@@ -3,9 +3,11 @@ import asyncio
 from datetime import datetime
 
 from motor.motor_asyncio import AsyncIOMotorClient
+from dotenv import load_dotenv
 
 
 async def seed() -> None:
+    load_dotenv()
     uri = os.getenv("MONGODB_URI") or os.getenv("DATABASE_URL", "mongodb://localhost:27017")
     db_name = os.getenv("MONGODB_DB", "vehicle_diag")
     client = AsyncIOMotorClient(uri)
