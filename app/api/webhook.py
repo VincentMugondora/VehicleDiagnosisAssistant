@@ -36,18 +36,45 @@ def _parse_vehicle_details(text: str) -> Dict[str, Optional[str]]:
 
 
 def _format_reply(code: str, base_info: Dict[str, Any], causes_ranked: Optional[list]) -> str:
-    lines = []
     meaning = base_info.get("description") or "Unknown description"
-    lines.append(f"Code: {code}")
-    lines.append(f"Meaning: {meaning}")
-    causes = causes_ranked or (base_info.get("common_causes") or "").split(",")
-    causes = [c.strip() for c in causes if c and c.strip()]
+    # Determine causes list
+    if causes_ranked and isinstance(causes_ranked, list) and len(causes_ranked) > 0:
+        causes = [str(c).strip() for c in causes_ranked if str(c).strip()]
+    else:
+        raw = base_info.get("common_causes") or ""
+        causes = [c.strip() for c in raw.split(",") if c and c.strip()]
+
+    # Determine checks/fixes list
+    fixes_raw = base_info.get("generic_fixes") or ""
+    fix_items = [i.strip() for i in re.split(r"[\,\n;]+", fixes_raw) if i and i.strip()]
+    if not fix_items:
+        fix_items = [
+            "Inspect intake hoses for cracks",
+            "Clean MAF sensor",
+            "Check fuel pressure",
+        ]
+
+    lines = []
+    lines.append(f"🚗 Code: {code}")
+    lines.append("")
+    lines.append("Meaning:")
+    lines.append(meaning)
+
     if causes:
+        lines.append("")
         lines.append("Likely causes:")
-        for c in causes[:5]:
-            lines.append(f"- {c}")
-    fixes = base_info.get("generic_fixes") or "Check basics: wiring, connectors, vacuum leaks, and sensor integrity."
-    lines.append(f"Recommended checks: {fixes}")
+        for idx, c in enumerate(causes[:5]):
+            suffix = " (most common)" if idx == 0 else ""
+            lines.append(f"• {c}{suffix}")
+
+    if fix_items:
+        lines.append("")
+        lines.append("Recommended checks:")
+        for f in fix_items[:5]:
+            lines.append(f"• {f}")
+
+    lines.append("")
+    lines.append("ℹ️ Generic guidance. Confirm with physical inspection.")
     return "\n".join(lines)
 
 
@@ -96,7 +123,8 @@ async def twilio_webhook(request: Request, db: Session = Depends(get_session)):
         return {"ok": True}
 
     base_info = get_obd_info(db, code)
-    causes_ranked = enrich_causes(base_info, vehicle)
+    use_ai = os.getenv("AI_ENRICH_ENABLED", "false").lower() == "true"
+    causes_ranked = enrich_causes(base_info, vehicle) if use_ai else None
     reply = _format_reply(code, base_info, causes_ranked)
 
     await _maybe_send_reply_via_twilio(from_number, reply)

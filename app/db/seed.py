@@ -29,6 +29,20 @@ def seed() -> None:
                 common_causes="Catalytic converter, O2 sensors, exhaust leak",
                 generic_fixes="Check for exhaust leaks, evaluate O2 sensors, assess catalyst",
             ),
+            ObdCode(
+                code="P0128",
+                description="Coolant thermostat (coolant temperature below thermostat regulating temperature)",
+                symptoms="Check engine light, engine taking long to warm up, poor heater performance",
+                common_causes="Stuck open thermostat, low coolant level, faulty ECT sensor",
+                generic_fixes="Replace thermostat, check/top-up coolant, test/replace ECT sensor",
+            ),
+            ObdCode(
+                code="P0100",
+                description="Mass or Volume Air Flow (MAF) circuit malfunction",
+                symptoms="Rough idle, hesitation, poor fuel economy, stalling",
+                common_causes="Dirty/faulty MAF sensor, wiring/connector issue, intake air leak",
+                generic_fixes="Inspect/clean/replace MAF sensor, check wiring/connectors, inspect intake for leaks",
+            ),
         ]
         existing = {r.code for r in db.query(ObdCode).all()}
         for s in seeds:
