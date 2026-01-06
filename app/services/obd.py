@@ -1,3 +1,4 @@
+import os
 import re
 from typing import Dict, Any
 
@@ -24,21 +25,59 @@ async def get_obd_info(db, code: str) -> Dict[str, Any]:
             desc_low = (base.get("description") or "").strip().lower()
             has_causes = bool((base.get("common_causes") or "").strip())
             is_generic = (not desc_low) or ("generic obd-ii dtc" in desc_low)
-            if is_generic or not has_causes:
+            always_enrich = os.getenv("EXTERNAL_ENRICH_ALWAYS", "false").strip().lower() == "true"
+            if is_generic or not has_causes or always_enrich:
                 external = await get_external_obd(db, code.upper(), {})
                 if external:
                     ext_desc = str(external.get("description") or "").strip()
                     ext_causes = [str(x).strip() for x in (external.get("causes") or []) if str(x).strip()]
                     ext_checks = [str(x).strip() for x in (external.get("checks") or []) if str(x).strip()]
+                    # Only override description if generic
                     if ext_desc and is_generic:
                         base["description"] = ext_desc
+                    # Merge/dedupe causes
                     if ext_causes:
-                        base["common_causes"] = ", ".join(ext_causes)
+                        base_causes = [c.strip() for c in (base.get("common_causes") or "").split(",") if c.strip()]
+                        merged = []
+                        seen = set()
+                        for c in base_causes + ext_causes:
+                            key = c.lower()
+                            if key not in seen:
+                                seen.add(key)
+                                merged.append(c)
+                        base["common_causes"] = ", ".join(merged)
+                    # Merge/dedupe checks
                     if ext_checks:
-                        base["generic_fixes"] = ", ".join(ext_checks)
+                        fixes_raw = base.get("generic_fixes") or ""
+                        base_checks = [i.strip() for i in re.split(r"[,\n;]+", fixes_raw) if i and i.strip()]
+                        merged_checks = []
+                        seen2 = set()
+                        for c in base_checks + ext_checks:
+                            key = c.lower()
+                            if key not in seen2:
+                                seen2.add(key)
+                                merged_checks.append(c)
+                        base["generic_fixes"] = ", ".join(merged_checks)
         except Exception:
             pass
         return base
+    # Not found in DB: attempt external before falling back to generic
+    try:
+        from app.providers.search import get_external_obd  # local import to avoid cycles
+        external = await get_external_obd(db, code.upper(), {})
+        if external:
+            ext_desc = str(external.get("description") or "").strip()
+            ext_causes = [str(x).strip() for x in (external.get("causes") or []) if str(x).strip()]
+            ext_checks = [str(x).strip() for x in (external.get("checks") or []) if str(x).strip()]
+            return {
+                "code": code.upper(),
+                "description": ext_desc or f"OBD-II code {code.upper()}",
+                "symptoms": "",
+                "common_causes": ", ".join(ext_causes) if ext_causes else "",
+                "generic_fixes": ", ".join(ext_checks) if ext_checks else "",
+            }
+    except Exception:
+        pass
     return {
         "code": code.upper(),
         "description": "Generic OBD-II DTC.",
