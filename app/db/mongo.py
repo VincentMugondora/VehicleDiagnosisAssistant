@@ -34,3 +34,9 @@ async def init_db() -> None:
     # message_logs: phone_number + created_at
     await db["message_logs"].create_index("phone_number")
     await db["message_logs"].create_index("created_at")
+    # external_obd_cache: TTL on fetched_at
+    try:
+        ttl = int(os.getenv("EXTERNAL_CACHE_TTL_SECONDS", "2592000"))  # 30 days
+    except Exception:
+        ttl = 2592000
+    await db["external_obd_cache"].create_index("fetched_at", expireAfterSeconds=ttl)
