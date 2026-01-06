@@ -13,6 +13,7 @@ from app.db.mongo import get_db
 from app.services.obd import validate_obd_code, get_obd_info
 from app.ai.enrich import enrich_causes, system_prompt, build_user_prompt
 from app.services.parser import parse_message
+from app.ai.gemini import rank_causes_with_gemini
 
 router = APIRouter(prefix="/webhook", tags=["webhook"])
 
@@ -184,7 +185,11 @@ async def twilio_webhook(request: Request, db = Depends(get_db)):
     causes_ranked = None
     if use_ai:
         try:
-            causes_ranked = enrich_causes(base_info, vehicle)
+            provider = os.getenv("AI_PROVIDER", "none").lower()
+            if provider == "gemini":
+                causes_ranked = rank_causes_with_gemini(base_info, vehicle)
+            else:
+                causes_ranked = enrich_causes(base_info, vehicle)
         except Exception:
             causes_ranked = None
     reply = _format_reply(code, base_info, causes_ranked)
@@ -200,3 +205,66 @@ async def twilio_webhook(request: Request, db = Depends(get_db)):
     })
 
     return {"ok": True}
+
+
+@router.post("/baileys")
+async def baileys_webhook(request: Request, db = Depends(get_db)):
+    payload = await request.json()
+    from_number = payload.get("from") or payload.get("sender") or ""
+    raw_text = (payload.get("text") or payload.get("message") or "").strip()
+
+    # Usage limit (skip for allowed numbers)
+    limit_msg = None if _is_allowed_number(from_number) else await _check_usage_limit(db, from_number)
+    if limit_msg:
+        await db["message_logs"].insert_one({
+            "phone_number": from_number,
+            "request_text": raw_text,
+            "response_text": limit_msg,
+            "code": None,
+            "created_at": datetime.utcnow(),
+        })
+        return {"reply": limit_msg}
+
+    parsed = parse_message(raw_text)
+    code = parsed.get("code")
+    vehicle = {
+        "make": parsed.get("make"),
+        "model": parsed.get("model"),
+        "year": parsed.get("year"),
+        "engine": parsed.get("engine"),
+    }
+
+    if not code or not validate_obd_code(code):
+        reply = "Send an OBD-II code like P0171. Optional: add vehicle (e.g., Corolla 2015 1.6L)."
+        await db["message_logs"].insert_one({
+            "phone_number": from_number,
+            "request_text": raw_text,
+            "response_text": reply,
+            "code": None,
+            "created_at": datetime.utcnow(),
+        })
+        return {"reply": reply}
+
+    base_info = await get_obd_info(db, code)
+    use_ai = os.getenv("AI_ENRICH_ENABLED", "false").lower() == "true"
+    causes_ranked = None
+    if use_ai:
+        try:
+            provider = os.getenv("AI_PROVIDER", "none").lower()
+            if provider == "gemini":
+                causes_ranked = rank_causes_with_gemini(base_info, vehicle)
+            else:
+                causes_ranked = enrich_causes(base_info, vehicle)
+        except Exception:
+            causes_ranked = None
+    reply = _format_reply(code, base_info, causes_ranked)
+
+    await db["message_logs"].insert_one({
+        "phone_number": from_number,
+        "request_text": raw_text,
+        "response_text": reply,
+        "code": code,
+        "created_at": datetime.utcnow(),
+    })
+
+    return {"reply": reply}
