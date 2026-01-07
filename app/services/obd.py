@@ -27,24 +27,7 @@ async def get_obd_info(db, code: str, vehicle: Optional[Dict[str, Any]] = None) 
                     "checks": checks_list,
                 },
             )
-            if (
-                cleaned.get("description") != (doc.get("description") or "")
-                or ", ".join(cleaned.get("causes", []) or []) != (doc.get("common_causes") or "")
-                or ", ".join(cleaned.get("checks", []) or []) != (doc.get("generic_fixes") or "")
-            ):
-                try:
-                    await db["obd_codes"].update_one(
-                        {"code": code.upper()},
-                        {
-                            "$set": {
-                                "description": cleaned.get("description", "") or "",
-                                "common_causes": ", ".join(cleaned.get("causes", []) or []),
-                                "generic_fixes": ", ".join(cleaned.get("checks", []) or []),
-                            }
-                        },
-                    )
-                except Exception:
-                    pass
+            # Do not mutate the authoritative KB; use sanitized values only in-memory
             base = {
                 "code": doc.get("code", code.upper()),
                 "description": cleaned.get("description") or "",
