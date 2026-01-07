@@ -167,6 +167,10 @@ async def twilio_webhook(request: Request, db = Depends(get_db)):
         "year": parsed.get("year"),
         "engine": parsed.get("engine"),
     }
+    try:
+        print(f"[baileys] parsed_code={code} vehicle={vehicle}")
+    except Exception:
+        pass
 
     if not code or not validate_obd_code(code):
         reply = "Send an OBD-II code like P0171. Optional: add vehicle (e.g., Corolla 2015 1.6L)."
@@ -180,7 +184,7 @@ async def twilio_webhook(request: Request, db = Depends(get_db)):
         })
         return {"ok": True}
 
-    base_info = await get_obd_info(db, code)
+    base_info = await get_obd_info(db, code, vehicle)
     use_ai = os.getenv("AI_ENRICH_ENABLED", "false").lower() == "true"
     causes_ranked = None
     if use_ai:
@@ -211,7 +215,15 @@ async def twilio_webhook(request: Request, db = Depends(get_db)):
 async def baileys_webhook(request: Request, db = Depends(get_db)):
     payload = await request.json()
     from_number = payload.get("from") or payload.get("sender") or ""
-    raw_text = (payload.get("text") or payload.get("message") or "").strip()
+    # Prefer 'text' if the key exists, even if it's an empty string; otherwise fallback to 'message'
+    _text_present = "text" in payload
+    _text_value = payload.get("text") if _text_present else None
+    raw_text = ((_text_value if _text_value is not None else payload.get("message")) or "").strip()
+    try:
+        print(f"[baileys] payload={payload}")
+        print(f"[baileys] raw_text='{raw_text}'")
+    except Exception:
+        pass
 
     # Usage limit (skip for allowed numbers)
     limit_msg = None if _is_allowed_number(from_number) else await _check_usage_limit(db, from_number)
@@ -245,7 +257,7 @@ async def baileys_webhook(request: Request, db = Depends(get_db)):
         })
         return {"reply": reply}
 
-    base_info = await get_obd_info(db, code)
+    base_info = await get_obd_info(db, code, vehicle)
     use_ai = os.getenv("AI_ENRICH_ENABLED", "false").lower() == "true"
     causes_ranked = None
     if use_ai:

@@ -40,3 +40,7 @@ async def init_db() -> None:
     except Exception:
         ttl = 2592000
     await db["external_obd_cache"].create_index("fetched_at", expireAfterSeconds=ttl)
+    # obd_summaries: unique per code+vehicle
+    await db["obd_summaries"].create_index([
+        ("code", 1), ("make", 1), ("model", 1), ("year", 1), ("engine", 1)
+    ], unique=True)

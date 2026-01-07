@@ -2,6 +2,9 @@ import os
 import warnings
 # Suppress Pydantic warning: built-in function `any` not a Python type during schema gen
 warnings.filterwarnings("ignore", message=r".*ArbitraryTypeWarning.*")
+# Also match the common message text and module that emits it
+warnings.filterwarnings("ignore", message=r".*is not a Python type.*")
+warnings.filterwarnings("ignore", module=r"pydantic\._internal\._generate_schema")
 from fastapi import FastAPI
 from dotenv import load_dotenv
 

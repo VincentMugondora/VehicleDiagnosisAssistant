@@ -122,7 +122,7 @@ def _configure_gemini() -> None:
         _GENAI_CLIENT = genai_new.Client(api_key=api_key)  # type: ignore
 
 
-def _summarize_with_gemini(code: str, results: List[Dict[str, str]]) -> Optional[Dict[str, object]]:
+def _summarize_with_gemini(code: str, results: List[Dict[str, str]], vehicle: Dict[str, Optional[str]]) -> Optional[Dict[str, object]]:
     if genai_new is None:
         return None
     _configure_gemini()
@@ -133,12 +133,17 @@ def _summarize_with_gemini(code: str, results: List[Dict[str, str]]) -> Optional
     sources_text = "\n\n".join([
         f"Source: {r['url']}\nTitle: {r.get('title','')}\nSnippet: {r.get('snippet','')}" for r in results
     ])
+    make = (vehicle.get("make") or "").strip()
+    model = (vehicle.get("model") or "").strip()
+    year = (vehicle.get("year") or "").strip()
+    engine = (vehicle.get("engine") or "").strip()
     prompt = (
         "You are an automotive diagnostics assistant for mechanics.\n"
         "Task: Summarize OBD-II code details ONLY using the provided sources.\n"
         "Do NOT invent causes or checks. If unclear, say 'generic'.\n"
         "Return STRICT JSON with keys: description (string), causes (array of 3-6 short strings), checks (array of 3-6 short strings).\n"
         f"Code: {code}\n\n"
+        f"Vehicle: {make} {model} {year} {engine}\n\n"
         f"SOURCES:\n{sources_text}\n\n"
         "Return only JSON."
     )
@@ -181,7 +186,7 @@ async def get_external_obd(db, code: str, vehicle: Dict[str, Optional[str]]) -> 
     # 3) Summarize (prefer Gemini if enabled)
     summary: Optional[Dict[str, object]] = None
     if _get_env_bool("AI_ENRICH_ENABLED", False) and os.getenv("AI_PROVIDER", "").lower() == "gemini":
-        summary = _summarize_with_gemini(code, results)
+        summary = _summarize_with_gemini(code, results, vehicle)
 
     # basic fallback if no AI: use snippets to craft minimal output
     if summary is None:
@@ -210,6 +215,45 @@ async def get_external_obd(db, code: str, vehicle: Dict[str, Optional[str]]) -> 
             },
             upsert=True,
         )
+    except Exception:
+        pass
+    # Optionally promote to primary collection for future use without internet
+    try:
+        if os.getenv("EXTERNAL_PROMOTE_TO_PRIMARY", "false").strip().lower() == "true":
+            primary_doc = {
+                "code": code.upper(),
+                "description": summary.get("description", "") or "",
+                "symptoms": "",
+                "common_causes": ", ".join(summary.get("causes", []) or []),
+                "generic_fixes": ", ".join(summary.get("checks", []) or []),
+            }
+            await db["obd_codes"].update_one({"code": code.upper()}, {"$set": primary_doc}, upsert=True)
+    except Exception:
+        pass
+
+    # Optionally save a per-vehicle summary document
+    try:
+        if os.getenv("EXTERNAL_SAVE_PER_VEHICLE", "true").strip().lower() == "true":
+            v_norm = {
+                "make": (vehicle.get("make") or "").strip().lower(),
+                "model": (vehicle.get("model") or "").strip().lower(),
+                "year": (vehicle.get("year") or "").strip().lower(),
+                "engine": (vehicle.get("engine") or "").strip().lower(),
+            }
+            doc = {
+                "code": code.upper(),
+                **v_norm,
+                "description": summary.get("description", "") or "",
+                "causes": summary.get("causes", []) or [],
+                "checks": summary.get("checks", []) or [],
+                "sources": [r.get("url") for r in results],
+                "created_at": datetime.utcnow(),
+            }
+            await db["obd_summaries"].update_one(
+                {"code": code.upper(), **v_norm},
+                {"$set": doc},
+                upsert=True,
+            )
     except Exception:
         pass
 

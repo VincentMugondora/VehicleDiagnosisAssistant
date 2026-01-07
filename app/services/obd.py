@@ -1,6 +1,6 @@
 import os
 import re
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 
 _OBD_REGEX = re.compile(r"^[PBCU][0-9]{4}$", re.IGNORECASE)
 
@@ -9,7 +9,29 @@ def validate_obd_code(code: str) -> bool:
     return bool(_OBD_REGEX.match(code or ""))
 
 
-async def get_obd_info(db, code: str) -> Dict[str, Any]:
+async def get_obd_info(db, code: str, vehicle: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+    # Prefer a per-vehicle summary if available
+    try:
+        save_per_vehicle = os.getenv("EXTERNAL_SAVE_PER_VEHICLE", "true").strip().lower() == "true"
+        if vehicle and save_per_vehicle:
+            v_norm = {
+                "make": str((vehicle.get("make") or "").strip().lower()),
+                "model": str((vehicle.get("model") or "").strip().lower()),
+                "year": str((vehicle.get("year") or "").strip().lower()),
+                "engine": str((vehicle.get("engine") or "").strip().lower()),
+            }
+            pv = await db["obd_summaries"].find_one({"code": code.upper(), **v_norm})
+            if pv:
+                return {
+                    "code": code.upper(),
+                    "description": pv.get("description") or "",
+                    "symptoms": "",
+                    "common_causes": ", ".join(pv.get("causes", []) or []),
+                    "generic_fixes": ", ".join(pv.get("checks", []) or []),
+                }
+    except Exception:
+        pass
+
     doc = await db["obd_codes"].find_one({"code": code.upper()})
     if doc:
         base = {
@@ -27,7 +49,7 @@ async def get_obd_info(db, code: str) -> Dict[str, Any]:
             is_generic = (not desc_low) or ("generic obd-ii dtc" in desc_low)
             always_enrich = os.getenv("EXTERNAL_ENRICH_ALWAYS", "false").strip().lower() == "true"
             if is_generic or not has_causes or always_enrich:
-                external = await get_external_obd(db, code.upper(), {})
+                external = await get_external_obd(db, code.upper(), vehicle or {})
                 if external:
                     ext_desc = str(external.get("description") or "").strip()
                     ext_causes = [str(x).strip() for x in (external.get("causes") or []) if str(x).strip()]
@@ -64,7 +86,7 @@ async def get_obd_info(db, code: str) -> Dict[str, Any]:
     # Not found in DB: attempt external before falling back to generic
     try:
         from app.providers.search import get_external_obd  # local import to avoid cycles
-        external = await get_external_obd(db, code.upper(), {})
+        external = await get_external_obd(db, code.upper(), vehicle or {})
         if external:
             ext_desc = str(external.get("description") or "").strip()
             ext_causes = [str(x).strip() for x in (external.get("causes") or []) if str(x).strip()]
