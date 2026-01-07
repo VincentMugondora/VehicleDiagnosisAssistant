@@ -1,6 +1,6 @@
 import re
 import pytest
-from httpx import AsyncClient
+from httpx import AsyncClient, ASGITransport
 
 
 @pytest.mark.asyncio
@@ -10,7 +10,8 @@ async def test_reply_contains_requested_code(test_app):
         "text": "P0705 Toyota Hilux 2011 2.5D",
     }
 
-    async with AsyncClient(app=test_app, base_url="http://test") as ac:
+    transport = ASGITransport(app=test_app)
+    async with AsyncClient(transport=transport, base_url="http://test") as ac:
         response = await ac.post("/webhook/baileys", json=payload)
 
     assert response.status_code == 200
