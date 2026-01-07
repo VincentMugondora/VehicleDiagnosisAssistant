@@ -1,4 +1,5 @@
 import os
+import json
 import asyncio
 from datetime import datetime
 
@@ -60,6 +61,37 @@ async def seed() -> None:
             {"$setOnInsert": doc},
             upsert=True,
         )
+
+    # Load starter dataset if present (app/data/obd_codes.json)
+    data_path = os.path.join(os.path.dirname(__file__), "..", "data", "obd_codes.json")
+    data_path = os.path.abspath(data_path)
+    if os.path.exists(data_path):
+        with open(data_path, "r", encoding="utf-8") as f:
+            dataset = json.load(f)
+        # dataset is a mapping from code -> structured fields
+        for code_key, payload in dataset.items():
+            code_up = str(code_key).upper().strip()
+            description = payload.get("meaning") or ""
+            symptoms = payload.get("symptoms") or ""
+            causes_list = payload.get("generic_causes") or []
+            checks_list = payload.get("generic_checks") or []
+            doc = {
+                "code": code_up,
+                "description": description,
+                "symptoms": symptoms,
+                "common_causes": ", ".join([c for c in causes_list if c]),
+                "generic_fixes": ", ".join([c for c in checks_list if c]),
+            }
+            # Preserve optional metadata if present
+            if payload.get("system"):
+                doc["system"] = payload["system"]
+            if payload.get("severity"):
+                doc["severity"] = payload["severity"]
+            await db["obd_codes"].update_one(
+                {"code": code_up},
+                {"$setOnInsert": doc},
+                upsert=True,
+            )
 
 
 if __name__ == "__main__":
