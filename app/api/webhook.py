@@ -220,6 +220,24 @@ async def twilio_webhook(request: Request, db = Depends(get_db)):
         "created_at": datetime.utcnow(),
     })
 
+    # Diagnostics audit log (never reused)
+    try:
+        vehicle_str = " ".join([
+            str((vehicle.get("make") if vehicle else "") or "").strip(),
+            str((vehicle.get("model") if vehicle else "") or "").strip(),
+            str((vehicle.get("year") if vehicle else "") or "").strip(),
+            str((vehicle.get("engine") if vehicle else "") or "").strip(),
+        ]).strip()
+        await db["diagnostic_logs"].insert_one({
+            "code": code,
+            "vehicle": vehicle_str,
+            "source": base_info.get("source"),
+            "confidence": base_info.get("confidence"),
+            "created_at": datetime.utcnow(),
+        })
+    except Exception:
+        pass
+
     return {"ok": True}
 
 
@@ -290,5 +308,23 @@ async def baileys_webhook(request: Request, db = Depends(get_db)):
         "code": code,
         "created_at": datetime.utcnow(),
     })
+
+    # Diagnostics audit log (never reused)
+    try:
+        vehicle_str = " ".join([
+            str((vehicle.get("make") if vehicle else "") or "").strip(),
+            str((vehicle.get("model") if vehicle else "") or "").strip(),
+            str((vehicle.get("year") if vehicle else "") or "").strip(),
+            str((vehicle.get("engine") if vehicle else "") or "").strip(),
+        ]).strip()
+        await db["diagnostic_logs"].insert_one({
+            "code": code,
+            "vehicle": vehicle_str,
+            "source": base_info.get("source"),
+            "confidence": base_info.get("confidence"),
+            "created_at": datetime.utcnow(),
+        })
+    except Exception:
+        pass
 
     return {"reply": reply}
