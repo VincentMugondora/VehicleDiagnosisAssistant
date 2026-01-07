@@ -65,29 +65,36 @@ async def get_obd_info(db, code: str, vehicle: Optional[Dict[str, Any]] = None) 
                     # Only override description if generic
                     if ext_desc and is_generic:
                         base["description"] = ext_desc
-                    # Merge/dedupe causes
-                    if ext_causes:
-                        base_causes = [c.strip() for c in (base.get("common_causes") or "").split(",") if c.strip()]
-                        merged = []
-                        seen = set()
-                        for c in base_causes + ext_causes:
-                            key = c.lower()
-                            if key not in seen:
-                                seen.add(key)
-                                merged.append(c)
-                        base["common_causes"] = ", ".join(merged)
-                    # Merge/dedupe checks
-                    if ext_checks:
-                        fixes_raw = base.get("generic_fixes") or ""
-                        base_checks = [i.strip() for i in re.split(r"[,\n;]+", fixes_raw) if i and i.strip()]
-                        merged_checks = []
-                        seen2 = set()
-                        for c in base_checks + ext_checks:
-                            key = c.lower()
-                            if key not in seen2:
-                                seen2.add(key)
-                                merged_checks.append(c)
-                        base["generic_fixes"] = ", ".join(merged_checks)
+                    if ext_causes or ext_checks:
+                        if always_enrich:
+                            # Replace to avoid stale/noisy data when enrichment is forced
+                            if ext_causes:
+                                base["common_causes"] = ", ".join(ext_causes)
+                            if ext_checks:
+                                base["generic_fixes"] = ", ".join(ext_checks)
+                        else:
+                            # Merge/dedupe
+                            if ext_causes:
+                                base_causes = [c.strip() for c in (base.get("common_causes") or "").split(",") if c.strip()]
+                                merged = []
+                                seen = set()
+                                for c in base_causes + ext_causes:
+                                    key = c.lower()
+                                    if key not in seen:
+                                        seen.add(key)
+                                        merged.append(c)
+                                base["common_causes"] = ", ".join(merged)
+                            if ext_checks:
+                                fixes_raw = base.get("generic_fixes") or ""
+                                base_checks = [i.strip() for i in re.split(r"[,\n;]+", fixes_raw) if i and i.strip()]
+                                merged_checks = []
+                                seen2 = set()
+                                for c in base_checks + ext_checks:
+                                    key = c.lower()
+                                    if key not in seen2:
+                                        seen2.add(key)
+                                        merged_checks.append(c)
+                                base["generic_fixes"] = ", ".join(merged_checks)
         except Exception:
             pass
         return base

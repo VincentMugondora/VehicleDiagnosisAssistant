@@ -31,6 +31,91 @@ def _domain(url: str) -> str:
         return ""
 
 
+def _dedupe_str_list(items: List[str]) -> List[str]:
+    out: List[str] = []
+    seen = set()
+    for it in items:
+        s = str(it or "").strip()
+        if not s:
+            continue
+        k = s.lower()
+        if k in seen:
+            continue
+        seen.add(k)
+        out.append(s)
+    return out
+
+
+def _suggest_checks_from_causes(causes: List[str]) -> List[str]:
+    text = " ".join(causes).lower()
+    checks: List[str] = []
+    if any(k in text for k in ["wire", "wiring", "harness", "connector", "communication", "bus", "can", "ecm", "pcm", "tcm"]):
+        checks.extend([
+            "Inspect wiring harness and connectors",
+            "Ensure connectors are seated and corrosion-free",
+            "Scan for communication errors and module connectivity",
+        ])
+    if any(k in text for k in ["vacuum", "intake"]):
+        checks.append("Check intake and vacuum lines for leaks")
+    if any(k in text for k in ["spark", "coil", "ignition", "misfire"]):
+        checks.append("Inspect spark plugs and ignition coils")
+    if any(k in text for k in ["sensor", "maf", "o2", "oxygen"]):
+        checks.append("Verify sensor readings with a scan tool")
+    if any(k in text for k in ["fuel", "injector", "pressure"]):
+        checks.append("Test fuel pressure and injector operation")
+    checks = _dedupe_str_list(checks)
+    if not checks:
+        checks = ["Perform visual inspection and scan for related DTCs"]
+    return checks[:6]
+
+
+def _sanitize_summary(summary: Dict[str, object]) -> Dict[str, object]:
+    desc = str(summary.get("description", "") or "").strip()
+    # collapse whitespace
+    desc = re.sub(r"\s+", " ", desc)
+    # remove obvious QA noise terms from description
+    bad_desc_terms = ["what is the meaning", "stack overflow", "stackexchange", "reddit", "quora"]
+    if any(t in desc.lower() for t in bad_desc_terms):
+        # keep only first sentence before such terms
+        for t in bad_desc_terms:
+            idx = desc.lower().find(t)
+            if idx != -1:
+                desc = desc[:idx].strip().rstrip("-:;,")
+                break
+    # sanitize causes
+    raw_causes = [str(x).strip() for x in (summary.get("causes") or []) if str(x).strip()]
+    causes: List[str] = []
+    bad_tokens = ["what is the meaning", "asked", "stack overflow", "stackexchange", "reddit", "quora", "http", "www."]
+    for c in raw_causes:
+        cl = c.lower()
+        if any(b in cl for b in bad_tokens):
+            continue
+        if len(c) > 120:
+            continue
+        causes.append(c)
+    causes = _dedupe_str_list(causes)[:6]
+    # If description is generic, derive from causes when they indicate communication/harness
+    if not desc or re.match(r"(?i)^obd-ii code\b", desc):
+        joined = " ".join(causes).lower()
+        if any(k in joined for k in ["communication", "can", "bus", "link", "harness", "connector", "ecm", "pcm", "tcm"]):
+            desc = "Malfunction in the communication link between ECM and related control modules (wiring/connectors)."
+
+    # sanitize checks
+    raw_checks = [str(x).strip() for x in (summary.get("checks") or []) if str(x).strip()]
+    checks: List[str] = []
+    for ck in raw_checks:
+        s = re.sub(r"^\s*check:\s*", "", ck, flags=re.IGNORECASE).strip()
+        if not s or len(s) > 140:
+            continue
+        if any(b in s.lower() for b in bad_tokens):
+            continue
+        checks.append(s)
+    if not checks:
+        checks = _suggest_checks_from_causes(causes)
+    checks = _dedupe_str_list(checks)[:6]
+    return {"description": desc, "causes": causes, "checks": checks}
+
+
 async def _search_brave(query: str) -> List[Dict[str, str]]:
     api_key = os.getenv("BRAVE_API_KEY", "").strip()
     if not api_key:
@@ -92,11 +177,16 @@ async def _search_serpapi(query: str) -> List[Dict[str, str]]:
         return items
 
 
-async def _web_search_for_code(code: str) -> List[Dict[str, str]]:
+async def _web_search_for_code(code: str, vehicle: Dict[str, Optional[str]]) -> List[Dict[str, str]]:
     domains = _trusted_domains()
-    # Build site-restricted query
+    # Build site-restricted query with vehicle context
+    make = (vehicle.get("make") or "").strip()
+    model = (vehicle.get("model") or "").strip()
+    year = (vehicle.get("year") or "").strip()
+    engine = (vehicle.get("engine") or "").strip()
+    v_terms = " ".join([t for t in [make, model, year, engine] if t]).strip()
     site_filters = " OR ".join([f"site:{d}" for d in domains])
-    query = f"{code} OBD-II meaning causes fixes {site_filters}".strip()
+    query = f"{code} {v_terms} OBD-II meaning causes fixes {site_filters}".strip()
 
     provider = os.getenv("SEARCH_PROVIDER", "brave").strip().lower()
     results: List[Dict[str, str]] = []
@@ -122,7 +212,13 @@ async def _web_search_for_code(code: str) -> List[Dict[str, str]]:
         if len(filtered) >= 3:
             break
 
-    return filtered or results[:3]
+    # Do not fall back to non-trusted domains; keep results empty if filter removed all
+    if not filtered:
+        try:
+            print("[external] filtered_results=0 (all non-trusted)")
+        except Exception:
+            pass
+    return filtered
 
 
 def _configure_gemini() -> None:
@@ -130,10 +226,18 @@ def _configure_gemini() -> None:
         return
     api_key = os.getenv("GOOGLE_API_KEY", "").strip()
     if not api_key:
+        try:
+            print("[gemini] GOOGLE_API_KEY missing")
+        except Exception:
+            pass
         return
     global _GENAI_CLIENT
     if _GENAI_CLIENT is None:
         _GENAI_CLIENT = genai_new.Client(api_key=api_key)  # type: ignore
+        try:
+            print("[gemini] client_configured=true")
+        except Exception:
+            pass
 
 
 def _summarize_with_gemini(code: str, results: List[Dict[str, str]], vehicle: Dict[str, Optional[str]]) -> Optional[Dict[str, object]]:
@@ -162,19 +266,32 @@ def _summarize_with_gemini(code: str, results: List[Dict[str, str]], vehicle: Di
         "Return only JSON."
     )
     try:
+        try:
+            print("[gemini] generate start")
+        except Exception:
+            pass
         resp = _GENAI_CLIENT.models.generate_content(model=model_name, contents=[prompt])  # type: ignore
         txt = (resp.text or "").strip()
-        # extract JSON block
-        m = re.search(r"\{[\s\S]*\}$", txt)
-        raw = m.group(0) if m else txt
+        # robust JSON extraction
+        start = txt.find("{")
+        end = txt.rfind("}")
+        raw = txt[start:end+1] if start != -1 and end != -1 and end > start else txt
         data = json.loads(raw)
         desc = str(data.get("description", "")).strip()
         causes = [str(x).strip() for x in data.get("causes", []) if str(x).strip()]
         checks = [str(x).strip() for x in data.get("checks", []) if str(x).strip()]
         if not (desc and causes and checks):
             return None
+        try:
+            print("[gemini] generate ok, parsed=true")
+        except Exception:
+            pass
         return {"description": desc, "causes": causes[:6], "checks": checks[:6]}
-    except Exception:
+    except Exception as e:
+        try:
+            print(f"[gemini] generate/parse failed: {type(e).__name__}")
+        except Exception:
+            pass
         return None
 
 
@@ -187,8 +304,14 @@ async def get_external_obd(db, code: str, vehicle: Dict[str, Optional[str]]) -> 
     if not internet:
         return None
 
-    # 1) Cache check
-    cached = await db["external_obd_cache"].find_one({"code": code.upper()})
+    # 1) Cache check (per code + vehicle)
+    v_norm = {
+        "make": (vehicle.get("make") or "").strip().lower(),
+        "model": (vehicle.get("model") or "").strip().lower(),
+        "year": (vehicle.get("year") or "").strip().lower(),
+        "engine": (vehicle.get("engine") or "").strip().lower(),
+    }
+    cached = await db["external_obd_cache"].find_one({"code": code.upper(), **v_norm})
     if cached:
         try:
             print("[external] cache_hit=true")
@@ -202,7 +325,7 @@ async def get_external_obd(db, code: str, vehicle: Dict[str, Optional[str]]) -> 
         }
 
     # 2) Search
-    results = await _web_search_for_code(code)
+    results = await _web_search_for_code(code, vehicle)
     if not results:
         try:
             print("[external] search_results=0")
@@ -235,20 +358,42 @@ async def get_external_obd(db, code: str, vehicle: Dict[str, Optional[str]]) -> 
         text = "\n".join([r.get("snippet", "") for r in results])
         # naive split for causes/checks candidates
         tokens = [t.strip() for t in re.split(r",|;|\n|•|\-|—|:\s*", text) if t.strip()]
-        causes = tokens[:5] or ["Vacuum leak", "Sensor issue", "Wiring problem"]
+        # remove noisy/QA phrases
+        bad_subs = [
+            "what is the meaning", "asked", "stack overflow", "stackexchange",
+            "reddit", "quora", "how do i fix", "may ", "nov ", "dec ", "jan ", "feb ", "mar ", "apr "
+        ]
+        cleaned = []
+        seen_lc = set()
+        for t in tokens:
+            tl = t.lower()
+            if any(b in tl for b in bad_subs):
+                continue
+            if len(t) > 120:
+                continue
+            # simple dedupe
+            if tl in seen_lc:
+                continue
+            seen_lc.add(tl)
+            cleaned.append(t)
+        causes = cleaned[:5] or ["Communication bus fault", "Harness/connector issue", "Control module fault"]
         checks = [f"Check: {c}" for c in causes][:5]
         summary = {"description": desc, "causes": causes, "checks": checks}
+
+    # Sanitize final summary
+    clean = _sanitize_summary(summary)
 
     # 4) Cache
     try:
         await db["external_obd_cache"].update_one(
-            {"code": code.upper()},
+            {"code": code.upper(), **v_norm},
             {
                 "$set": {
                     "code": code.upper(),
-                    "description": summary.get("description", ""),
-                    "causes": summary.get("causes", []),
-                    "checks": summary.get("checks", []),
+                    **v_norm,
+                    "description": clean.get("description", ""),
+                    "causes": clean.get("causes", []),
+                    "checks": clean.get("checks", []),
                     "sources": [r.get("url") for r in results],
                     "fetched_at": datetime.utcnow(),
                 }
@@ -266,10 +411,10 @@ async def get_external_obd(db, code: str, vehicle: Dict[str, Optional[str]]) -> 
         if os.getenv("EXTERNAL_PROMOTE_TO_PRIMARY", "false").strip().lower() == "true":
             primary_doc = {
                 "code": code.upper(),
-                "description": summary.get("description", "") or "",
+                "description": clean.get("description", "") or "",
                 "symptoms": "",
-                "common_causes": ", ".join(summary.get("causes", []) or []),
-                "generic_fixes": ", ".join(summary.get("checks", []) or []),
+                "common_causes": ", ".join(clean.get("causes", []) or []),
+                "generic_fixes": ", ".join(clean.get("checks", []) or []),
             }
             await db["obd_codes"].update_one({"code": code.upper()}, {"$set": primary_doc}, upsert=True)
             try:
@@ -291,9 +436,9 @@ async def get_external_obd(db, code: str, vehicle: Dict[str, Optional[str]]) -> 
             doc = {
                 "code": code.upper(),
                 **v_norm,
-                "description": summary.get("description", "") or "",
-                "causes": summary.get("causes", []) or [],
-                "checks": summary.get("checks", []) or [],
+                "description": clean.get("description", "") or "",
+                "causes": clean.get("causes", []) or [],
+                "checks": clean.get("checks", []) or [],
                 "sources": [r.get("url") for r in results],
                 "created_at": datetime.utcnow(),
             }
@@ -309,4 +454,4 @@ async def get_external_obd(db, code: str, vehicle: Dict[str, Optional[str]]) -> 
     except Exception:
         pass
 
-    return summary
+    return clean
