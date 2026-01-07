@@ -2,13 +2,34 @@ import os
 import re
 from typing import Dict, List, Optional
 
-import google.generativeai as genai
+try:
+    # Preferred: new official SDK
+    from google import genai as genai_new  # type: ignore
+    _GENAI_MODE = "new"
+except Exception:
+    try:
+        # Fallback: deprecated SDK (kept for compatibility)
+        import google.generativeai as genai_old  # type: ignore
+        _GENAI_MODE = "old"
+    except Exception:
+        genai_new = None  # type: ignore
+        genai_old = None  # type: ignore
+        _GENAI_MODE = "none"
+
+_GENAI_CLIENT = None
 
 
 def _configure() -> None:
     api_key = os.getenv("GOOGLE_API_KEY")
-    if api_key:
-        genai.configure(api_key=api_key)
+    if not api_key:
+        return
+    global _GENAI_CLIENT
+    if _GENAI_MODE == "new":
+        # Lazily initialize client
+        if _GENAI_CLIENT is None:
+            _GENAI_CLIENT = genai_new.Client(api_key=api_key)  # type: ignore
+    elif _GENAI_MODE == "old":
+        genai_old.configure(api_key=api_key)  # type: ignore
 
 
 def _normalize_items(lines: List[str]) -> List[str]:
@@ -27,7 +48,6 @@ def _normalize_items(lines: List[str]) -> List[str]:
 def rank_causes_with_gemini(base_info: Dict[str, str], vehicle: Dict[str, Optional[str]]) -> List[str]:
     _configure()
     model_name = os.getenv("GEMINI_MODEL", "gemini-1.5-flash")
-    model = genai.GenerativeModel(model_name)
 
     base_causes_raw = base_info.get("common_causes") or ""
     base_causes = [c.strip() for c in base_causes_raw.split(",") if c.strip()]
@@ -47,7 +67,17 @@ def rank_causes_with_gemini(base_info: Dict[str, str], vehicle: Dict[str, Option
     )
 
     try:
-        resp = model.generate_content(prompt)
+        if _GENAI_MODE == "new":
+            if _GENAI_CLIENT is None:
+                # Safety check; configuration failed
+                raise RuntimeError("Gemini client not initialized")
+            resp = _GENAI_CLIENT.models.generate_content(model=model_name, contents=[prompt])  # type: ignore
+        elif _GENAI_MODE == "old":
+            model = genai_old.GenerativeModel(model_name)  # type: ignore
+            resp = model.generate_content(prompt)
+        else:
+            # No AI available; return base causes
+            return base_causes[:5]
         txt = resp.text or ""
         lines = txt.splitlines()
         ranked = _normalize_items(lines)

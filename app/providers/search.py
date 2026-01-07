@@ -8,9 +8,11 @@ from datetime import datetime
 import httpx
 
 try:
-    import google.generativeai as genai  # type: ignore
+    from google import genai as genai_new  # type: ignore
 except Exception:
-    genai = None  # Gemini optional
+    genai_new = None  # Gemini optional
+
+_GENAI_CLIENT = None
 
 
 def _get_env_bool(name: str, default: bool = False) -> bool:
@@ -110,19 +112,23 @@ async def _web_search_for_code(code: str) -> List[Dict[str, str]]:
 
 
 def _configure_gemini() -> None:
-    if genai is None:
+    if genai_new is None:
         return
     api_key = os.getenv("GOOGLE_API_KEY", "").strip()
-    if api_key:
-        genai.configure(api_key=api_key)
+    if not api_key:
+        return
+    global _GENAI_CLIENT
+    if _GENAI_CLIENT is None:
+        _GENAI_CLIENT = genai_new.Client(api_key=api_key)  # type: ignore
 
 
 def _summarize_with_gemini(code: str, results: List[Dict[str, str]]) -> Optional[Dict[str, object]]:
-    if genai is None:
+    if genai_new is None:
         return None
     _configure_gemini()
+    if _GENAI_CLIENT is None:
+        return None
     model_name = os.getenv("GEMINI_MODEL", "gemini-1.5-flash")
-    model = genai.GenerativeModel(model_name)
     # Build a compact prompt with citations
     sources_text = "\n\n".join([
         f"Source: {r['url']}\nTitle: {r.get('title','')}\nSnippet: {r.get('snippet','')}" for r in results
@@ -137,7 +143,7 @@ def _summarize_with_gemini(code: str, results: List[Dict[str, str]]) -> Optional
         "Return only JSON."
     )
     try:
-        resp = model.generate_content(prompt)
+        resp = _GENAI_CLIENT.models.generate_content(model=model_name, contents=[prompt])  # type: ignore
         txt = (resp.text or "").strip()
         # extract JSON block
         m = re.search(r"\{[\s\S]*\}$", txt)

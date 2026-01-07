@@ -1,11 +1,14 @@
 import os
+import warnings
+# Suppress Pydantic warning: built-in function `any` not a Python type during schema gen
+warnings.filterwarnings("ignore", message=r".*ArbitraryTypeWarning.*")
 from fastapi import FastAPI
 from dotenv import load_dotenv
 
+load_dotenv()
+
 from app.db.mongo import init_db
 from app.api.webhook import router as webhook_router
-
-load_dotenv()
 
 app = FastAPI(title="Vehicle Diagnosis Assistant API")
 
