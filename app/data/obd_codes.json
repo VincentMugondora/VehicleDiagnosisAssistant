@@ -1,0 +1,123 @@
+{
+  "P0001": {
+    "system": "Fuel & Air",
+    "meaning": "Fuel volume regulator control circuit open",
+    "severity": "High",
+    "generic_causes": [
+      "Open circuit in fuel volume regulator",
+      "Faulty fuel pressure regulator",
+      "Wiring or connector damage"
+    ],
+    "generic_checks": [
+      "Inspect wiring to fuel regulator",
+      "Check regulator resistance",
+      "Verify ECM output signal"
+    ]
+  },
+  "P0100": {
+    "system": "Intake Air",
+    "meaning": "Mass air flow circuit malfunction",
+    "severity": "Medium",
+    "generic_causes": [
+      "Faulty MAF sensor",
+      "Dirty air filter",
+      "Wiring issue"
+    ],
+    "generic_checks": [
+      "Clean MAF sensor",
+      "Inspect wiring",
+      "Check air intake for leaks"
+    ]
+  },
+  "P0300": {
+    "system": "Ignition",
+    "meaning": "Random/multiple cylinder misfire detected",
+    "severity": "High",
+    "generic_causes": [
+      "Ignition coil failure",
+      "Vacuum leak",
+      "Fuel pressure issue"
+    ],
+    "generic_checks": [
+      "Inspect ignition system",
+      "Check vacuum lines",
+      "Verify fuel pressure"
+    ]
+  },
+  "P0301": {
+    "system": "Ignition",
+    "meaning": "Cylinder 1 misfire detected",
+    "severity": "Medium",
+    "generic_causes": [
+      "Faulty ignition coil (cylinder 1)",
+      "Spark plug failure",
+      "Injector malfunction",
+      "Vacuum leak"
+    ],
+    "generic_checks": [
+      "Swap ignition coil",
+      "Inspect spark plug",
+      "Check injector pulse"
+    ]
+  },
+  "P0401": {
+    "system": "EGR",
+    "meaning": "Insufficient exhaust gas recirculation flow",
+    "severity": "Medium",
+    "generic_causes": [
+      "Clogged EGR valve",
+      "Blocked EGR passages",
+      "Faulty EGR sensor"
+    ],
+    "generic_checks": [
+      "Clean EGR valve",
+      "Inspect vacuum supply",
+      "Check EGR position sensor"
+    ]
+  },
+  "P0420": {
+    "system": "Emissions",
+    "meaning": "Catalyst system efficiency below threshold (Bank 1)",
+    "severity": "Medium",
+    "generic_causes": [
+      "Catalytic converter degraded",
+      "Oxygen sensor issue",
+      "Exhaust leak"
+    ],
+    "generic_checks": [
+      "Check for exhaust leaks",
+      "Evaluate upstream/downstream O2 sensors",
+      "Assess catalytic converter"
+    ]
+  },
+  "P0705": {
+    "system": "Transmission",
+    "meaning": "Transmission range sensor circuit malfunction",
+    "severity": "High",
+    "generic_causes": [
+      "Faulty range sensor",
+      "Misadjusted neutral safety switch",
+      "Wiring damage near gearbox"
+    ],
+    "generic_checks": [
+      "Inspect range sensor",
+      "Check wiring continuity",
+      "Verify gear selector alignment"
+    ]
+  },
+  "P0720": {
+    "system": "Transmission",
+    "meaning": "Output speed sensor circuit malfunction",
+    "severity": "High",
+    "generic_causes": [
+      "Faulty output speed sensor",
+      "Damaged sensor wiring",
+      "Transmission internal issue"
+    ],
+    "generic_checks": [
+      "Inspect speed sensor",
+      "Check wiring",
+      "Monitor live data"
+    ]
+  }
+}

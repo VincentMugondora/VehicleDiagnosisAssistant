@@ -25,4 +25,6 @@ async def healthz():
 
 @app.on_event("startup")
 async def on_startup():
+    if os.getenv("SKIP_INIT_DB", "false").lower() == "true":
+        return
     await init_db()
