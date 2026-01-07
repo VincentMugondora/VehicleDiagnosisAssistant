@@ -1,0 +1,22 @@
+{
+  "rough_idle": {
+    "description": "Engine shakes or vibrates at idle",
+    "related_codes": ["P0300", "P0301", "P0171", "P0100"],
+    "likely_systems": ["Ignition", "Fuel", "Air Intake"]
+  },
+  "hard_start": {
+    "description": "Engine struggles or fails to start",
+    "related_codes": ["P0705", "P0562", "P0335"],
+    "likely_systems": ["Transmission", "Electrical", "Crankshaft Sensor"]
+  },
+  "stuck_in_gear": {
+    "description": "Vehicle will not shift gears properly",
+    "related_codes": ["P0705", "P0720"],
+    "likely_systems": ["Transmission"]
+  },
+  "low_power": {
+    "description": "Poor acceleration or sluggish response",
+    "related_codes": ["P0401", "P0171", "P0100"],
+    "likely_systems": ["EGR", "Fuel", "Air Intake"]
+  }
+}
