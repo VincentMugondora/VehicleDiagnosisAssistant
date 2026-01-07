@@ -554,7 +554,7 @@ async def get_external_obd(db, code: str, vehicle: Dict[str, Optional[str]]) -> 
     # Optionally save a per-vehicle summary document
     if summary_from_ai:
         try:
-            if os.getenv("EXTERNAL_SAVE_PER_VEHICLE", "true").strip().lower() == "true":
+            if os.getenv("EXTERNAL_SAVE_PER_VEHICLE", "false").strip().lower() == "true":
                 v_norm = {
                     "make": (vehicle.get("make") or "").strip().lower(),
                     "model": (vehicle.get("model") or "").strip().lower(),
