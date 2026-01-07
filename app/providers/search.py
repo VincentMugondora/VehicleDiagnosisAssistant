@@ -61,13 +61,27 @@ async def _search_brave(query: str) -> List[Dict[str, str]]:
 async def _search_serpapi(query: str) -> List[Dict[str, str]]:
     key = os.getenv("SERPAPI_KEY", "").strip()
     if not key:
+        try:
+            print("[external] serpapi key missing")
+        except Exception:
+            pass
         return []
     params = {"engine": "google", "q": query, "api_key": key, "num": 6}
     async with httpx.AsyncClient(timeout=15.0) as client:
         r = await client.get("https://serpapi.com/search.json", params=params)
         if r.status_code != 200:
+            try:
+                print(f"[external] serpapi status={r.status_code}")
+            except Exception:
+                pass
             return []
         data = r.json()
+        if data.get("error"):
+            try:
+                print(f"[external] serpapi error={data.get('error')}")
+            except Exception:
+                pass
+            return []
         items = []
         for it in data.get("organic_results", []) or []:
             url = it.get("link") or ""
@@ -165,12 +179,21 @@ def _summarize_with_gemini(code: str, results: List[Dict[str, str]], vehicle: Di
 
 
 async def get_external_obd(db, code: str, vehicle: Dict[str, Optional[str]]) -> Optional[Dict[str, object]]:
-    if not _get_env_bool("INTERNET_FALLBACK_ENABLED", False):
+    internet = _get_env_bool("INTERNET_FALLBACK_ENABLED", False)
+    try:
+        print(f"[external] code={code} internet={internet} provider={os.getenv('SEARCH_PROVIDER', 'brave')}")
+    except Exception:
+        pass
+    if not internet:
         return None
 
     # 1) Cache check
     cached = await db["external_obd_cache"].find_one({"code": code.upper()})
     if cached:
+        try:
+            print("[external] cache_hit=true")
+        except Exception:
+            pass
         return {
             "description": cached.get("description", ""),
             "causes": cached.get("causes", []) or [],
@@ -181,15 +204,32 @@ async def get_external_obd(db, code: str, vehicle: Dict[str, Optional[str]]) -> 
     # 2) Search
     results = await _web_search_for_code(code)
     if not results:
+        try:
+            print("[external] search_results=0")
+        except Exception:
+            pass
         return None
+    try:
+        print(f"[external] search_results={len(results)}")
+    except Exception:
+        pass
 
     # 3) Summarize (prefer Gemini if enabled)
     summary: Optional[Dict[str, object]] = None
-    if _get_env_bool("AI_ENRICH_ENABLED", False) and os.getenv("AI_PROVIDER", "").lower() == "gemini":
+    ai_gemini = _get_env_bool("AI_ENRICH_ENABLED", False) and os.getenv("AI_PROVIDER", "").lower() == "gemini"
+    try:
+        print(f"[external] ai_gemini={ai_gemini}")
+    except Exception:
+        pass
+    if ai_gemini:
         summary = _summarize_with_gemini(code, results, vehicle)
 
     # basic fallback if no AI: use snippets to craft minimal output
     if summary is None:
+        try:
+            print("[external] using_heuristic_fallback=true")
+        except Exception:
+            pass
         # heuristic extraction from snippets
         desc = f"OBD-II code {code}"
         text = "\n".join([r.get("snippet", "") for r in results])
@@ -215,6 +255,10 @@ async def get_external_obd(db, code: str, vehicle: Dict[str, Optional[str]]) -> 
             },
             upsert=True,
         )
+        try:
+            print("[external] cache_write=ok")
+        except Exception:
+            pass
     except Exception:
         pass
     # Optionally promote to primary collection for future use without internet
@@ -228,6 +272,10 @@ async def get_external_obd(db, code: str, vehicle: Dict[str, Optional[str]]) -> 
                 "generic_fixes": ", ".join(summary.get("checks", []) or []),
             }
             await db["obd_codes"].update_one({"code": code.upper()}, {"$set": primary_doc}, upsert=True)
+            try:
+                print("[external] promoted_to_primary=ok")
+            except Exception:
+                pass
     except Exception:
         pass
 
@@ -254,6 +302,10 @@ async def get_external_obd(db, code: str, vehicle: Dict[str, Optional[str]]) -> 
                 {"$set": doc},
                 upsert=True,
             )
+            try:
+                print("[external] saved_per_vehicle=ok")
+            except Exception:
+                pass
     except Exception:
         pass
 

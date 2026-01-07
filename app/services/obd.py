@@ -49,7 +49,15 @@ async def get_obd_info(db, code: str, vehicle: Optional[Dict[str, Any]] = None) 
             is_generic = (not desc_low) or ("generic obd-ii dtc" in desc_low)
             always_enrich = os.getenv("EXTERNAL_ENRICH_ALWAYS", "false").strip().lower() == "true"
             if is_generic or not has_causes or always_enrich:
+                try:
+                    print(f"[obd] enrich: is_generic={is_generic} has_causes={has_causes} always_enrich={always_enrich}")
+                except Exception:
+                    pass
                 external = await get_external_obd(db, code.upper(), vehicle or {})
+                try:
+                    print(f"[obd] external_summary={'yes' if external else 'no'}")
+                except Exception:
+                    pass
                 if external:
                     ext_desc = str(external.get("description") or "").strip()
                     ext_causes = [str(x).strip() for x in (external.get("causes") or []) if str(x).strip()]
@@ -86,7 +94,15 @@ async def get_obd_info(db, code: str, vehicle: Optional[Dict[str, Any]] = None) 
     # Not found in DB: attempt external before falling back to generic
     try:
         from app.providers.search import get_external_obd  # local import to avoid cycles
+        try:
+            print("[obd] not_found: attempting external")
+        except Exception:
+            pass
         external = await get_external_obd(db, code.upper(), vehicle or {})
+        try:
+            print(f"[obd] external_summary={'yes' if external else 'no'}")
+        except Exception:
+            pass
         if external:
             ext_desc = str(external.get("description") or "").strip()
             ext_causes = [str(x).strip() for x in (external.get("causes") or []) if str(x).strip()]
