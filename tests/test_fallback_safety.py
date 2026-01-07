@@ -1,5 +1,5 @@
 import pytest
-from httpx import AsyncClient
+from httpx import AsyncClient, ASGITransport
 
 FORBIDDEN_PHRASES = [
     "i bought",
@@ -17,7 +17,8 @@ async def test_no_forum_language(test_app):
         "text": "P0401",
     }
 
-    async with AsyncClient(app=test_app, base_url="http://test") as ac:
+    transport = ASGITransport(app=test_app)
+    async with AsyncClient(transport=transport, base_url="http://test") as ac:
         response = await ac.post("/webhook/baileys", json=payload)
 
     assert response.status_code == 200
