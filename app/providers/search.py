@@ -98,7 +98,7 @@ async def _web_search_for_code(code: str) -> List[Dict[str, str]]:
     site_filters = " OR ".join([f"site:{d}" for d in domains])
     query = f"{code} OBD-II meaning causes fixes {site_filters}".strip()
 
-    provider = os.getenv("SEARCH_PROVIDER", "brave").lower()
+    provider = os.getenv("SEARCH_PROVIDER", "brave").strip().lower()
     results: List[Dict[str, str]] = []
     if provider == "serpapi":
         results = await _search_serpapi(query)
@@ -216,7 +216,7 @@ async def get_external_obd(db, code: str, vehicle: Dict[str, Optional[str]]) -> 
 
     # 3) Summarize (prefer Gemini if enabled)
     summary: Optional[Dict[str, object]] = None
-    ai_gemini = _get_env_bool("AI_ENRICH_ENABLED", False) and os.getenv("AI_PROVIDER", "").lower() == "gemini"
+    ai_gemini = _get_env_bool("AI_ENRICH_ENABLED", False) and os.getenv("AI_PROVIDER", "").strip().lower() == "gemini"
     try:
         print(f"[external] ai_gemini={ai_gemini}")
     except Exception:
