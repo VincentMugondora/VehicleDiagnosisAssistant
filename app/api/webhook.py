@@ -80,6 +80,18 @@ def _format_reply(code: str, base_info: Dict[str, Any], causes_ranked: Optional[
 
     lines.append("")
     lines.append("ℹ️ Generic guidance. Confirm with physical inspection.")
+    # Confidence indicator
+    try:
+        conf = float(base_info.get("confidence", 0))
+        if conf >= 0.9:
+            lbl = "High"
+        elif conf >= 0.7:
+            lbl = "Medium"
+        else:
+            lbl = "Low"
+        lines.append(f"ℹ️ Confidence: {lbl}")
+    except Exception:
+        pass
     return "\n".join(lines)
 
 
