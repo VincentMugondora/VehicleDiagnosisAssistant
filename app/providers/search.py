@@ -179,46 +179,86 @@ async def _search_serpapi(query: str) -> List[Dict[str, str]]:
 
 async def _web_search_for_code(code: str, vehicle: Dict[str, Optional[str]]) -> List[Dict[str, str]]:
     domains = _trusted_domains()
-    # Build site-restricted query with vehicle context
     make = (vehicle.get("make") or "").strip()
     model = (vehicle.get("model") or "").strip()
     year = (vehicle.get("year") or "").strip()
     engine = (vehicle.get("engine") or "").strip()
     v_terms = " ".join([t for t in [make, model, year, engine] if t]).strip()
+    base_terms = f"{code} OBD-II meaning causes fixes".strip()
     site_filters = " OR ".join([f"site:{d}" for d in domains])
-    query = f"{code} {v_terms} OBD-II meaning causes fixes {site_filters}".strip()
+
+    queries = [
+        f"{base_terms} {v_terms} {site_filters}".strip() if v_terms else f"{base_terms} {site_filters}".strip(),
+        f"{base_terms} {site_filters}".strip(),
+        base_terms,
+    ]
 
     provider = os.getenv("SEARCH_PROVIDER", "brave").strip().lower()
-    results: List[Dict[str, str]] = []
-    if provider == "serpapi":
-        results = await _search_serpapi(query)
-    else:
-        results = await _search_brave(query)
-
-    if not results:
-        return []
-
-    # Filter to trusted domains and dedupe by domain
-    seen = set()
-    filtered: List[Dict[str, str]] = []
-    for r in results:
-        dom = _domain(r.get("url", ""))
-        if not any(dom.endswith(td) for td in domains):
-            continue
-        if dom in seen:
-            continue
-        seen.add(dom)
-        filtered.append(r)
-        if len(filtered) >= 3:
-            break
-
-    # Do not fall back to non-trusted domains; keep results empty if filter removed all
-    if not filtered:
+    for idx, q in enumerate(queries, start=1):
         try:
-            print("[external] filtered_results=0 (all non-trusted)")
+            print(f"[external] search_attempt={idx} q='{q[:120]}'")
         except Exception:
             pass
-    return filtered
+        if provider == "serpapi":
+            results = await _search_serpapi(q)
+        else:
+            results = await _search_brave(q)
+        if not results:
+            continue
+        # Filter to trusted domains and dedupe by domain
+        seen = set()
+        filtered: List[Dict[str, str]] = []
+        for r in results:
+            dom = _domain(r.get("url", ""))
+            if not any(dom.endswith(td) for td in domains):
+                continue
+            if dom in seen:
+                continue
+            seen.add(dom)
+            filtered.append(r)
+            if len(filtered) >= 3:
+                break
+        if filtered:
+            return filtered
+        # For the last attempt (without site filters), allow untrusted fallback if enabled
+        if idx == len(queries) and _get_env_bool("ALLOW_UNTRUSTED_FALLBACK", False):
+            try:
+                print("[external] untrusted_fallback=true")
+            except Exception:
+                pass
+            return results[:3]
+
+    # As a final trusted-only fallback, query each trusted domain separately and aggregate
+    agg: List[Dict[str, str]] = []
+    for d in domains:
+        if len(agg) >= 3:
+            break
+        q = f"{base_terms} {v_terms} site:{d}".strip() if v_terms else f"{base_terms} site:{d}".strip()
+        try:
+            print(f"[external] per_domain_try domain={d} q='{q[:120]}'")
+        except Exception:
+            pass
+        if provider == "serpapi":
+            res = await _search_serpapi(q)
+        else:
+            res = await _search_brave(q)
+        for r in res:
+            dom = _domain(r.get("url", ""))
+            if not dom.endswith(d):
+                continue
+            # ensure uniqueness by domain
+            if any(_domain(x.get("url", "")) == dom for x in agg):
+                continue
+            agg.append(r)
+            break
+    if agg:
+        return agg[:3]
+
+    try:
+        print("[external] filtered_results=0 (no suitable results)")
+    except Exception:
+        pass
+    return []
 
 
 def _configure_gemini() -> None:
