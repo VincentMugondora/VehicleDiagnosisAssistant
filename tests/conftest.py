@@ -2,6 +2,7 @@ import os
 import asyncio
 import types
 import pytest
+import pytest_asyncio
 from typing import Any, Dict
 
 # Ensure DB init is skipped in tests
@@ -75,7 +76,7 @@ class AsyncFakeDB:
         return AsyncFakeCollection(self._stores[name])
 
 
-@pytest.fixture()
+@pytest_asyncio.fixture()
 async def test_app(monkeypatch):
     fake_db = AsyncFakeDB()
 
