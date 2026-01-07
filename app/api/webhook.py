@@ -13,6 +13,8 @@ from app.db.mongo import get_db
 from app.services.obd import validate_obd_code, get_obd_info
 from app.ai.enrich import enrich_causes, system_prompt, build_user_prompt
 from app.services.parser import parse_message
+from app.services.normalize import normalize_symptoms
+from app.services.diagnose import diagnose
 from app.ai.gemini import rank_causes_with_gemini
 
 router = APIRouter(prefix="/webhook", tags=["webhook"])
@@ -92,6 +94,31 @@ def _format_reply(code: str, base_info: Dict[str, Any], causes_ranked: Optional[
         lines.append(f"ℹ️ Confidence: {lbl}")
     except Exception:
         pass
+    return "\n".join(lines)
+
+
+def _format_symptom_reply(probable_codes: list, likely_systems: list, recommended_checks: list) -> str:
+    max_codes = _get_int_env("REPLY_MAX_CODES", 3)
+    max_checks = _get_int_env("REPLY_MAX_CHECKS", 3)
+
+    lines = []
+    lines.append("🚗 Diagnosis Summary")
+    lines.append("")
+    if likely_systems:
+        lines.append("Possible issues detected in:")
+        lines.append(", ".join(likely_systems[:5]))
+    if probable_codes:
+        lines.append("")
+        lines.append("Common codes:")
+        lines.append(", ".join(probable_codes[:max_codes]))
+    if recommended_checks:
+        lines.append("")
+        lines.append("Recommended checks:")
+        for f in recommended_checks[:max_checks]:
+            lines.append(f"• {f}")
+    lines.append("")
+    lines.append("Would you like to scan for codes?")
+    lines.append("ℹ️ Symptom-based guidance. Confirm with a scan and inspection.")
     return "\n".join(lines)
 
 
@@ -185,7 +212,12 @@ async def twilio_webhook(request: Request, db = Depends(get_db)):
         pass
 
     if not code or not validate_obd_code(code):
-        reply = "Send an OBD-II code like P0171. Optional: add vehicle (e.g., Corolla 2015 1.6L)."
+        syms = normalize_symptoms(raw_text)
+        if syms:
+            diag = diagnose(syms)
+            reply = _format_symptom_reply(diag.get("probable_codes", []), diag.get("likely_systems", []), diag.get("recommended_checks", []))
+        else:
+            reply = "Send an OBD-II code like P0171. Optional: add symptoms (e.g., car shaking) and vehicle (e.g., Corolla 2015 1.6L)."
         await _maybe_send_reply_via_twilio(from_number, reply)
         await db["message_logs"].insert_one({
             "phone_number": from_number,
@@ -277,7 +309,12 @@ async def baileys_webhook(request: Request, db = Depends(get_db)):
     }
 
     if not code or not validate_obd_code(code):
-        reply = "Send an OBD-II code like P0171. Optional: add vehicle (e.g., Corolla 2015 1.6L)."
+        syms = normalize_symptoms(raw_text)
+        if syms:
+            diag = diagnose(syms)
+            reply = _format_symptom_reply(diag.get("probable_codes", []), diag.get("likely_systems", []), diag.get("recommended_checks", []))
+        else:
+            reply = "Send an OBD-II code like P0171. Optional: add symptoms (e.g., car shaking) and vehicle (e.g., Corolla 2015 1.6L)."
         await db["message_logs"].insert_one({
             "phone_number": from_number,
             "request_text": raw_text,
