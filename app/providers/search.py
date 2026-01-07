@@ -69,7 +69,7 @@ def _suggest_checks_from_causes(causes: List[str]) -> List[str]:
     return checks[:6]
 
 
-def _sanitize_summary(summary: Dict[str, object]) -> Dict[str, object]:
+def _sanitize_summary(code: str, summary: Dict[str, object]) -> Dict[str, object]:
     desc = str(summary.get("description", "") or "").strip()
     # collapse whitespace
     desc = re.sub(r"\s+", " ", desc)
@@ -85,34 +85,121 @@ def _sanitize_summary(summary: Dict[str, object]) -> Dict[str, object]:
     # sanitize causes
     raw_causes = [str(x).strip() for x in (summary.get("causes") or []) if str(x).strip()]
     causes: List[str] = []
-    bad_tokens = ["what is the meaning", "asked", "stack overflow", "stackexchange", "reddit", "quora", "http", "www."]
+    bad_tokens = [
+        "what is the meaning", "asked", "stack overflow", "stackexchange", "reddit", "quora", "http", "www.",
+        "i bought", "my car", "yesterday", "today", "please", "thanks", "anyone", "someone said", "forum", "thread", "help"
+    ]
+    # remove causes that reference other DTCs
+    dtc_re = re.compile(r"\b[PBCU][0-9]{4}\b", re.IGNORECASE)
     for c in raw_causes:
         cl = c.lower()
         if any(b in cl for b in bad_tokens):
+            continue
+        # drop unrelated DTC mentions
+        m = dtc_re.search(c)
+        if m and m.group(0).upper() != code.upper():
+            continue
+        # remove obvious broken fragments
+        if len(c) < 8:
+            continue
+        if c.strip(". ").endswith("..."):
+            continue
+        if cl.startswith("this ") or cl.startswith("specifically ") or cl.startswith("use "):
             continue
         if len(c) > 120:
             continue
         causes.append(c)
     causes = _dedupe_str_list(causes)[:6]
-    # If description is generic, derive from causes when they indicate communication/harness
+    # If description is generic or mismatched, derive from code pattern/causes
     if not desc or re.match(r"(?i)^obd-ii code\b", desc):
-        joined = " ".join(causes).lower()
-        if any(k in joined for k in ["communication", "can", "bus", "link", "harness", "connector", "ecm", "pcm", "tcm"]):
-            desc = "Malfunction in the communication link between ECM and related control modules (wiring/connectors)."
+        c_up = code.upper().strip()
+        # Common mappings
+        if re.match(r"^P0300$", c_up):
+            desc = "Random/multiple cylinder misfire detected"
+        elif re.match(r"^P03\d\d$", c_up):
+            # e.g. P0301 -> cylinder 1 misfire
+            cyl = c_up[-2:]
+            if cyl.isdigit() and cyl != "00":
+                desc = f"Cylinder {int(cyl)%100} misfire detected"
+            else:
+                desc = "Engine misfire detected"
+        elif c_up == "P0420":
+            desc = "Catalyst system efficiency below threshold (Bank 1)"
+        elif c_up == "P0720":
+            desc = "Output speed sensor circuit malfunction"
+        elif c_up == "P0600":
+            desc = "Serial communication link malfunction"
+        else:
+            # Fall back to causes keywords
+            joined = " ".join(causes).lower()
+            if any(k in joined for k in ["communication", "can", "bus", "link", "harness", "connector", "ecm", "pcm", "tcm"]):
+                desc = "Malfunction in the communication link between ECM and related control modules (wiring/connectors)."
 
     # sanitize checks
     raw_checks = [str(x).strip() for x in (summary.get("checks") or []) if str(x).strip()]
     checks: List[str] = []
+    allowed_verbs = ["inspect", "check", "test", "scan", "verify", "clean", "replace", "tighten", "swap", "measure", "perform"]
     for ck in raw_checks:
         s = re.sub(r"^\s*check:\s*", "", ck, flags=re.IGNORECASE).strip()
+        sl = s.lower()
         if not s or len(s) > 140:
             continue
-        if any(b in s.lower() for b in bad_tokens):
+        if len(s) < 12:
+            continue
+        if any(b in sl for b in bad_tokens):
+            continue
+        if not any(v in sl for v in allowed_verbs):
+            continue
+        # drop checks that reference other DTCs
+        m = dtc_re.search(s)
+        if m and m.group(0).upper() != code.upper():
             continue
         checks.append(s)
-    if not checks:
+    if not checks or len(checks) < 2:
         checks = _suggest_checks_from_causes(causes)
     checks = _dedupe_str_list(checks)[:6]
+
+    # Canonicalize misfire (P03xx) when results are weak
+    c_up = code.upper().strip()
+    if re.match(r"^P03\d\d$", c_up):
+        cyl = c_up[-2:]
+        cyl_num = int(cyl) % 100 if cyl.isdigit() else None
+        if len(causes) < 3:
+            base_c = [
+                f"Ignition coil failure (cylinder {cyl_num})" if cyl_num else "Ignition coil failure",
+                f"Spark plug fouled/worn (cylinder {cyl_num})" if cyl_num else "Spark plug fouled/worn",
+                f"Fuel injector issue (cylinder {cyl_num})" if cyl_num else "Fuel injector issue",
+                "Vacuum leak near intake manifold",
+                f"Low compression (cylinder {cyl_num})" if cyl_num else "Low compression",
+                f"Wiring/connector issue at coil/injector (cylinder {cyl_num})" if cyl_num else "Wiring/connector issue at coil/injector",
+            ]
+            causes = _dedupe_str_list(base_c)[:6]
+        if len(checks) < 3:
+            base_chk = [
+                f"Inspect/replace spark plug (cylinder {cyl_num})" if cyl_num else "Inspect/replace spark plug",
+                f"Swap ignition coil with another cylinder and re-scan (cylinder {cyl_num})" if cyl_num else "Swap ignition coil with another cylinder and re-scan",
+                f"Inspect coil/injector wiring and connectors (cylinder {cyl_num})" if cyl_num else "Inspect coil/injector wiring and connectors",
+                f"Perform compression test (cylinder {cyl_num})" if cyl_num else "Perform compression test",
+                f"Injector balance/leak test (cylinder {cyl_num})" if cyl_num else "Injector balance/leak test",
+                "Check for vacuum leaks around intake hoses/gaskets",
+            ]
+            checks = _dedupe_str_list(base_chk)[:6]
+    # Canonicalize P0705 (TRS circuit) when results are weak
+    if c_up == "P0705":
+        if len(causes) < 3:
+            causes = _dedupe_str_list([
+                "Transmission range sensor (TRS) faulty or misaligned",
+                "Damaged or corroded TRS connector/wiring",
+                "Selector linkage out of adjustment",
+                "TCM input fault (less common)",
+            ])[:6]
+        if len(checks) < 3:
+            checks = _dedupe_str_list([
+                "Verify TRS alignment and selector linkage adjustment",
+                "Inspect TRS wiring and connector for damage/corrosion",
+                "Read PRNDL status with scan tool and compare to lever position",
+                "Check continuity/voltage at TRS according to service manual",
+            ])[:6]
     return {"description": desc, "causes": causes, "checks": checks}
 
 
@@ -379,6 +466,7 @@ async def get_external_obd(db, code: str, vehicle: Dict[str, Optional[str]]) -> 
 
     # 3) Summarize (prefer Gemini if enabled)
     summary: Optional[Dict[str, object]] = None
+    summary_from_ai = False
     ai_gemini = _get_env_bool("AI_ENRICH_ENABLED", False) and os.getenv("AI_PROVIDER", "").strip().lower() == "gemini"
     try:
         print(f"[external] ai_gemini={ai_gemini}")
@@ -386,6 +474,8 @@ async def get_external_obd(db, code: str, vehicle: Dict[str, Optional[str]]) -> 
         pass
     if ai_gemini:
         summary = _summarize_with_gemini(code, results, vehicle)
+        if summary is not None:
+            summary_from_ai = True
 
     # basic fallback if no AI: use snippets to craft minimal output
     if summary is None:
@@ -421,77 +511,85 @@ async def get_external_obd(db, code: str, vehicle: Dict[str, Optional[str]]) -> 
         summary = {"description": desc, "causes": causes, "checks": checks}
 
     # Sanitize final summary
-    clean = _sanitize_summary(summary)
+    clean = _sanitize_summary(code, summary)
 
-    # 4) Cache
-    try:
-        await db["external_obd_cache"].update_one(
-            {"code": code.upper(), **v_norm},
-            {
-                "$set": {
-                    "code": code.upper(),
-                    **v_norm,
-                    "description": clean.get("description", ""),
-                    "causes": clean.get("causes", []),
-                    "checks": clean.get("checks", []),
-                    "sources": [r.get("url") for r in results],
-                    "fetched_at": datetime.utcnow(),
-                }
-            },
-            upsert=True,
-        )
+    # 4) Persist only if AI summary
+    if summary_from_ai:
         try:
-            print("[external] cache_write=ok")
-        except Exception:
-            pass
-    except Exception:
-        pass
-    # Optionally promote to primary collection for future use without internet
-    try:
-        if os.getenv("EXTERNAL_PROMOTE_TO_PRIMARY", "false").strip().lower() == "true":
-            primary_doc = {
-                "code": code.upper(),
-                "description": clean.get("description", "") or "",
-                "symptoms": "",
-                "common_causes": ", ".join(clean.get("causes", []) or []),
-                "generic_fixes": ", ".join(clean.get("checks", []) or []),
-            }
-            await db["obd_codes"].update_one({"code": code.upper()}, {"$set": primary_doc}, upsert=True)
-            try:
-                print("[external] promoted_to_primary=ok")
-            except Exception:
-                pass
-    except Exception:
-        pass
-
-    # Optionally save a per-vehicle summary document
-    try:
-        if os.getenv("EXTERNAL_SAVE_PER_VEHICLE", "true").strip().lower() == "true":
-            v_norm = {
-                "make": (vehicle.get("make") or "").strip().lower(),
-                "model": (vehicle.get("model") or "").strip().lower(),
-                "year": (vehicle.get("year") or "").strip().lower(),
-                "engine": (vehicle.get("engine") or "").strip().lower(),
-            }
-            doc = {
-                "code": code.upper(),
-                **v_norm,
-                "description": clean.get("description", "") or "",
-                "causes": clean.get("causes", []) or [],
-                "checks": clean.get("checks", []) or [],
-                "sources": [r.get("url") for r in results],
-                "created_at": datetime.utcnow(),
-            }
-            await db["obd_summaries"].update_one(
+            await db["external_obd_cache"].update_one(
                 {"code": code.upper(), **v_norm},
-                {"$set": doc},
+                {
+                    "$set": {
+                        "code": code.upper(),
+                        **v_norm,
+                        "description": clean.get("description", ""),
+                        "causes": clean.get("causes", []),
+                        "checks": clean.get("checks", []),
+                        "sources": [r.get("url") for r in results],
+                        "fetched_at": datetime.utcnow(),
+                    }
+                },
                 upsert=True,
             )
             try:
-                print("[external] saved_per_vehicle=ok")
+                print("[external] cache_write=ok")
             except Exception:
                 pass
-    except Exception:
-        pass
+        except Exception:
+            pass
+    else:
+        try:
+            print("[external] skip_persist_heuristic=true")
+        except Exception:
+            pass
+    # Optionally promote to primary collection for future use without internet
+    if summary_from_ai:
+        try:
+            if os.getenv("EXTERNAL_PROMOTE_TO_PRIMARY", "false").strip().lower() == "true":
+                primary_doc = {
+                    "code": code.upper(),
+                    "description": clean.get("description", "") or "",
+                    "symptoms": "",
+                    "common_causes": ", ".join(clean.get("causes", []) or []),
+                    "generic_fixes": ", ".join(clean.get("checks", []) or []),
+                }
+                await db["obd_codes"].update_one({"code": code.upper()}, {"$set": primary_doc}, upsert=True)
+                try:
+                    print("[external] promoted_to_primary=ok")
+                except Exception:
+                    pass
+        except Exception:
+            pass
+
+    # Optionally save a per-vehicle summary document
+    if summary_from_ai:
+        try:
+            if os.getenv("EXTERNAL_SAVE_PER_VEHICLE", "true").strip().lower() == "true":
+                v_norm = {
+                    "make": (vehicle.get("make") or "").strip().lower(),
+                    "model": (vehicle.get("model") or "").strip().lower(),
+                    "year": (vehicle.get("year") or "").strip().lower(),
+                    "engine": (vehicle.get("engine") or "").strip().lower(),
+                }
+                doc = {
+                    "code": code.upper(),
+                    **v_norm,
+                    "description": clean.get("description", "") or "",
+                    "causes": clean.get("causes", []) or [],
+                    "checks": clean.get("checks", []) or [],
+                    "sources": [r.get("url") for r in results],
+                    "created_at": datetime.utcnow(),
+                }
+                await db["obd_summaries"].update_one(
+                    {"code": code.upper(), **v_norm},
+                    {"$set": doc},
+                    upsert=True,
+                )
+                try:
+                    print("[external] saved_per_vehicle=ok")
+                except Exception:
+                    pass
+        except Exception:
+            pass
 
     return clean

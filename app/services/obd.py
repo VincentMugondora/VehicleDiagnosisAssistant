@@ -22,25 +22,102 @@ async def get_obd_info(db, code: str, vehicle: Optional[Dict[str, Any]] = None) 
             }
             pv = await db["obd_summaries"].find_one({"code": code.upper(), **v_norm})
             if pv:
+                # Sanitize legacy/older saved summaries to ensure clean reply
+                try:
+                    from app.providers.search import _sanitize_summary  # type: ignore
+                    cleaned = _sanitize_summary(
+                        code,
+                        {
+                            "description": pv.get("description") or "",
+                            "causes": pv.get("causes", []) or [],
+                            "checks": pv.get("checks", []) or [],
+                        },
+                    )
+                    # If changed, persist sanitized version
+                    if (
+                        cleaned.get("description") != (pv.get("description") or "")
+                        or cleaned.get("causes") != (pv.get("causes") or [])
+                        or cleaned.get("checks") != (pv.get("checks") or [])
+                    ):
+                        try:
+                            await db["obd_summaries"].update_one(
+                                {"code": code.upper(), **v_norm},
+                                {
+                                    "$set": {
+                                        "description": cleaned.get("description", "") or "",
+                                        "causes": cleaned.get("causes", []) or [],
+                                        "checks": cleaned.get("checks", []) or [],
+                                    }
+                                },
+                            )
+                        except Exception:
+                            pass
+                except Exception:
+                    cleaned = {
+                        "description": pv.get("description") or "",
+                        "causes": pv.get("causes", []) or [],
+                        "checks": pv.get("checks", []) or [],
+                    }
                 return {
                     "code": code.upper(),
-                    "description": pv.get("description") or "",
+                    "description": cleaned.get("description") or "",
                     "symptoms": "",
-                    "common_causes": ", ".join(pv.get("causes", []) or []),
-                    "generic_fixes": ", ".join(pv.get("checks", []) or []),
+                    "common_causes": ", ".join(cleaned.get("causes", []) or []),
+                    "generic_fixes": ", ".join(cleaned.get("checks", []) or []),
                 }
     except Exception:
         pass
 
     doc = await db["obd_codes"].find_one({"code": code.upper()})
     if doc:
-        base = {
-            "code": doc.get("code", code.upper()),
-            "description": doc.get("description") or "",
-            "symptoms": doc.get("symptoms") or "",
-            "common_causes": doc.get("common_causes") or "",
-            "generic_fixes": doc.get("generic_fixes") or "",
-        }
+        # Sanitize primary record on read
+        try:
+            from app.providers.search import _sanitize_summary  # type: ignore
+            causes_list = [c.strip() for c in (doc.get("common_causes") or "").split(",") if c.strip()]
+            fixes_raw = doc.get("generic_fixes") or ""
+            checks_list = [i.strip() for i in re.split(r"[,\n;]+", fixes_raw) if i and i.strip()]
+            cleaned = _sanitize_summary(
+                code,
+                {
+                    "description": doc.get("description") or "",
+                    "causes": causes_list,
+                    "checks": checks_list,
+                },
+            )
+            # persist if changed
+            if (
+                cleaned.get("description") != (doc.get("description") or "")
+                or ", ".join(cleaned.get("causes", []) or []) != (doc.get("common_causes") or "")
+                or ", ".join(cleaned.get("checks", []) or []) != (doc.get("generic_fixes") or "")
+            ):
+                try:
+                    await db["obd_codes"].update_one(
+                        {"code": code.upper()},
+                        {
+                            "$set": {
+                                "description": cleaned.get("description", "") or "",
+                                "common_causes": ", ".join(cleaned.get("causes", []) or []),
+                                "generic_fixes": ", ".join(cleaned.get("checks", []) or []),
+                            }
+                        },
+                    )
+                except Exception:
+                    pass
+            base = {
+                "code": doc.get("code", code.upper()),
+                "description": cleaned.get("description") or "",
+                "symptoms": doc.get("symptoms") or "",
+                "common_causes": ", ".join(cleaned.get("causes", []) or []),
+                "generic_fixes": ", ".join(cleaned.get("checks", []) or []),
+            }
+        except Exception:
+            base = {
+                "code": doc.get("code", code.upper()),
+                "description": doc.get("description") or "",
+                "symptoms": doc.get("symptoms") or "",
+                "common_causes": doc.get("common_causes") or "",
+                "generic_fixes": doc.get("generic_fixes") or "",
+            }
         # If DB is generic or lacks causes, try external fallback (no vehicle context here)
         try:
             from app.providers.search import get_external_obd  # local import to avoid cycles
