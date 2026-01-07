@@ -449,6 +449,7 @@ async def get_external_obd(db, code: str, vehicle: Dict[str, Optional[str]]) -> 
             "causes": cached.get("causes", []) or [],
             "checks": cached.get("checks", []) or [],
             "sources": cached.get("sources", []) or [],
+            "from_ai": True,
         }
 
     # 2) Search
@@ -512,6 +513,7 @@ async def get_external_obd(db, code: str, vehicle: Dict[str, Optional[str]]) -> 
 
     # Sanitize final summary
     clean = _sanitize_summary(code, summary)
+    clean["from_ai"] = bool(summary_from_ai)
 
     # 4) Persist only if AI summary
     if summary_from_ai:
@@ -542,24 +544,12 @@ async def get_external_obd(db, code: str, vehicle: Dict[str, Optional[str]]) -> 
             print("[external] skip_persist_heuristic=true")
         except Exception:
             pass
-    # Optionally promote to primary collection for future use without internet
-    if summary_from_ai:
-        try:
-            if os.getenv("EXTERNAL_PROMOTE_TO_PRIMARY", "false").strip().lower() == "true":
-                primary_doc = {
-                    "code": code.upper(),
-                    "description": clean.get("description", "") or "",
-                    "symptoms": "",
-                    "common_causes": ", ".join(clean.get("causes", []) or []),
-                    "generic_fixes": ", ".join(clean.get("checks", []) or []),
-                }
-                await db["obd_codes"].update_one({"code": code.upper()}, {"$set": primary_doc}, upsert=True)
-                try:
-                    print("[external] promoted_to_primary=ok")
-                except Exception:
-                    pass
-        except Exception:
-            pass
+    # Do not promote external summaries into the authoritative primary KB
+    try:
+        if os.getenv("EXTERNAL_PROMOTE_TO_PRIMARY", "false").strip().lower() == "true":
+            print("[external] skip_promote_to_primary=true")
+    except Exception:
+        pass
 
     # Optionally save a per-vehicle summary document
     if summary_from_ai:

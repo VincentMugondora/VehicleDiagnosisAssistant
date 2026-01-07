@@ -48,3 +48,5 @@ async def init_db() -> None:
     await db["vehicle_overrides"].create_index([
         ("code", 1), ("make", 1), ("model", 1), ("year", 1), ("engine", 1)
     ], unique=True)
+    # diagnostic_logs: created_at for TTL-like queries/archiving
+    await db["diagnostic_logs"].create_index("created_at")
