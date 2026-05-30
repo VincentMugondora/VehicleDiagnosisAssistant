@@ -59,6 +59,29 @@ class AIClient:
             max_retries=max_retries
         )
 
+    async def complete(
+        self,
+        prompt: str,
+        temperature: float = 0.3,
+        max_tokens: int = 1000
+    ) -> str:
+        """
+        Generate text completion using configured AI provider.
+
+        Args:
+            prompt: The prompt to send
+            temperature: Sampling temperature (0.0-1.0)
+            max_tokens: Maximum tokens to generate
+
+        Returns:
+            Generated text
+        """
+        return await self._client.generate(
+            prompt=prompt,
+            temperature=temperature,
+            max_tokens=max_tokens
+        )
+
 
 # Factory function for easy import
 def get_ai_client() -> AIClient:

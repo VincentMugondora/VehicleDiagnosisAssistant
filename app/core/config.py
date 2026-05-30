@@ -41,6 +41,7 @@ class Settings(BaseSettings):
     # Feature flags
     ai_enrich_enabled: bool = False
     internet_fallback_enabled: bool = True
+    auto_learn_codes: bool = True  # Enable dynamic code learning from web
 
     # Usage limits
     usage_limit_per_number: int = 20

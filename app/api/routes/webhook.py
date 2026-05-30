@@ -53,15 +53,16 @@ def get_message_router(repos: dict = Depends(get_repositories)):
     """Get MessageRouter with dependencies"""
     # Initialize OBDService with AI client for auto-learning
     ai_client = None
-    try:
-        ai_client = AIClient()
-    except:
-        pass  # AI optional, will work without it
+    if settings.auto_learn_codes:
+        try:
+            ai_client = AIClient()
+        except:
+            pass  # AI optional, will work without it
 
     obd_service = OBDService(
         repos["obd_repo"],
         ai_client=ai_client,
-        auto_learn=True  # Enable dynamic learning
+        auto_learn=settings.auto_learn_codes
     )
     return MessageRouter(obd_service)
 

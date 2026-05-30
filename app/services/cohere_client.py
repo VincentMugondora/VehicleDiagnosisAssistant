@@ -23,6 +23,35 @@ class CohereClient:
             raise ValueError("COHERE_API_KEY not set in environment")
         self.client = cohere.Client(api_key=settings.cohere_api_key)
 
+    async def generate(
+        self,
+        prompt: str,
+        temperature: float = 0.3,
+        max_tokens: int = 1000
+    ) -> str:
+        """
+        Generate text using Cohere.
+
+        Args:
+            prompt: The prompt to send
+            temperature: Sampling temperature (0.0-1.0)
+            max_tokens: Maximum tokens to generate
+
+        Returns:
+            Generated text
+        """
+        try:
+            response = self.client.chat(
+                model=settings.cohere_model,
+                message=prompt,
+                temperature=temperature,
+                max_tokens=max_tokens
+            )
+            return response.text
+        except Exception as e:
+            logger.error("cohere_generate_failed", error=str(e))
+            raise
+
     def rank_causes_with_retry(
         self,
         base_causes: list[str],
