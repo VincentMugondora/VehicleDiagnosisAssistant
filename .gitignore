@@ -19,6 +19,8 @@ venv/
 ENV/
 env/
 .env
+.env.local
+.env.example
 .gradle
 build/
 target/
