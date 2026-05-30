@@ -17,7 +17,7 @@ class BaileysWebhookPayload(BaseModel):
     sender: str | None = None
     text: str | None = None
     message: str | None = None
-    message_id: str
+    message_id: str | None = None
 
     class Config:
         populate_by_name = True

@@ -64,6 +64,13 @@ async function connectToWhatsApp() {
         if (!msg.message || msg.key.fromMe) return
 
         const from = msg.key.remoteJid
+
+        // Skip status broadcasts and group messages
+        if (from === 'status@broadcast' || from.endsWith('@g.us')) {
+            console.log(`⏩ Skipping message from ${from}`)
+            return
+        }
+
         const text = msg.message.conversation ||
                      msg.message.extendedTextMessage?.text ||
                      msg.message.imageMessage?.caption || ''

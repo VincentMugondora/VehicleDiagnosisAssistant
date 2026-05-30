@@ -1,6 +1,7 @@
 import hmac
 import base64
 import hashlib
+from datetime import datetime   
 from typing import Dict, Any
 import httpx
 from fastapi import APIRouter, Request, Response, status, Depends
@@ -291,6 +292,19 @@ async def twilio_webhook(
     return {"ok": True}
 
 
+@router.get("/test")
+async def test_webhook():
+    """Simple test endpoint"""
+    return {"status": "ok", "message": "Webhook route is working!"}
+
+
+@router.post("/baileys/test")
+async def test_baileys_post(data: dict):
+    """Test POST endpoint without complex logic"""
+    logger.info("test_post_received", data=data)
+    return {"status": "ok", "received": data}
+
+
 @router.post("/baileys")
 async def baileys_webhook(
     payload: BaileysWebhookPayload,
@@ -304,6 +318,8 @@ async def baileys_webhook(
 
     Validates API key, checks idempotency, processes message.
     """
+    logger.info("baileys_webhook_started", payload=payload.model_dump())
+
     # Validate API key
     if settings.baileys_api_key:
         auth_header = request.headers.get("X-API-Key", "")
@@ -312,8 +328,15 @@ async def baileys_webhook(
             return Response(status_code=status.HTTP_401_UNAUTHORIZED)
 
     # Extract sender and text
+    logger.info("extracting_sender")
     from_number = payload.get_sender()
+    logger.info("sender_extracted", from_number=from_number)
+
     raw_text = payload.get_text().strip()
+    logger.info("text_extracted", text=raw_text)
+
+    # Generate message_id if not provided
+    message_id = payload.message_id or f"msg_{hash_phone_number(from_number)}_{int(datetime.now().timestamp() * 1000)}"
 
     # Hash phone number
     phone_hash = hash_phone_number(from_number)
@@ -321,12 +344,12 @@ async def baileys_webhook(
     logger.info(
         "baileys_webhook_received",
         phone_hash=phone_hash,
-        message_id=payload.message_id
+        message_id=message_id
     )
 
     # Check idempotency
     try:
-        session_manager.check_message_idempotency(payload.message_id)
+        session_manager.check_message_idempotency(message_id)
     except MessageAlreadyProcessed:
         logger.info("duplicate_message_ignored")
         return {"ok": True, "status": "duplicate"}
@@ -335,7 +358,7 @@ async def baileys_webhook(
     limit_msg = await _check_usage_limit(repos["message_repo"], phone_hash)
     if limit_msg:
         repos["message_repo"].insert_audit(
-            message_id=payload.message_id,
+            message_id=message_id,
             phone_hash=phone_hash,
             request_id=request.state.request_id,
             session_id=None,
@@ -389,7 +412,7 @@ async def baileys_webhook(
 
     # Log message
     repos["message_repo"].insert_audit(
-        message_id=payload.message_id,
+        message_id=message_id,
         phone_hash=phone_hash,
         request_id=request.state.request_id,
         session_id=None,

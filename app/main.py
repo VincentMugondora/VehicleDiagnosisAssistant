@@ -1,4 +1,5 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request, status
+from fastapi.responses import JSONResponse
 from app.core.config import settings
 from app.core.logging import setup_logging, logger
 from app.core.middleware import RequestContextMiddleware
@@ -19,6 +20,30 @@ app.add_middleware(RequestContextMiddleware)
 
 # Register routes
 app.include_router(webhook.router)
+
+
+# Global exception handler to catch and log all errors
+@app.exception_handler(Exception)
+async def global_exception_handler(request: Request, exc: Exception):
+    """Catch all unhandled exceptions and log them"""
+    import traceback
+    with open("error.log", "a") as f:
+        f.write(f"Exception for path {request.url.path}:\n")
+        f.write(traceback.format_exc())
+        f.write("\n")
+
+    logger.error(
+        "unhandled_exception",
+        error=str(exc),
+        error_type=type(exc).__name__,
+        path=request.url.path,
+        method=request.method,
+        exc_info=True
+    )
+    return JSONResponse(
+        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        content={"error": "Internal server error", "detail": str(exc)}
+    )
 
 
 @app.on_event("startup")
