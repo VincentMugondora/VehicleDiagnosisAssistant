@@ -18,18 +18,23 @@ except Exception:
 
 _GENAI_CLIENT = None
 
-
 def _configure() -> None:
     api_key = os.getenv("GOOGLE_API_KEY")
     if not api_key:
         return
     global _GENAI_CLIENT
     if _GENAI_MODE == "new":
-        # Lazily initialize client
         if _GENAI_CLIENT is None:
             _GENAI_CLIENT = genai_new.Client(api_key=api_key)  # type: ignore
     elif _GENAI_MODE == "old":
         genai_old.configure(api_key=api_key)  # type: ignore
+
+def get_client():
+    _configure()
+    return _GENAI_CLIENT
+
+def get_mode():
+    return _GENAI_MODE
 
 
 def _normalize_items(lines: List[str]) -> List[str]:

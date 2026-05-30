@@ -1,30 +1,59 @@
-import os
-import warnings
-# Suppress Pydantic warning: built-in function `any` not a Python type during schema gen
-warnings.filterwarnings("ignore", message=r".*ArbitraryTypeWarning.*")
-# Also match the common message text and module that emits it
-warnings.filterwarnings("ignore", message=r".*is not a Python type.*")
-warnings.filterwarnings("ignore", module=r"pydantic\._internal\._generate_schema")
 from fastapi import FastAPI
-from dotenv import load_dotenv
+from app.core.config import settings
+from app.core.logging import setup_logging, logger
+from app.core.middleware import RequestContextMiddleware
+from app.db.client import get_supabase_client
+from app.api.routes import webhook
 
-load_dotenv()
+# Setup structured logging
+setup_logging()
 
-from app.db.mongo import init_db
-from app.api.webhook import router as webhook_router
+app = FastAPI(
+    title="Vehicle Diagnosis Assistant API",
+    version="2.0.0",
+    description="WhatsApp-based OBD-II diagnostic assistant with PostgreSQL/Supabase backend"
+)
 
-app = FastAPI(title="Vehicle Diagnosis Assistant API")
+# Register middleware
+app.add_middleware(RequestContextMiddleware)
 
-app.include_router(webhook_router)
-
-
-@app.get("/healthz")
-async def healthz():
-    return {"status": "ok"}
+# Register routes
+app.include_router(webhook.router)
 
 
 @app.on_event("startup")
-async def on_startup():
-    if os.getenv("SKIP_INIT_DB", "false").lower() == "true":
-        return
-    await init_db()
+async def startup():
+    """Initialize services on startup"""
+    logger.info(
+        "app_starting",
+        env=settings.app_env,
+        supabase_url=settings.supabase_url
+    )
+
+    # Initialize Supabase client (validates connection)
+    try:
+        get_supabase_client()
+        logger.info("supabase_connected")
+    except Exception as e:
+        logger.error("supabase_connection_failed", error=str(e))
+        raise
+
+
+@app.get("/healthz")
+async def health():
+    """Health check endpoint"""
+    return {
+        "status": "ok",
+        "version": "2.0.0",
+        "env": settings.app_env
+    }
+
+
+@app.get("/")
+async def root():
+    """Root endpoint"""
+    return {
+        "service": "Vehicle Diagnosis Assistant",
+        "version": "2.0.0",
+        "docs": "/docs"
+    }

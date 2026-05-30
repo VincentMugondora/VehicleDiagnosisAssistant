@@ -12,7 +12,7 @@ try:
 except Exception:
     genai_new = None  # Gemini optional
 
-_GENAI_CLIENT = None
+from app.ai.gemini import get_client, get_mode
 
 
 def _get_env_bool(name: str, default: bool = False) -> bool:
@@ -348,30 +348,10 @@ async def _web_search_for_code(code: str, vehicle: Dict[str, Optional[str]]) -> 
     return []
 
 
-def _configure_gemini() -> None:
-    if genai_new is None:
-        return
-    api_key = os.getenv("GOOGLE_API_KEY", "").strip()
-    if not api_key:
-        try:
-            print("[gemini] GOOGLE_API_KEY missing")
-        except Exception:
-            pass
-        return
-    global _GENAI_CLIENT
-    if _GENAI_CLIENT is None:
-        _GENAI_CLIENT = genai_new.Client(api_key=api_key)  # type: ignore
-        try:
-            print("[gemini] client_configured=true")
-        except Exception:
-            pass
-
-
 def _summarize_with_gemini(code: str, results: List[Dict[str, str]], vehicle: Dict[str, Optional[str]]) -> Optional[Dict[str, object]]:
-    if genai_new is None:
-        return None
-    _configure_gemini()
-    if _GENAI_CLIENT is None:
+    client = get_client()
+    mode = get_mode()
+    if mode != "new" or client is None:
         return None
     model_name = os.getenv("GEMINI_MODEL", "gemini-1.5-flash")
     # Build a compact prompt with citations
@@ -397,7 +377,7 @@ def _summarize_with_gemini(code: str, results: List[Dict[str, str]], vehicle: Di
             print("[gemini] generate start")
         except Exception:
             pass
-        resp = _GENAI_CLIENT.models.generate_content(model=model_name, contents=[prompt])  # type: ignore
+        resp = client.models.generate_content(model=model_name, contents=[prompt])  # type: ignore
         txt = (resp.text or "").strip()
         # robust JSON extraction
         start = txt.find("{")

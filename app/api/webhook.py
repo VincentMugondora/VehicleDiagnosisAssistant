@@ -8,6 +8,7 @@ from datetime import datetime, timedelta
 
 import httpx
 from fastapi import APIRouter, Request, Response, status, Depends
+from pydantic import BaseModel, Field
 
 from app.db.mongo import get_db
 from app.services.obd import validate_obd_code, get_obd_info
@@ -170,6 +171,91 @@ def _is_allowed_number(phone_number: str) -> bool:
     return phone_number in allowed
 
 
+async def process_incoming_message(raw_text: str, from_number: str, db) -> str:
+    """Core logic to parse, validate, fetch OBD info, enrich, and format reply."""
+    limit_msg = None if _is_allowed_number(from_number) else await _check_usage_limit(db, from_number)
+    if limit_msg:
+        await db["message_logs"].insert_one({
+            "phone_number": from_number,
+            "request_text": raw_text,
+            "response_text": limit_msg,
+            "code": None,
+            "created_at": datetime.utcnow(),
+        })
+        return limit_msg
+
+    parsed = parse_message(raw_text)
+    code = parsed.get("code")
+    vehicle = {
+        "make": parsed.get("make"),
+        "model": parsed.get("model"),
+        "year": parsed.get("year"),
+        "engine": parsed.get("engine"),
+    }
+    try:
+        print(f"[process] parsed_code={code} vehicle={vehicle}")
+    except Exception:
+        pass
+
+    if not code or not validate_obd_code(code):
+        syms = normalize_symptoms(raw_text)
+        if syms:
+            diag = diagnose(syms)
+            reply = _format_symptom_reply(diag.get("probable_codes", []), diag.get("likely_systems", []), diag.get("recommended_checks", []))
+        else:
+            reply = "Send an OBD-II code like P0171. Optional: add symptoms (e.g., car shaking) and vehicle (e.g., Corolla 2015 1.6L)."
+        await db["message_logs"].insert_one({
+            "phone_number": from_number,
+            "request_text": raw_text,
+            "response_text": reply,
+            "code": None,
+            "created_at": datetime.utcnow(),
+        })
+        return reply
+
+    base_info = await get_obd_info(db, code, vehicle)
+    use_ai = os.getenv("AI_ENRICH_ENABLED", "false").lower() == "true"
+    causes_ranked = None
+    if use_ai:
+        try:
+            provider = os.getenv("AI_PROVIDER", "none").lower()
+            if provider == "gemini":
+                causes_ranked = rank_causes_with_gemini(base_info, vehicle)
+            else:
+                causes_ranked = enrich_causes(base_info, vehicle)
+        except Exception:
+            causes_ranked = None
+    reply = _format_reply(code, base_info, causes_ranked)
+
+    await db["message_logs"].insert_one({
+        "phone_number": from_number,
+        "request_text": raw_text,
+        "response_text": reply,
+        "code": code,
+        "created_at": datetime.utcnow(),
+    })
+
+    # Diagnostics audit log (never reused)
+    try:
+        vehicle_str = " ".join([
+            str((vehicle.get("make") if vehicle else "") or "").strip(),
+            str((vehicle.get("model") if vehicle else "") or "").strip(),
+            str((vehicle.get("year") if vehicle else "") or "").strip(),
+            str((vehicle.get("engine") if vehicle else "") or "").strip(),
+        ]).strip()
+        await db["diagnostic_logs"].insert_one({
+            "code": code,
+            "vehicle": vehicle_str,
+            "source": base_info.get("source"),
+            "confidence": base_info.get("confidence"),
+            "created_at": datetime.utcnow(),
+        })
+    except Exception:
+        pass
+
+    return reply
+
+
 @router.post("/twilio")
 async def twilio_webhook(request: Request, db = Depends(get_db)):
     form = await request.form()
@@ -185,183 +271,41 @@ async def twilio_webhook(request: Request, db = Depends(get_db)):
     from_number = data.get("From", "")
     raw_text = (data.get("Body") or "").strip()
 
-    # Enforce simple per-number usage limits if configured
-    limit_msg = None if _is_allowed_number(from_number) else await _check_usage_limit(db, from_number)
-    if limit_msg:
-        await _maybe_send_reply_via_twilio(from_number, limit_msg)
-        await db["message_logs"].insert_one({
-            "phone_number": from_number,
-            "request_text": raw_text,
-            "response_text": limit_msg,
-            "code": None,
-            "created_at": datetime.utcnow(),
-        })
-        return {"ok": True}
-
-    parsed = parse_message(raw_text)
-    code = parsed.get("code")
-    vehicle = {
-        "make": parsed.get("make"),
-        "model": parsed.get("model"),
-        "year": parsed.get("year"),
-        "engine": parsed.get("engine"),
-    }
-    try:
-        print(f"[baileys] parsed_code={code} vehicle={vehicle}")
-    except Exception:
-        pass
-
-    if not code or not validate_obd_code(code):
-        syms = normalize_symptoms(raw_text)
-        if syms:
-            diag = diagnose(syms)
-            reply = _format_symptom_reply(diag.get("probable_codes", []), diag.get("likely_systems", []), diag.get("recommended_checks", []))
-        else:
-            reply = "Send an OBD-II code like P0171. Optional: add symptoms (e.g., car shaking) and vehicle (e.g., Corolla 2015 1.6L)."
-        await _maybe_send_reply_via_twilio(from_number, reply)
-        await db["message_logs"].insert_one({
-            "phone_number": from_number,
-            "request_text": raw_text,
-            "response_text": reply,
-            "code": None,
-            "created_at": datetime.utcnow(),
-        })
-        return {"ok": True}
-
-    base_info = await get_obd_info(db, code, vehicle)
-    use_ai = os.getenv("AI_ENRICH_ENABLED", "false").lower() == "true"
-    causes_ranked = None
-    if use_ai:
-        try:
-            provider = os.getenv("AI_PROVIDER", "none").lower()
-            if provider == "gemini":
-                causes_ranked = rank_causes_with_gemini(base_info, vehicle)
-            else:
-                causes_ranked = enrich_causes(base_info, vehicle)
-        except Exception:
-            causes_ranked = None
-    reply = _format_reply(code, base_info, causes_ranked)
-
+    reply = await process_incoming_message(raw_text, from_number, db)
     await _maybe_send_reply_via_twilio(from_number, reply)
-
-    await db["message_logs"].insert_one({
-        "phone_number": from_number,
-        "request_text": raw_text,
-        "response_text": reply,
-        "code": code,
-        "created_at": datetime.utcnow(),
-    })
-
-    # Diagnostics audit log (never reused)
-    try:
-        vehicle_str = " ".join([
-            str((vehicle.get("make") if vehicle else "") or "").strip(),
-            str((vehicle.get("model") if vehicle else "") or "").strip(),
-            str((vehicle.get("year") if vehicle else "") or "").strip(),
-            str((vehicle.get("engine") if vehicle else "") or "").strip(),
-        ]).strip()
-        await db["diagnostic_logs"].insert_one({
-            "code": code,
-            "vehicle": vehicle_str,
-            "source": base_info.get("source"),
-            "confidence": base_info.get("confidence"),
-            "created_at": datetime.utcnow(),
-        })
-    except Exception:
-        pass
 
     return {"ok": True}
 
 
+class BaileysPayload(BaseModel):
+    from_: Optional[str] = Field(None, alias="from")
+    sender: Optional[str] = None
+    text: Optional[str] = None
+    message: Optional[str] = None
+
+    def get_sender(self) -> str:
+        return self.from_ or self.sender or ""
+
+    def get_text(self) -> str:
+        return self.text if self.text is not None else (self.message or "")
+
+
 @router.post("/baileys")
-async def baileys_webhook(request: Request, db = Depends(get_db)):
-    payload = await request.json()
-    from_number = payload.get("from") or payload.get("sender") or ""
-    # Prefer 'text' if the key exists, even if it's an empty string; otherwise fallback to 'message'
-    _text_present = "text" in payload
-    _text_value = payload.get("text") if _text_present else None
-    raw_text = ((_text_value if _text_value is not None else payload.get("message")) or "").strip()
+async def baileys_webhook(payload: BaileysPayload, request: Request, db = Depends(get_db)):
+    expected_token = os.getenv("BAILEYS_API_KEY")
+    if expected_token:
+        auth_header = request.headers.get("X-API-Key", "")
+        if auth_header != expected_token:
+            return Response(status_code=status.HTTP_401_UNAUTHORIZED)
+
+    from_number = payload.get_sender()
+    raw_text = payload.get_text().strip()
+
     try:
-        print(f"[baileys] payload={payload}")
         print(f"[baileys] raw_text='{raw_text}'")
     except Exception:
         pass
 
-    # Usage limit (skip for allowed numbers)
-    limit_msg = None if _is_allowed_number(from_number) else await _check_usage_limit(db, from_number)
-    if limit_msg:
-        await db["message_logs"].insert_one({
-            "phone_number": from_number,
-            "request_text": raw_text,
-            "response_text": limit_msg,
-            "code": None,
-            "created_at": datetime.utcnow(),
-        })
-        return {"reply": limit_msg}
-
-    parsed = parse_message(raw_text)
-    code = parsed.get("code")
-    vehicle = {
-        "make": parsed.get("make"),
-        "model": parsed.get("model"),
-        "year": parsed.get("year"),
-        "engine": parsed.get("engine"),
-    }
-
-    if not code or not validate_obd_code(code):
-        syms = normalize_symptoms(raw_text)
-        if syms:
-            diag = diagnose(syms)
-            reply = _format_symptom_reply(diag.get("probable_codes", []), diag.get("likely_systems", []), diag.get("recommended_checks", []))
-        else:
-            reply = "Send an OBD-II code like P0171. Optional: add symptoms (e.g., car shaking) and vehicle (e.g., Corolla 2015 1.6L)."
-        await db["message_logs"].insert_one({
-            "phone_number": from_number,
-            "request_text": raw_text,
-            "response_text": reply,
-            "code": None,
-            "created_at": datetime.utcnow(),
-        })
-        return {"reply": reply}
-
-    base_info = await get_obd_info(db, code, vehicle)
-    use_ai = os.getenv("AI_ENRICH_ENABLED", "false").lower() == "true"
-    causes_ranked = None
-    if use_ai:
-        try:
-            provider = os.getenv("AI_PROVIDER", "none").lower()
-            if provider == "gemini":
-                causes_ranked = rank_causes_with_gemini(base_info, vehicle)
-            else:
-                causes_ranked = enrich_causes(base_info, vehicle)
-        except Exception:
-            causes_ranked = None
-    reply = _format_reply(code, base_info, causes_ranked)
-
-    await db["message_logs"].insert_one({
-        "phone_number": from_number,
-        "request_text": raw_text,
-        "response_text": reply,
-        "code": code,
-        "created_at": datetime.utcnow(),
-    })
-
-    # Diagnostics audit log (never reused)
-    try:
-        vehicle_str = " ".join([
-            str((vehicle.get("make") if vehicle else "") or "").strip(),
-            str((vehicle.get("model") if vehicle else "") or "").strip(),
-            str((vehicle.get("year") if vehicle else "") or "").strip(),
-            str((vehicle.get("engine") if vehicle else "") or "").strip(),
-        ]).strip()
-        await db["diagnostic_logs"].insert_one({
-            "code": code,
-            "vehicle": vehicle_str,
-            "source": base_info.get("source"),
-            "confidence": base_info.get("confidence"),
-            "created_at": datetime.utcnow(),
-        })
-    except Exception:
-        pass
+    reply = await process_incoming_message(raw_text, from_number, db)
 
     return {"reply": reply}

@@ -1,11 +1,50 @@
-.env
-data.db
-venv/
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Temporary files
+*~
+*.tmp
+*.temp
+
+# Dependency directories
+node_modules/
 __pycache__/
 *.pyc
-*.pyo
-*.pyd
-.Python
-env/
 .venv/
+venv/
+ENV/
+env/
+.env
+.gradle
+build/
+target/
+.idea/
 .vscode/
+*.swp
+*~
+.sass-cache
+
+# Compiled source
+*.com
+*.class
+*.dll
+*.exe
+*.o
+*.so
+
+# Packages
+*.7z
+*.dmg
+*.iso
+*.jar
+*.rar
+*.tar
+*.zip
+
+# Logs and databases
+*.sql
+*.sqlite

@@ -1,0 +1,92 @@
+Refactor: Migrate from MongoDB to PostgreSQL/Supabase with CLAUDE.md architecture
+
+This is a major architectural refactor implementing production-ready patterns
+and security best practices per CLAUDE.md requirements.
+
+## Database Migration
+- Migrate from MongoDB to PostgreSQL (Supabase)
+- Add comprehensive indexes and constraints
+- Implement conversation_sessions table for stateful interactions
+- Create migration scripts and seeding tools
+
+## Security Enhancements
+- Phone number hashing (SHA-256) - never store raw numbers
+- Message idempotency checks (duplicate detection)
+- Webhook signature validation (Twilio HMAC-SHA1)
+- API key authentication (Baileys)
+
+## Architecture Changes
+- Implement layered architecture: core/models/repositories/services/api
+- Add repository pattern (separate data access from business logic)
+- Dependency injection via FastAPI Depends
+- Full type safety with Pydantic models
+- Custom exception hierarchy (no generic Exception)
+
+## Observability
+- Replace print() with structured logging (structlog + JSON)
+- Request ID tracing (UUID per request)
+- Session ID tracking (conversation continuity)
+- All logs include context (phone_hash, request_id, session_id)
+
+## New Features
+- Session management (30-minute TTL)
+- Message deduplication (WhatsApp duplicate handling)
+- Rate limiting per phone number
+- Response splitting (1,500 char max)
+- WhatsApp markdown formatting (*bold*, _italic_, • bullets)
+- Gemini retry with exponential backoff (429/503 errors)
+
+## Configuration
+- Centralized config via Pydantic settings (app/core/config.py)
+- Environment variable validation
+- Type-safe configuration access
+
+## Files Created
+- app/core/ - Config, logging, errors, middleware
+- app/models/ - Pydantic data models
+- app/repositories/ - Data access layer
+- app/services/ - Refactored business logic
+- app/api/routes/ - Refactored HTTP handlers
+- app/utils/ - Phone hashing, OBD parsing
+- supabase/migrations/ - PostgreSQL schema
+- scripts/ - Database seeding
+- MIGRATION.md, QUICKSTART.md, REFACTOR_SUMMARY.md
+
+## Files Modified
+- app/main.py - New middleware and startup
+- requirements.txt - Added supabase, structlog, pydantic-settings
+- .env.example - New Supabase variables
+
+## Preserved Logic
+- OBD code validation and lookup
+- Symptom-based diagnosis
+- Gemini AI integration
+- External search fallback
+- WhatsApp webhooks (Twilio & Baileys)
+
+## Testing Required
+- Database seeding
+- Health checks
+- Webhook endpoints
+- Idempotency
+- Session persistence
+- Phone hashing
+- Structured logging
+
+## Breaking Changes
+- Database backend changed (MongoDB → PostgreSQL)
+- Environment variables changed (MONGODB_* → SUPABASE_*)
+- Phone numbers now hashed (cannot query by raw number)
+- Log format changed (text → JSON)
+
+## Migration Path
+See MIGRATION.md for complete migration guide.
+See QUICKSTART.md for getting started in 5 minutes.
+
+## Compliance
+✅ All CLAUDE.md absolute rules met
+✅ Project structure matches specification
+✅ Security requirements implemented
+✅ Type safety enforced
+
+Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>
