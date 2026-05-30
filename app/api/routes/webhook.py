@@ -51,7 +51,18 @@ def get_session_manager(repos: dict = Depends(get_repositories)):
 
 def get_message_router(repos: dict = Depends(get_repositories)):
     """Get MessageRouter with dependencies"""
-    obd_service = OBDService(repos["obd_repo"])
+    # Initialize OBDService with AI client for auto-learning
+    ai_client = None
+    try:
+        ai_client = AIClient()
+    except:
+        pass  # AI optional, will work without it
+
+    obd_service = OBDService(
+        repos["obd_repo"],
+        ai_client=ai_client,
+        auto_learn=True  # Enable dynamic learning
+    )
     return MessageRouter(obd_service)
 
 
@@ -236,7 +247,7 @@ async def twilio_webhook(
     session = session_manager.load_session(phone_hash)
 
     # Route message
-    result = message_router.route_message(
+    result = await message_router.route_message(
         raw_text=payload.Body,
         phone_hash=phone_hash,
         request_id=request.state.request_id
@@ -372,7 +383,7 @@ async def baileys_webhook(
     session = session_manager.load_session(phone_hash)
 
     # Route message
-    result = message_router.route_message(
+    result = await message_router.route_message(
         raw_text=raw_text,
         phone_hash=phone_hash,
         request_id=request.state.request_id

@@ -69,3 +69,19 @@ class OBDRepository:
             .eq("system", system)\
             .execute()
         return result.data
+
+    def insert_code(self, code_data: dict) -> dict:
+        """
+        Insert a new OBD code into the database.
+        Uses upsert to avoid duplicates.
+
+        Args:
+            code_data: Dict with code information
+
+        Returns:
+            Inserted/updated code data
+        """
+        result = self.client.table("obd_codes")\
+            .upsert(code_data, on_conflict="code")\
+            .execute()
+        return result.data[0] if result.data else None

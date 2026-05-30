@@ -31,7 +31,7 @@ class MessageRouter:
                     error=str(e)
                 )
 
-    def route_message(
+    async def route_message(
         self,
         raw_text: str,
         phone_hash: str,
@@ -69,7 +69,7 @@ class MessageRouter:
         if code and validate_obd_code(code):
             logger.info("routing_to_code_diagnosis", code=code)
             try:
-                result = self.obd_service.get_obd_info(code, vehicle)
+                result = await self.obd_service.get_obd_info(code, vehicle)
 
                 # Enrich with AI if enabled
                 if self.ai_client and result.causes:

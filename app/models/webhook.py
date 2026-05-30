@@ -1,26 +1,24 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 
 
 class TwilioWebhookPayload(BaseModel):
     """Twilio WhatsApp webhook payload"""
+    model_config = ConfigDict(populate_by_name=True)
+
     From: str = Field(alias="From")
     Body: str = Field(alias="Body")
     MessageSid: str = Field(alias="MessageSid")
 
-    class Config:
-        populate_by_name = True
-
 
 class BaileysWebhookPayload(BaseModel):
     """Baileys WhatsApp webhook payload with fallback fields"""
+    model_config = ConfigDict(populate_by_name=True)
+
     from_: str | None = Field(None, alias="from")
     sender: str | None = None
     text: str | None = None
     message: str | None = None
     message_id: str | None = None
-
-    class Config:
-        populate_by_name = True
 
     def get_sender(self) -> str:
         """Get sender with fallback logic"""
