@@ -37,10 +37,13 @@ class SessionRepository:
         Args:
             session: SessionState to persist
         """
+        # Serialize datetime objects to ISO format strings
+        session_dict = session.model_dump(mode='json')
+
         self.client.table("conversation_sessions")\
             .upsert({
                 "phone_hash": session.phone_hash,
-                "state": session.model_dump(),
+                "state": session_dict,
                 "last_active": datetime.utcnow().isoformat()
             }, on_conflict="phone_hash")\
             .execute()

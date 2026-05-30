@@ -1,4 +1,5 @@
 const { default: makeWASocket, useMultiFileAuthState, DisconnectReason } = require('@whiskeysockets/baileys')
+const qrcode = require('qrcode-terminal')
 const express = require('express')
 const axios = require('axios')
 
@@ -19,7 +20,7 @@ async function connectToWhatsApp() {
 
     sock = makeWASocket({
         auth: state,
-        printQRInTerminal: true,
+        printQRInTerminal: false, // We'll handle QR manually
         browser: ['Vehicle Diagnosis Assistant', 'Chrome', '1.0.0']
     })
 
@@ -28,8 +29,16 @@ async function connectToWhatsApp() {
     sock.ev.on('connection.update', (update) => {
         const { connection, lastDisconnect, qr } = update
 
+        // Display QR code
         if (qr) {
-            console.log('📱 Scan this QR code with WhatsApp:')
+            console.log('\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━')
+            console.log('📱 SCAN THIS QR CODE WITH WHATSAPP')
+            console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n')
+            qrcode.generate(qr, { small: true })
+            console.log('\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━')
+            console.log('Open WhatsApp → Settings → Linked Devices')
+            console.log('Tap "Link a Device" and scan the code above')
+            console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n')
         }
 
         if(connection === 'close') {
