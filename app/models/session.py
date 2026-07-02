@@ -10,6 +10,14 @@ class ConversationTurn(BaseModel):
     timestamp: datetime
 
 
+class LastDiagnosis(BaseModel):
+    """Last diagnosis performed in this session"""
+    code: str
+    description: str
+    timestamp: datetime
+    vehicle_context: str | None = None  # "Toyota Camry 2015"
+
+
 class SessionState(BaseModel):
     """Conversation session state for multi-turn interactions"""
     phone_hash: str
@@ -18,4 +26,5 @@ class SessionState(BaseModel):
     vehicle: VehicleContext | None = None
     pending_obd_codes: list[str] = []
     turns: list[ConversationTurn] = []
+    last_diagnosis: LastDiagnosis | None = None  # Track last diagnosis for followups
     last_active: datetime

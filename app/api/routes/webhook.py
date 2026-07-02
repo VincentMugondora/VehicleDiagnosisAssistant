@@ -383,11 +383,12 @@ async def baileys_webhook(
     # Load session
     session = session_manager.load_session(phone_hash)
 
-    # Route message
+    # Route message with session context for followups
     result = await message_router.route_message(
         raw_text=raw_text,
         phone_hash=phone_hash,
-        request_id=request.state.request_id
+        request_id=request.state.request_id,
+        session=session  # Pass session for conversation memory
     )
 
     # Format response

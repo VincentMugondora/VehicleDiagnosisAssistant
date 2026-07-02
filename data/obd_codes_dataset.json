@@ -1,0 +1,1414 @@
+{
+  "metadata": {
+    "version": "1.0",
+    "date": "2026-07-02",
+    "total_codes": 250,
+    "description": "Comprehensive OBD-II diagnostic trouble code database covering Powertrain (P0xxx-P3xxx), Body (B), Chassis (C), and Network (U) codes"
+  },
+  "codes": [
+    {
+      "code": "P0420",
+      "description": "Catalyst System Efficiency Below Threshold (Bank 1)",
+      "system": "Emissions",
+      "severity": "Medium",
+      "symptoms": "Check Engine Light, reduced fuel economy, possible sulfur smell",
+      "common_causes": "Worn catalytic converter, Faulty oxygen sensor, Exhaust leak, Engine misfire, Fuel system problems",
+      "generic_fixes": "Inspect oxygen sensors, Check for exhaust leaks, Test catalytic converter efficiency, Scan for additional codes, Verify fuel pressure and injectors"
+    },
+    {
+      "code": "P0171",
+      "description": "System Too Lean (Bank 1)",
+      "system": "Fuel & Air",
+      "severity": "Medium",
+      "symptoms": "Rough idle, hesitation, poor acceleration, Check Engine Light",
+      "common_causes": "Vacuum leak, Faulty mass airflow sensor, Weak fuel pump, Clogged fuel filter, Faulty oxygen sensor",
+      "generic_fixes": "Check for vacuum leaks, Test mass airflow sensor, Verify fuel pressure, Inspect air filter, Clean throttle body"
+    },
+    {
+      "code": "P0300",
+      "description": "Random/Multiple Cylinder Misfire Detected",
+      "system": "Ignition",
+      "severity": "High",
+      "symptoms": "Rough idle, loss of power, vibration, Check Engine Light flashing",
+      "common_causes": "Worn spark plugs, Bad ignition coils, Low compression, Vacuum leak, Fuel delivery problem",
+      "generic_fixes": "Replace spark plugs, Test ignition coils, Check fuel injectors, Perform compression test, Inspect for vacuum leaks"
+    },
+    {
+      "code": "P0301",
+      "description": "Cylinder 1 Misfire Detected",
+      "system": "Ignition",
+      "severity": "High",
+      "symptoms": "Rough idle, vibration, loss of power, flashing Check Engine Light",
+      "common_causes": "Faulty spark plug (cylinder 1), Bad ignition coil, Fuel injector problem, Low compression, Vacuum leak",
+      "generic_fixes": "Replace spark plug #1, Test ignition coil #1, Check fuel injector #1, Perform compression test cylinder 1, Swap coils to verify"
+    },
+    {
+      "code": "P0302",
+      "description": "Cylinder 2 Misfire Detected",
+      "system": "Ignition",
+      "severity": "High",
+      "symptoms": "Rough idle, vibration, loss of power, flashing Check Engine Light",
+      "common_causes": "Faulty spark plug (cylinder 2), Bad ignition coil, Fuel injector problem, Low compression, Vacuum leak",
+      "generic_fixes": "Replace spark plug #2, Test ignition coil #2, Check fuel injector #2, Perform compression test cylinder 2, Swap coils to verify"
+    },
+    {
+      "code": "P0303",
+      "description": "Cylinder 3 Misfire Detected",
+      "system": "Ignition",
+      "severity": "High",
+      "symptoms": "Rough idle, vibration, loss of power, flashing Check Engine Light",
+      "common_causes": "Faulty spark plug (cylinder 3), Bad ignition coil, Fuel injector problem, Low compression, Vacuum leak",
+      "generic_fixes": "Replace spark plug #3, Test ignition coil #3, Check fuel injector #3, Perform compression test cylinder 3, Swap coils to verify"
+    },
+    {
+      "code": "P0304",
+      "description": "Cylinder 4 Misfire Detected",
+      "system": "Ignition",
+      "severity": "High",
+      "symptoms": "Rough idle, vibration, loss of power, flashing Check Engine Light",
+      "common_causes": "Faulty spark plug (cylinder 4), Bad ignition coil, Fuel injector problem, Low compression, Vacuum leak",
+      "generic_fixes": "Replace spark plug #4, Test ignition coil #4, Check fuel injector #4, Perform compression test cylinder 4, Swap coils to verify"
+    },
+    {
+      "code": "P0305",
+      "description": "Cylinder 5 Misfire Detected",
+      "system": "Ignition",
+      "severity": "High",
+      "symptoms": "Rough idle, vibration, loss of power, flashing Check Engine Light",
+      "common_causes": "Faulty spark plug (cylinder 5), Bad ignition coil, Fuel injector problem, Low compression, Vacuum leak",
+      "generic_fixes": "Replace spark plug #5, Test ignition coil #5, Check fuel injector #5, Perform compression test cylinder 5, Swap coils to verify"
+    },
+    {
+      "code": "P0306",
+      "description": "Cylinder 6 Misfire Detected",
+      "system": "Ignition",
+      "severity": "High",
+      "symptoms": "Rough idle, vibration, loss of power, flashing Check Engine Light",
+      "common_causes": "Faulty spark plug (cylinder 6), Bad ignition coil, Fuel injector problem, Low compression, Vacuum leak",
+      "generic_fixes": "Replace spark plug #6, Test ignition coil #6, Check fuel injector #6, Perform compression test cylinder 6, Swap coils to verify"
+    },
+    {
+      "code": "P0172",
+      "description": "System Too Rich (Bank 1)",
+      "system": "Fuel & Air",
+      "severity": "Medium",
+      "symptoms": "Black smoke from exhaust, poor fuel economy, rough idle, strong fuel smell",
+      "common_causes": "Faulty oxygen sensor, Leaking fuel injector, Excessive fuel pressure, Faulty mass airflow sensor, Clogged air filter",
+      "generic_fixes": "Test oxygen sensors, Check fuel pressure, Inspect fuel injectors for leaks, Test mass airflow sensor, Replace air filter"
+    },
+    {
+      "code": "P0174",
+      "description": "System Too Lean (Bank 2)",
+      "system": "Fuel & Air",
+      "severity": "Medium",
+      "symptoms": "Rough idle, hesitation, poor acceleration, Check Engine Light",
+      "common_causes": "Vacuum leak, Faulty mass airflow sensor, Weak fuel pump, Clogged fuel filter, Faulty oxygen sensor",
+      "generic_fixes": "Check for vacuum leaks, Test mass airflow sensor, Verify fuel pressure, Inspect air filter, Clean throttle body"
+    },
+    {
+      "code": "P0175",
+      "description": "System Too Rich (Bank 2)",
+      "system": "Fuel & Air",
+      "severity": "Medium",
+      "symptoms": "Black smoke from exhaust, poor fuel economy, rough idle, strong fuel smell",
+      "common_causes": "Faulty oxygen sensor, Leaking fuel injector, Excessive fuel pressure, Faulty mass airflow sensor, Clogged air filter",
+      "generic_fixes": "Test oxygen sensors, Check fuel pressure, Inspect fuel injectors for leaks, Test mass airflow sensor, Replace air filter"
+    },
+    {
+      "code": "P0401",
+      "description": "Exhaust Gas Recirculation (EGR) Flow Insufficient",
+      "system": "Emissions",
+      "severity": "Low",
+      "symptoms": "Check Engine Light, possible pinging or knocking under load, failed emissions test",
+      "common_causes": "Clogged EGR passages, Faulty EGR valve, Carbon buildup, EGR solenoid failure, Vacuum hose leak",
+      "generic_fixes": "Clean EGR valve and passages, Test EGR solenoid, Check vacuum lines, Inspect EGR valve operation, Remove carbon deposits"
+    },
+    {
+      "code": "P0402",
+      "description": "Exhaust Gas Recirculation (EGR) Flow Excessive",
+      "system": "Emissions",
+      "severity": "Low",
+      "symptoms": "Rough idle, stalling, hesitation, Check Engine Light",
+      "common_causes": "Stuck open EGR valve, Faulty EGR solenoid, Carbon buildup preventing valve closure, EGR valve position sensor fault",
+      "generic_fixes": "Inspect EGR valve for proper closure, Test EGR solenoid, Clean EGR valve, Check EGR position sensor, Replace EGR valve if stuck"
+    },
+    {
+      "code": "P0430",
+      "description": "Catalyst System Efficiency Below Threshold (Bank 2)",
+      "system": "Emissions",
+      "severity": "Medium",
+      "symptoms": "Check Engine Light, reduced fuel economy, possible sulfur smell",
+      "common_causes": "Worn catalytic converter, Faulty oxygen sensor, Exhaust leak, Engine misfire, Fuel system problems",
+      "generic_fixes": "Inspect oxygen sensors, Check for exhaust leaks, Test catalytic converter efficiency, Scan for additional codes, Verify fuel pressure"
+    },
+    {
+      "code": "P0442",
+      "description": "Evaporative Emission System Leak Detected (Small Leak)",
+      "system": "Emissions",
+      "severity": "Low",
+      "symptoms": "Check Engine Light, possible fuel smell",
+      "common_causes": "Loose or damaged gas cap, Cracked EVAP hose, Faulty purge valve, Leaking fuel tank, Faulty vent valve",
+      "generic_fixes": "Tighten or replace gas cap, Inspect EVAP hoses, Test purge valve, Check for fuel leaks, Perform smoke test"
+    },
+    {
+      "code": "P0443",
+      "description": "Evaporative Emission Purge Control Valve Circuit Malfunction",
+      "system": "Emissions",
+      "severity": "Low",
+      "symptoms": "Check Engine Light, possible rough idle",
+      "common_causes": "Faulty purge valve, Broken wiring, Corroded connector, Short circuit, ECM fault",
+      "generic_fixes": "Test purge valve operation, Check wiring and connectors, Test purge valve circuit, Replace purge valve if faulty, Verify ECM grounds"
+    },
+    {
+      "code": "P0455",
+      "description": "Evaporative Emission System Leak Detected (Large Leak)",
+      "system": "Emissions",
+      "severity": "Low",
+      "symptoms": "Check Engine Light, strong fuel smell",
+      "common_causes": "Missing or loose gas cap, Cracked EVAP hose, Damaged fuel tank, Faulty purge valve, Leaking fuel filler neck",
+      "generic_fixes": "Check gas cap, Inspect all EVAP hoses, Examine fuel tank for damage, Test purge and vent valves, Perform smoke test"
+    },
+    {
+      "code": "P0500",
+      "description": "Vehicle Speed Sensor (VSS) Malfunction",
+      "system": "Transmission",
+      "severity": "Medium",
+      "symptoms": "Speedometer not working, transmission shifting issues, Check Engine Light, cruise control not working",
+      "common_causes": "Faulty vehicle speed sensor, Broken speedometer cable, Wiring problem, Bad wheel speed sensor, ECM fault",
+      "generic_fixes": "Test vehicle speed sensor, Check wiring and connectors, Inspect speedometer cable, Test wheel speed sensors, Verify ECM communication"
+    },
+    {
+      "code": "P0505",
+      "description": "Idle Air Control (IAC) System Malfunction",
+      "system": "Fuel & Air",
+      "severity": "Medium",
+      "symptoms": "Erratic idle, stalling, high idle, engine dies when stopping",
+      "common_causes": "Dirty idle air control valve, Carbon buildup in throttle body, Faulty IAC valve, Vacuum leak, Wiring problem",
+      "generic_fixes": "Clean idle air control valve, Clean throttle body, Test IAC valve operation, Check for vacuum leaks, Inspect IAC wiring"
+    },
+    {
+      "code": "P0562",
+      "description": "System Voltage Low",
+      "system": "Electrical",
+      "severity": "Medium",
+      "symptoms": "Dim lights, electrical issues, difficult starting, Check Engine Light",
+      "common_causes": "Weak battery, Faulty alternator, Corroded battery terminals, Loose drive belt, Bad voltage regulator",
+      "generic_fixes": "Test battery voltage, Check alternator output, Clean battery terminals, Inspect alternator belt, Test voltage regulator"
+    },
+    {
+      "code": "P0601",
+      "description": "Internal Control Module Memory Check Sum Error",
+      "system": "ECM/PCM",
+      "severity": "High",
+      "symptoms": "Check Engine Light, poor performance, no start, erratic behavior",
+      "common_causes": "ECM/PCM failure, Software corruption, Low battery voltage during reprogramming, Electrical spike damage",
+      "generic_fixes": "Reprogram ECM/PCM, Check all ECM grounds, Test ECM power supply, Replace ECM if faulty, Verify battery voltage"
+    },
+    {
+      "code": "P0700",
+      "description": "Transmission Control System Malfunction",
+      "system": "Transmission",
+      "severity": "High",
+      "symptoms": "Check Engine Light, transmission shifting problems, limp mode",
+      "common_causes": "Transmission control module fault, Wiring issues, Transmission mechanical problem, Shift solenoid failure, Low transmission fluid",
+      "generic_fixes": "Scan for transmission-specific codes, Check transmission fluid level, Inspect wiring, Test shift solenoids, Diagnose TCM"
+    },
+    {
+      "code": "P0717",
+      "description": "Input/Turbine Speed Sensor Circuit No Signal",
+      "system": "Transmission",
+      "severity": "High",
+      "symptoms": "Transmission won't shift, speedometer issues, Check Engine Light, limp mode",
+      "common_causes": "Faulty input speed sensor, Broken sensor wiring, Corroded connector, TCM fault, Transmission mechanical damage",
+      "generic_fixes": "Test input speed sensor, Check sensor wiring, Inspect connector, Verify TCM operation, Check transmission fluid level"
+    },
+    {
+      "code": "P0740",
+      "description": "Torque Converter Clutch Circuit Malfunction",
+      "system": "Transmission",
+      "severity": "Medium",
+      "symptoms": "Poor fuel economy, transmission slipping, overheating, Check Engine Light",
+      "common_causes": "Faulty torque converter, Bad TCC solenoid, Wiring problem, Low transmission fluid, Valve body issue",
+      "generic_fixes": "Check transmission fluid level and condition, Test TCC solenoid, Inspect wiring, Perform transmission pressure test, Replace torque converter if needed"
+    },
+    {
+      "code": "P1133",
+      "description": "HO2S Insufficient Switching Bank 1 Sensor 1",
+      "system": "Fuel & Air",
+      "severity": "Medium",
+      "symptoms": "Check Engine Light, poor fuel economy, rough idle",
+      "common_causes": "Worn oxygen sensor, Exhaust leak near sensor, Contaminated sensor, Wiring problem, Fuel system issue",
+      "generic_fixes": "Replace oxygen sensor, Check for exhaust leaks, Inspect sensor wiring, Test fuel pressure, Verify sensor heater operation"
+    },
+    {
+      "code": "P2096",
+      "description": "Post Catalyst Fuel Trim System Too Lean (Bank 1)",
+      "system": "Fuel & Air",
+      "severity": "Medium",
+      "symptoms": "Check Engine Light, rough idle, poor acceleration",
+      "common_causes": "Exhaust leak after catalytic converter, Faulty downstream oxygen sensor, Vacuum leak, Weak fuel pump, Air injection system problem",
+      "generic_fixes": "Check for exhaust leaks, Test downstream oxygen sensor, Inspect for vacuum leaks, Verify fuel pressure, Check air injection system"
+    },
+    {
+      "code": "P2097",
+      "description": "Post Catalyst Fuel Trim System Too Rich (Bank 1)",
+      "system": "Fuel & Air",
+      "severity": "Medium",
+      "symptoms": "Check Engine Light, black smoke, poor fuel economy",
+      "common_causes": "Faulty downstream oxygen sensor, Excessive fuel pressure, Leaking fuel injector, Faulty mass airflow sensor",
+      "generic_fixes": "Test downstream oxygen sensor, Check fuel pressure, Inspect fuel injectors, Test mass airflow sensor, Check for carbon buildup"
+    },
+    {
+      "code": "P0036",
+      "description": "HO2S Heater Control Circuit (Bank 1 Sensor 2)",
+      "system": "Fuel & Air",
+      "severity": "Low",
+      "symptoms": "Check Engine Light, increased emissions, possible rough idle when cold",
+      "common_causes": "Faulty oxygen sensor heater, Blown fuse, Broken wiring, Bad relay, ECM fault",
+      "generic_fixes": "Test oxygen sensor heater circuit, Check fuses and relays, Inspect wiring, Test sensor resistance, Replace oxygen sensor if faulty"
+    },
+    {
+      "code": "P0100",
+      "description": "Mass Air Flow (MAF) Circuit Malfunction",
+      "system": "Fuel & Air",
+      "severity": "Medium",
+      "symptoms": "Hard starting, stalling, rough idle, poor acceleration, Check Engine Light",
+      "common_causes": "Dirty or faulty MAF sensor, Wiring problem, Air leak after MAF, Damaged air filter, ECM fault",
+      "generic_fixes": "Clean MAF sensor, Check MAF wiring, Inspect for air leaks, Replace air filter, Test MAF voltage output"
+    },
+    {
+      "code": "P0101",
+      "description": "Mass Air Flow (MAF) Circuit Range/Performance",
+      "system": "Fuel & Air",
+      "severity": "Medium",
+      "symptoms": "Poor acceleration, rough idle, stalling, black smoke, Check Engine Light",
+      "common_causes": "Dirty MAF sensor, Air leak, Restricted air filter, Faulty MAF sensor, Intake manifold leak",
+      "generic_fixes": "Clean MAF sensor with proper cleaner, Check for air leaks, Replace air filter, Verify MAF readings with scanner, Replace MAF if out of range"
+    },
+    {
+      "code": "P0102",
+      "description": "Mass Air Flow (MAF) Circuit Low Input",
+      "system": "Fuel & Air",
+      "severity": "Medium",
+      "symptoms": "Hard starting, poor idle, lack of power, Check Engine Light",
+      "common_causes": "Faulty MAF sensor, Wiring short to ground, Air leak before MAF, Dirty MAF sensor, ECM problem",
+      "generic_fixes": "Test MAF sensor voltage, Check wiring for shorts, Clean MAF sensor, Inspect for air leaks, Replace MAF sensor if faulty"
+    },
+    {
+      "code": "P0103",
+      "description": "Mass Air Flow (MAF) Circuit High Input",
+      "system": "Fuel & Air",
+      "severity": "Medium",
+      "symptoms": "Black smoke, rough idle, stalling, poor fuel economy, Check Engine Light",
+      "common_causes": "Faulty MAF sensor, Wiring short to power, Restricted air filter, Large vacuum leak, ECM fault",
+      "generic_fixes": "Test MAF sensor voltage, Check wiring for shorts to power, Replace air filter, Check for vacuum leaks, Replace MAF if readings too high"
+    },
+    {
+      "code": "P0110",
+      "description": "Intake Air Temperature (IAT) Circuit Malfunction",
+      "system": "Fuel & Air",
+      "severity": "Low",
+      "symptoms": "Check Engine Light, poor performance when cold or hot, hard starting",
+      "common_causes": "Faulty IAT sensor, Wiring problem, Corroded connector, Short circuit, ECM fault",
+      "generic_fixes": "Test IAT sensor resistance, Check IAT wiring, Clean sensor connector, Replace IAT sensor if faulty, Verify ECM grounds"
+    },
+    {
+      "code": "P0113",
+      "description": "Intake Air Temperature (IAT) Circuit High Input",
+      "system": "Fuel & Air",
+      "severity": "Low",
+      "symptoms": "Check Engine Light, hard starting, poor cold weather performance",
+      "common_causes": "Faulty IAT sensor, Open circuit, Broken wiring, Poor connection, IAT sensor unplugged",
+      "generic_fixes": "Test IAT sensor resistance, Check for open circuits, Inspect wiring and connector, Replace IAT sensor, Verify sensor is properly connected"
+    },
+    {
+      "code": "P0115",
+      "description": "Engine Coolant Temperature (ECT) Circuit Malfunction",
+      "system": "Cooling",
+      "severity": "Medium",
+      "symptoms": "Engine won't reach normal temperature, overheating, poor fuel economy, Check Engine Light",
+      "common_causes": "Faulty coolant temperature sensor, Wiring problem, Corroded connector, Stuck thermostat, Low coolant level",
+      "generic_fixes": "Test ECT sensor resistance, Check ECT wiring, Inspect connector, Replace thermostat, Check coolant level"
+    },
+    {
+      "code": "P0116",
+      "description": "Engine Coolant Temperature (ECT) Circuit Range/Performance",
+      "system": "Cooling",
+      "severity": "Medium",
+      "symptoms": "Engine takes long to warm up or overheats, Check Engine Light, poor fuel economy",
+      "common_causes": "Stuck open thermostat, Faulty coolant temperature sensor, Low coolant, Cooling fan always on, Wiring issue",
+      "generic_fixes": "Replace thermostat, Test coolant temperature sensor, Check coolant level, Verify cooling fan operation, Inspect ECT wiring"
+    },
+    {
+      "code": "P0117",
+      "description": "Engine Coolant Temperature (ECT) Circuit Low Input",
+      "system": "Cooling",
+      "severity": "Medium",
+      "symptoms": "Check Engine Light, engine runs rich, poor fuel economy, may not start when cold",
+      "common_causes": "Short to ground in ECT circuit, Faulty coolant temperature sensor, Wiring problem, ECM fault",
+      "generic_fixes": "Test ECT sensor resistance, Check for shorts to ground, Inspect ECT wiring, Replace coolant temperature sensor, Verify ECM operation"
+    },
+    {
+      "code": "P0118",
+      "description": "Engine Coolant Temperature (ECT) Circuit High Input",
+      "system": "Cooling",
+      "severity": "Medium",
+      "symptoms": "Check Engine Light, hard starting, engine runs lean, poor performance",
+      "common_causes": "Open circuit, Faulty coolant temperature sensor, Broken wiring, Poor connector, ECT sensor unplugged",
+      "generic_fixes": "Test ECT sensor resistance, Check for open circuits, Inspect connector, Replace coolant temperature sensor, Verify sensor is plugged in"
+    },
+    {
+      "code": "P0120",
+      "description": "Throttle Position Sensor/Switch Circuit Malfunction",
+      "system": "Fuel & Air",
+      "severity": "High",
+      "symptoms": "Poor acceleration, stalling, erratic idle, Check Engine Light, limp mode",
+      "common_causes": "Faulty throttle position sensor, Wiring problem, Corroded connector, Bad throttle body, ECM fault",
+      "generic_fixes": "Test TPS voltage, Clean throttle body, Check TPS wiring, Replace throttle position sensor, Calibrate TPS"
+    },
+    {
+      "code": "P0121",
+      "description": "Throttle Position Sensor/Switch Circuit Range/Performance",
+      "system": "Fuel & Air",
+      "severity": "High",
+      "symptoms": "Hesitation, stalling, poor acceleration, limp mode, Check Engine Light",
+      "common_causes": "Faulty TPS, Dirty throttle body, Carbon buildup, TPS misadjustment, Wiring issue",
+      "generic_fixes": "Clean throttle body thoroughly, Test TPS readings with scanner, Adjust or replace TPS, Check TPS wiring, Perform TPS relearn procedure"
+    },
+    {
+      "code": "P0122",
+      "description": "Throttle Position Sensor/Switch Circuit Low Input",
+      "system": "Fuel & Air",
+      "severity": "High",
+      "symptoms": "Engine won't rev, limp mode, stalling, Check Engine Light",
+      "common_causes": "Short to ground in TPS circuit, Faulty TPS, Wiring problem, Bad throttle body, ECM fault",
+      "generic_fixes": "Test TPS voltage, Check for shorts to ground, Inspect TPS wiring, Replace throttle position sensor, Test throttle body"
+    },
+    {
+      "code": "P0123",
+      "description": "Throttle Position Sensor/Switch Circuit High Input",
+      "system": "Fuel & Air",
+      "severity": "High",
+      "symptoms": "High idle, poor fuel economy, lack of power, Check Engine Light",
+      "common_causes": "Open circuit, Faulty TPS, Broken wiring, Loose connector, TPS unplugged",
+      "generic_fixes": "Test TPS voltage, Check for open circuits, Inspect connector, Replace throttle position sensor, Verify TPS is plugged in"
+    },
+    {
+      "code": "P0125",
+      "description": "Insufficient Coolant Temperature for Closed Loop Fuel Control",
+      "system": "Cooling",
+      "severity": "Low",
+      "symptoms": "Check Engine Light, poor fuel economy, engine takes long to warm up",
+      "common_causes": "Stuck open thermostat, Faulty coolant temperature sensor, Low coolant, Cooling system problem, ECM fault",
+      "generic_fixes": "Replace thermostat, Test coolant temperature sensor, Check coolant level, Verify proper coolant mixture, Inspect cooling system"
+    },
+    {
+      "code": "P0128",
+      "description": "Coolant Thermostat (Coolant Temperature Below Thermostat Regulating Temperature)",
+      "system": "Cooling",
+      "severity": "Low",
+      "symptoms": "Check Engine Light, poor heater performance, poor fuel economy, engine runs cool",
+      "common_causes": "Stuck open thermostat, Faulty coolant temperature sensor, Low coolant, Cooling fan always on, Incorrect thermostat installed",
+      "generic_fixes": "Replace thermostat, Test coolant temperature sensor, Check coolant level, Verify cooling fan operation, Install correct thermostat rating"
+    },
+    {
+      "code": "P0131",
+      "description": "O2 Sensor Circuit Low Voltage (Bank 1 Sensor 1)",
+      "system": "Fuel & Air",
+      "severity": "Medium",
+      "symptoms": "Check Engine Light, poor fuel economy, rough idle, engine runs rich",
+      "common_causes": "Faulty oxygen sensor, Exhaust leak near sensor, Short to ground, Wiring problem, Contaminated sensor",
+      "generic_fixes": "Replace oxygen sensor, Check for exhaust leaks, Inspect wiring for shorts, Clean sensor if possible, Verify sensor heater operation"
+    },
+    {
+      "code": "P0132",
+      "description": "O2 Sensor Circuit High Voltage (Bank 1 Sensor 1)",
+      "system": "Fuel & Air",
+      "severity": "Medium",
+      "symptoms": "Check Engine Light, poor fuel economy, rough idle, engine runs lean",
+      "common_causes": "Faulty oxygen sensor, Short to power, Exhaust leak, Fuel pressure too high, Contaminated sensor",
+      "generic_fixes": "Replace oxygen sensor, Check wiring for shorts to power, Inspect for exhaust leaks, Test fuel pressure, Clean or replace sensor"
+    },
+    {
+      "code": "P0133",
+      "description": "O2 Sensor Circuit Slow Response (Bank 1 Sensor 1)",
+      "system": "Fuel & Air",
+      "severity": "Medium",
+      "symptoms": "Check Engine Light, poor fuel economy, sluggish acceleration",
+      "common_causes": "Worn oxygen sensor, Contaminated sensor, Exhaust leak, Wiring problem, Fuel system issue",
+      "generic_fixes": "Replace oxygen sensor, Check for exhaust leaks near sensor, Inspect sensor wiring, Test fuel pressure and injectors, Verify sensor heater operation"
+    },
+    {
+      "code": "P0134",
+      "description": "O2 Sensor Circuit No Activity Detected (Bank 1 Sensor 1)",
+      "system": "Fuel & Air",
+      "severity": "Medium",
+      "symptoms": "Check Engine Light, poor fuel economy, rough idle",
+      "common_causes": "Faulty oxygen sensor, Open circuit, Blown fuse, Wiring problem, Failed sensor heater",
+      "generic_fixes": "Replace oxygen sensor, Check fuses, Test sensor heater circuit, Inspect wiring, Verify sensor power and ground"
+    },
+    {
+      "code": "P0135",
+      "description": "O2 Sensor Heater Circuit Malfunction (Bank 1 Sensor 1)",
+      "system": "Fuel & Air",
+      "severity": "Low",
+      "symptoms": "Check Engine Light, possible rough idle when cold, increased emissions",
+      "common_causes": "Faulty oxygen sensor heater, Blown fuse, Wiring problem, Bad relay, Open circuit",
+      "generic_fixes": "Test sensor heater resistance, Check fuses and relays, Inspect heater circuit wiring, Replace oxygen sensor, Verify power supply"
+    },
+    {
+      "code": "P0136",
+      "description": "O2 Sensor Circuit Malfunction (Bank 1 Sensor 2)",
+      "system": "Fuel & Air",
+      "severity": "Low",
+      "symptoms": "Check Engine Light, may affect fuel economy",
+      "common_causes": "Faulty downstream oxygen sensor, Wiring problem, Exhaust leak, Corroded connector, ECM fault",
+      "generic_fixes": "Replace downstream oxygen sensor, Check sensor wiring, Inspect for exhaust leaks, Clean connector, Test sensor voltage"
+    },
+    {
+      "code": "P0137",
+      "description": "O2 Sensor Circuit Low Voltage (Bank 1 Sensor 2)",
+      "system": "Fuel & Air",
+      "severity": "Low",
+      "symptoms": "Check Engine Light, possible catalyst efficiency issues",
+      "common_causes": "Faulty downstream oxygen sensor, Short to ground, Wiring problem, Exhaust leak after catalyst",
+      "generic_fixes": "Replace downstream oxygen sensor, Check wiring for shorts, Inspect for exhaust leaks, Test sensor voltage, Clean sensor connector"
+    },
+    {
+      "code": "P0138",
+      "description": "O2 Sensor Circuit High Voltage (Bank 1 Sensor 2)",
+      "system": "Fuel & Air",
+      "severity": "Low",
+      "symptoms": "Check Engine Light, possible catalyst efficiency issues",
+      "common_causes": "Faulty downstream oxygen sensor, Short to power, Wiring problem, Exhaust leak after catalyst",
+      "generic_fixes": "Replace downstream oxygen sensor, Check wiring for shorts to power, Inspect for exhaust leaks, Test sensor voltage"
+    },
+    {
+      "code": "P0140",
+      "description": "O2 Sensor Circuit No Activity Detected (Bank 1 Sensor 2)",
+      "system": "Fuel & Air",
+      "severity": "Low",
+      "symptoms": "Check Engine Light, catalyst monitoring disabled",
+      "common_causes": "Faulty downstream oxygen sensor, Open circuit, Blown fuse, Wiring problem, Failed sensor heater",
+      "generic_fixes": "Replace downstream oxygen sensor, Check fuses, Test wiring, Verify sensor heater operation, Check power and ground"
+    },
+    {
+      "code": "P0141",
+      "description": "O2 Sensor Heater Circuit Malfunction (Bank 1 Sensor 2)",
+      "system": "Fuel & Air",
+      "severity": "Low",
+      "symptoms": "Check Engine Light, possible increased emissions",
+      "common_causes": "Faulty oxygen sensor heater, Blown fuse, Wiring problem, Bad relay, Open circuit",
+      "generic_fixes": "Test sensor heater resistance, Check fuses and relays, Inspect heater wiring, Replace downstream oxygen sensor, Verify power supply"
+    },
+    {
+      "code": "P0201",
+      "description": "Injector Circuit Malfunction - Cylinder 1",
+      "system": "Fuel & Air",
+      "severity": "High",
+      "symptoms": "Rough idle, misfire cylinder 1, poor performance, Check Engine Light",
+      "common_causes": "Faulty fuel injector, Wiring problem, Corroded connector, ECM driver fault, Short or open circuit",
+      "generic_fixes": "Test fuel injector resistance, Check injector wiring, Swap injectors to verify, Clean or replace injector #1, Test ECM injector driver"
+    },
+    {
+      "code": "P0202",
+      "description": "Injector Circuit Malfunction - Cylinder 2",
+      "system": "Fuel & Air",
+      "severity": "High",
+      "symptoms": "Rough idle, misfire cylinder 2, poor performance, Check Engine Light",
+      "common_causes": "Faulty fuel injector, Wiring problem, Corroded connector, ECM driver fault, Short or open circuit",
+      "generic_fixes": "Test fuel injector resistance, Check injector wiring, Swap injectors to verify, Clean or replace injector #2, Test ECM injector driver"
+    },
+    {
+      "code": "P0203",
+      "description": "Injector Circuit Malfunction - Cylinder 3",
+      "system": "Fuel & Air",
+      "severity": "High",
+      "symptoms": "Rough idle, misfire cylinder 3, poor performance, Check Engine Light",
+      "common_causes": "Faulty fuel injector, Wiring problem, Corroded connector, ECM driver fault, Short or open circuit",
+      "generic_fixes": "Test fuel injector resistance, Check injector wiring, Swap injectors to verify, Clean or replace injector #3, Test ECM injector driver"
+    },
+    {
+      "code": "P0204",
+      "description": "Injector Circuit Malfunction - Cylinder 4",
+      "system": "Fuel & Air",
+      "severity": "High",
+      "symptoms": "Rough idle, misfire cylinder 4, poor performance, Check Engine Light",
+      "common_causes": "Faulty fuel injector, Wiring problem, Corroded connector, ECM driver fault, Short or open circuit",
+      "generic_fixes": "Test fuel injector resistance, Check injector wiring, Swap injectors to verify, Clean or replace injector #4, Test ECM injector driver"
+    },
+    {
+      "code": "P0220",
+      "description": "Throttle/Pedal Position Sensor/Switch B Circuit Malfunction",
+      "system": "Fuel & Air",
+      "severity": "High",
+      "symptoms": "Poor acceleration, limp mode, stalling, Check Engine Light",
+      "common_causes": "Faulty accelerator pedal position sensor, Wiring problem, Corroded connector, Throttle body fault, ECM issue",
+      "generic_fixes": "Test accelerator pedal sensor voltage, Clean throttle body, Check sensor wiring, Replace pedal position sensor, Perform relearn procedure"
+    },
+    {
+      "code": "P0234",
+      "description": "Engine Overboost Condition (Turbocharger/Supercharger)",
+      "system": "Boost Control",
+      "severity": "High",
+      "symptoms": "Check Engine Light, loss of power, limp mode, possible engine knock",
+      "common_causes": "Faulty wastegate, Stuck wastegate actuator, Boost control solenoid failure, Boost leak, Faulty boost pressure sensor",
+      "generic_fixes": "Test wastegate operation, Check boost control solenoid, Inspect for boost leaks, Replace boost pressure sensor, Verify turbo operation"
+    },
+    {
+      "code": "P0299",
+      "description": "Turbocharger/Supercharger Underboost Condition",
+      "system": "Boost Control",
+      "severity": "Medium",
+      "symptoms": "Lack of power, sluggish acceleration, Check Engine Light",
+      "common_causes": "Boost leak, Faulty turbocharger, Stuck wastegate, Clogged air filter, Exhaust restriction, Faulty boost sensor",
+      "generic_fixes": "Check for boost leaks, Inspect turbocharger, Test wastegate operation, Replace air filter, Check exhaust for restrictions, Test boost sensor"
+    },
+    {
+      "code": "P0335",
+      "description": "Crankshaft Position Sensor A Circuit Malfunction",
+      "system": "Ignition",
+      "severity": "High",
+      "symptoms": "No start, stalling, rough idle, Check Engine Light, intermittent starting",
+      "common_causes": "Faulty crankshaft position sensor, Wiring problem, Loose sensor, Damaged reluctor wheel, Excessive air gap, ECM fault",
+      "generic_fixes": "Replace crankshaft position sensor, Check sensor wiring, Verify sensor mounting, Inspect reluctor wheel, Adjust air gap, Test ECM"
+    },
+    {
+      "code": "P0336",
+      "description": "Crankshaft Position Sensor A Circuit Range/Performance",
+      "system": "Ignition",
+      "severity": "High",
+      "symptoms": "Rough idle, hesitation, poor acceleration, stalling, Check Engine Light",
+      "common_causes": "Worn crankshaft position sensor, Damaged reluctor wheel, Excessive air gap, Timing chain/belt worn, Wiring issue",
+      "generic_fixes": "Replace crankshaft position sensor, Inspect reluctor wheel, Check timing chain/belt, Adjust sensor air gap, Test sensor signal"
+    },
+    {
+      "code": "P0340",
+      "description": "Camshaft Position Sensor Circuit Malfunction",
+      "system": "Ignition",
+      "severity": "High",
+      "symptoms": "No start, stalling, rough idle, Check Engine Light, poor performance",
+      "common_causes": "Faulty camshaft position sensor, Wiring problem, Loose sensor, Damaged reluctor wheel, Timing problem, ECM fault",
+      "generic_fixes": "Replace camshaft position sensor, Check sensor wiring, Verify sensor mounting, Inspect timing, Test sensor signal, Verify reluctor wheel"
+    },
+    {
+      "code": "P0341",
+      "description": "Camshaft Position Sensor Circuit Range/Performance",
+      "system": "Ignition",
+      "severity": "High",
+      "symptoms": "Rough idle, poor performance, stalling, Check Engine Light, hard starting",
+      "common_causes": "Worn camshaft position sensor, Timing chain/belt worn or jumped, Damaged reluctor wheel, Wiring issue, Oil contamination",
+      "generic_fixes": "Replace camshaft position sensor, Verify timing chain/belt position, Inspect reluctor wheel, Check sensor wiring, Clean sensor area"
+    },
+    {
+      "code": "P0350",
+      "description": "Ignition Coil Primary/Secondary Circuit Malfunction",
+      "system": "Ignition",
+      "severity": "High",
+      "symptoms": "Misfire, rough idle, poor acceleration, Check Engine Light",
+      "common_causes": "Faulty ignition coil, Wiring problem, Bad spark plug, Short circuit, ECM driver fault",
+      "generic_fixes": "Test ignition coil resistance, Check coil wiring, Replace spark plugs, Test coil primary/secondary circuits, Swap coils to verify"
+    },
+    {
+      "code": "P0351",
+      "description": "Ignition Coil A Primary/Secondary Circuit Malfunction",
+      "system": "Ignition",
+      "severity": "High",
+      "symptoms": "Misfire cylinder 1, rough idle, Check Engine Light flashing",
+      "common_causes": "Faulty ignition coil, Wiring problem, Bad spark plug, Short circuit, ECM driver fault",
+      "generic_fixes": "Replace ignition coil #1, Test coil resistance, Check coil wiring, Replace spark plug #1, Swap coils to verify"
+    },
+    {
+      "code": "P0352",
+      "description": "Ignition Coil B Primary/Secondary Circuit Malfunction",
+      "system": "Ignition",
+      "severity": "High",
+      "symptoms": "Misfire cylinder 2, rough idle, Check Engine Light flashing",
+      "common_causes": "Faulty ignition coil, Wiring problem, Bad spark plug, Short circuit, ECM driver fault",
+      "generic_fixes": "Replace ignition coil #2, Test coil resistance, Check coil wiring, Replace spark plug #2, Swap coils to verify"
+    },
+    {
+      "code": "P0353",
+      "description": "Ignition Coil C Primary/Secondary Circuit Malfunction",
+      "system": "Ignition",
+      "severity": "High",
+      "symptoms": "Misfire cylinder 3, rough idle, Check Engine Light flashing",
+      "common_causes": "Faulty ignition coil, Wiring problem, Bad spark plug, Short circuit, ECM driver fault",
+      "generic_fixes": "Replace ignition coil #3, Test coil resistance, Check coil wiring, Replace spark plug #3, Swap coils to verify"
+    },
+    {
+      "code": "P0354",
+      "description": "Ignition Coil D Primary/Secondary Circuit Malfunction",
+      "system": "Ignition",
+      "severity": "High",
+      "symptoms": "Misfire cylinder 4, rough idle, Check Engine Light flashing",
+      "common_causes": "Faulty ignition coil, Wiring problem, Bad spark plug, Short circuit, ECM driver fault",
+      "generic_fixes": "Replace ignition coil #4, Test coil resistance, Check coil wiring, Replace spark plug #4, Swap coils to verify"
+    },
+    {
+      "code": "P0400",
+      "description": "Exhaust Gas Recirculation (EGR) Flow Malfunction",
+      "system": "Emissions",
+      "severity": "Low",
+      "symptoms": "Check Engine Light, possible rough idle, failed emissions test",
+      "common_causes": "Clogged EGR passages, Faulty EGR valve, Bad EGR solenoid, Carbon buildup, Vacuum leak",
+      "generic_fixes": "Clean EGR valve and passages, Test EGR valve operation, Check EGR solenoid, Inspect vacuum lines, Remove carbon deposits"
+    },
+    {
+      "code": "P0403",
+      "description": "Exhaust Gas Recirculation (EGR) Circuit Malfunction",
+      "system": "Emissions",
+      "severity": "Low",
+      "symptoms": "Check Engine Light, possible rough idle or stalling",
+      "common_causes": "Faulty EGR solenoid, Wiring problem, Corroded connector, Short circuit, ECM fault",
+      "generic_fixes": "Test EGR solenoid operation, Check solenoid wiring, Clean connector, Replace EGR solenoid, Verify ECM grounds"
+    },
+    {
+      "code": "P0404",
+      "description": "Exhaust Gas Recirculation (EGR) Circuit Range/Performance",
+      "system": "Emissions",
+      "severity": "Low",
+      "symptoms": "Check Engine Light, rough idle, stalling, hesitation",
+      "common_causes": "Carbon buildup in EGR system, Faulty EGR valve, Bad position sensor, Vacuum leak, Clogged passages",
+      "generic_fixes": "Clean EGR valve and passages, Test EGR position sensor, Check vacuum system, Replace EGR valve, Remove carbon deposits"
+    },
+    {
+      "code": "P0405",
+      "description": "Exhaust Gas Recirculation (EGR) Sensor A Circuit Low",
+      "system": "Emissions",
+      "severity": "Low",
+      "symptoms": "Check Engine Light, possible rough idle",
+      "common_causes": "Faulty EGR position sensor, Short to ground, Wiring problem, Bad EGR valve, ECM fault",
+      "generic_fixes": "Test EGR position sensor, Check wiring for shorts, Clean sensor, Replace EGR valve assembly, Verify ECM operation"
+    },
+    {
+      "code": "P0406",
+      "description": "Exhaust Gas Recirculation (EGR) Sensor A Circuit High",
+      "system": "Emissions",
+      "severity": "Low",
+      "symptoms": "Check Engine Light, possible rough idle",
+      "common_causes": "Faulty EGR position sensor, Open circuit, Wiring problem, Poor connection, ECM fault",
+      "generic_fixes": "Test EGR position sensor, Check for open circuits, Inspect connector, Replace EGR valve assembly, Test ECM"
+    },
+    {
+      "code": "P0410",
+      "description": "Secondary Air Injection System Malfunction",
+      "system": "Emissions",
+      "severity": "Low",
+      "symptoms": "Check Engine Light, increased emissions, possible failed emissions test",
+      "common_causes": "Faulty air pump, Bad check valve, Vacuum leak, Electrical problem, Clogged passages",
+      "generic_fixes": "Test air injection pump, Check check valve operation, Inspect vacuum lines, Test pump relay and fuse, Clean air passages"
+    },
+    {
+      "code": "P0411",
+      "description": "Secondary Air Injection System Incorrect Flow Detected",
+      "system": "Emissions",
+      "severity": "Low",
+      "symptoms": "Check Engine Light, rough idle when cold, increased emissions",
+      "common_causes": "Faulty air pump, Bad check valve, Blocked passages, Air leak, Faulty switching valve",
+      "generic_fixes": "Test air pump operation, Replace check valve, Clean air injection passages, Check for air leaks, Test switching valve"
+    },
+    {
+      "code": "P0440",
+      "description": "Evaporative Emission Control System Malfunction",
+      "system": "Emissions",
+      "severity": "Low",
+      "symptoms": "Check Engine Light, possible fuel smell",
+      "common_causes": "Loose gas cap, EVAP system leak, Faulty purge valve, Vent valve problem, Cracked hose",
+      "generic_fixes": "Tighten gas cap, Inspect EVAP hoses, Test purge valve, Check vent valve, Perform smoke test"
+    },
+    {
+      "code": "P0441",
+      "description": "Evaporative Emission Control System Incorrect Purge Flow",
+      "system": "Emissions",
+      "severity": "Low",
+      "symptoms": "Check Engine Light, rough idle, possible fuel smell",
+      "common_causes": "Faulty purge valve, Vacuum leak, Restricted EVAP line, Faulty vent valve, Canister problem",
+      "generic_fixes": "Test purge valve operation, Check for vacuum leaks, Inspect EVAP lines, Test vent valve, Replace charcoal canister if needed"
+    },
+    {
+      "code": "P0444",
+      "description": "Evaporative Emission Control System Purge Control Valve Circuit Open",
+      "system": "Emissions",
+      "severity": "Low",
+      "symptoms": "Check Engine Light",
+      "common_causes": "Open circuit, Faulty purge valve, Broken wiring, Blown fuse, Poor connection",
+      "generic_fixes": "Test purge valve circuit, Check fuse, Inspect wiring for breaks, Test purge valve, Verify connector"
+    },
+    {
+      "code": "P0445",
+      "description": "Evaporative Emission Control System Purge Control Valve Circuit Shorted",
+      "system": "Emissions",
+      "severity": "Low",
+      "symptoms": "Check Engine Light, possible rough idle",
+      "common_causes": "Short circuit, Faulty purge valve, Wiring problem, ECM fault",
+      "generic_fixes": "Test purge valve circuit for shorts, Check wiring, Replace purge valve, Verify ECM grounds"
+    },
+    {
+      "code": "P0446",
+      "description": "Evaporative Emission Control System Vent Control Circuit Malfunction",
+      "system": "Emissions",
+      "severity": "Low",
+      "symptoms": "Check Engine Light, difficulty fueling",
+      "common_causes": "Faulty vent valve, Wiring problem, Restricted vent line, Corroded connector, ECM fault",
+      "generic_fixes": "Test vent valve operation, Check vent valve wiring, Inspect vent line, Clean connector, Replace vent valve"
+    },
+    {
+      "code": "P0450",
+      "description": "Evaporative Emission Control System Pressure Sensor Malfunction",
+      "system": "Emissions",
+      "severity": "Low",
+      "symptoms": "Check Engine Light",
+      "common_causes": "Faulty EVAP pressure sensor, Wiring problem, Corroded connector, Vacuum leak, ECM fault",
+      "generic_fixes": "Test EVAP pressure sensor, Check sensor wiring, Inspect connector, Check for vacuum leaks, Replace pressure sensor"
+    },
+    {
+      "code": "P0451",
+      "description": "Evaporative Emission Control System Pressure Sensor Range/Performance",
+      "system": "Emissions",
+      "severity": "Low",
+      "symptoms": "Check Engine Light",
+      "common_causes": "Faulty EVAP pressure sensor, EVAP leak, Restricted line, Bad purge valve, Vent valve stuck",
+      "generic_fixes": "Test pressure sensor readings, Check for EVAP leaks, Inspect EVAP lines, Test purge and vent valves, Replace pressure sensor"
+    },
+    {
+      "code": "P0453",
+      "description": "Evaporative Emission Control System Pressure Sensor High Input",
+      "system": "Emissions",
+      "severity": "Low",
+      "symptoms": "Check Engine Light",
+      "common_causes": "Open circuit, Faulty pressure sensor, Broken wiring, Poor connection, Sensor unplugged",
+      "generic_fixes": "Test pressure sensor circuit, Check for open circuits, Inspect connector, Replace EVAP pressure sensor, Verify sensor is connected"
+    },
+    {
+      "code": "P0456",
+      "description": "Evaporative Emission System - Small Leak Detected",
+      "system": "Emissions",
+      "severity": "Low",
+      "symptoms": "Check Engine Light, slight fuel smell",
+      "common_causes": "Loose gas cap, Small EVAP hose crack, Faulty purge valve, Leaking vent valve, Pinhole in canister",
+      "generic_fixes": "Tighten or replace gas cap, Inspect all EVAP hoses carefully, Test purge valve, Check vent valve, Perform smoke test"
+    },
+    {
+      "code": "P0457",
+      "description": "Evaporative Emission System Leak Detected (Fuel Cap Loose/Off)",
+      "system": "Emissions",
+      "severity": "Low",
+      "symptoms": "Check Engine Light, fuel smell",
+      "common_causes": "Loose gas cap, Missing gas cap, Damaged gas cap seal, Cross-threaded cap, Wrong cap installed",
+      "generic_fixes": "Tighten gas cap until it clicks, Inspect gas cap seal, Replace gas cap if damaged, Install correct OEM gas cap"
+    },
+    {
+      "code": "P0461",
+      "description": "Fuel Level Sensor Circuit Range/Performance",
+      "system": "Fuel & Air",
+      "severity": "Low",
+      "symptoms": "Inaccurate fuel gauge, Check Engine Light, fuel gauge stuck",
+      "common_causes": "Faulty fuel level sensor, Wiring problem, Bad fuel pump module, Corroded connector, Stuck float",
+      "generic_fixes": "Test fuel level sensor resistance, Check sensor wiring, Inspect fuel pump connector, Replace fuel level sensor, Clean fuel tank"
+    },
+    {
+      "code": "P0496",
+      "description": "Evaporative Emission System High Purge Flow",
+      "system": "Emissions",
+      "severity": "Low",
+      "symptoms": "Rough idle, stalling, Check Engine Light, fuel smell",
+      "common_causes": "Stuck open purge valve, Vacuum leak, Faulty purge solenoid, EVAP hose disconnected, Canister saturated",
+      "generic_fixes": "Test purge valve (should be closed at idle), Replace purge valve, Check vacuum lines, Inspect EVAP hoses, Replace charcoal canister"
+    },
+    {
+      "code": "P0501",
+      "description": "Vehicle Speed Sensor Range/Performance",
+      "system": "Transmission",
+      "severity": "Medium",
+      "symptoms": "Speedometer erratic, transmission problems, Check Engine Light, cruise control issues",
+      "common_causes": "Faulty VSS, Intermittent wiring, Bad wheel speed sensor, Transmission problem, ECM fault",
+      "generic_fixes": "Test vehicle speed sensor signal, Check VSS wiring, Test wheel speed sensors, Verify transmission operation, Replace VSS"
+    },
+    {
+      "code": "P0506",
+      "description": "Idle Control System RPM Lower Than Expected",
+      "system": "Fuel & Air",
+      "severity": "Medium",
+      "symptoms": "Low idle, stalling, engine dies when stopping, Check Engine Light",
+      "common_causes": "Dirty throttle body, Carbon buildup, Faulty idle air control valve, Vacuum leak, Throttle body fault",
+      "generic_fixes": "Clean throttle body thoroughly, Clean idle air control valve, Check for vacuum leaks, Perform idle relearn, Replace IAC valve if needed"
+    },
+    {
+      "code": "P0507",
+      "description": "Idle Control System RPM Higher Than Expected",
+      "system": "Fuel & Air",
+      "severity": "Medium",
+      "symptoms": "High idle, surging idle, Check Engine Light",
+      "common_causes": "Vacuum leak, Dirty throttle body, Faulty idle air control valve, Stuck throttle cable, Throttle body fault",
+      "generic_fixes": "Check for vacuum leaks, Clean throttle body, Test idle air control valve, Inspect throttle cable, Perform idle relearn procedure"
+    },
+    {
+      "code": "P0520",
+      "description": "Engine Oil Pressure Sensor/Switch Circuit Malfunction",
+      "system": "Lubrication",
+      "severity": "High",
+      "symptoms": "Oil pressure warning light, Check Engine Light, incorrect oil pressure gauge reading",
+      "common_causes": "Faulty oil pressure sensor, Wiring problem, Low oil level, Worn engine, Corroded connector",
+      "generic_fixes": "Test oil pressure sensor, Check engine oil level, Verify actual oil pressure with mechanical gauge, Check sensor wiring, Replace oil pressure sensor"
+    },
+    {
+      "code": "P0522",
+      "description": "Engine Oil Pressure Sensor/Switch Circuit Low Voltage",
+      "system": "Lubrication",
+      "severity": "High",
+      "symptoms": "Oil pressure warning light, Check Engine Light, gauge reads low",
+      "common_causes": "Low oil level, Faulty oil pressure sensor, Worn oil pump, Clogged oil passages, Short to ground",
+      "generic_fixes": "Check oil level immediately, Test oil pressure mechanically, Test sensor circuit, Check for shorts to ground, Replace oil pressure sensor"
+    },
+    {
+      "code": "P0523",
+      "description": "Engine Oil Pressure Sensor/Switch Circuit High Voltage",
+      "system": "Lubrication",
+      "severity": "Medium",
+      "symptoms": "Oil pressure gauge reads high, Check Engine Light",
+      "common_causes": "Faulty oil pressure sensor, Open circuit, Wiring problem, Poor connection, Sensor unplugged",
+      "generic_fixes": "Test oil pressure sensor circuit, Check for open circuits, Inspect connector, Verify sensor is connected, Replace oil pressure sensor"
+    },
+    {
+      "code": "P0560",
+      "description": "System Voltage Malfunction",
+      "system": "Electrical",
+      "severity": "Medium",
+      "symptoms": "Electrical issues, Check Engine Light, dim lights, hard starting",
+      "common_causes": "Weak battery, Faulty alternator, Loose battery cables, Bad voltage regulator, Electrical drain",
+      "generic_fixes": "Test battery and alternator, Check battery cables and connections, Test charging system voltage, Inspect for electrical drains, Replace battery or alternator"
+    },
+    {
+      "code": "P0603",
+      "description": "Internal Control Module Keep Alive Memory (KAM) Error",
+      "system": "ECM/PCM",
+      "severity": "High",
+      "symptoms": "Check Engine Light, loss of adaptive memory, poor performance, no start",
+      "common_causes": "Low battery voltage, ECM/PCM failure, Loose battery connection, Software corruption, Power interruption during programming",
+      "generic_fixes": "Check battery voltage, Test all ECM grounds, Reprogram ECM/PCM, Check battery connections, Replace ECM if faulty"
+    },
+    {
+      "code": "P0604",
+      "description": "Internal Control Module Random Access Memory (RAM) Error",
+      "system": "ECM/PCM",
+      "severity": "High",
+      "symptoms": "Check Engine Light, erratic behavior, no start, stalling",
+      "common_causes": "ECM/PCM failure, Low voltage, Software corruption, Electrical interference, Physical damage to ECM",
+      "generic_fixes": "Test ECM power and ground, Check for voltage spikes, Reprogram ECM, Shield ECM from interference, Replace ECM if damaged"
+    },
+    {
+      "code": "P0605",
+      "description": "Internal Control Module Read Only Memory (ROM) Error",
+      "system": "ECM/PCM",
+      "severity": "High",
+      "symptoms": "Check Engine Light, no start, engine won't run, limp mode",
+      "common_causes": "ECM/PCM failure, Software corruption, Failed reprogramming attempt, Power loss during update",
+      "generic_fixes": "Attempt to reprogram ECM, Verify stable battery voltage, Check ECM connections, Replace ECM if reprogram fails"
+    },
+    {
+      "code": "P0606",
+      "description": "ECM/PCM Processor Fault",
+      "system": "ECM/PCM",
+      "severity": "High",
+      "symptoms": "Check Engine Light, no start, poor performance, limp mode",
+      "common_causes": "ECM/PCM failure, Software malfunction, Electrical damage, Water intrusion, Physical damage",
+      "generic_fixes": "Test all ECM connections, Check for water damage, Attempt ECM reset, Reprogram if possible, Replace ECM"
+    },
+    {
+      "code": "P0615",
+      "description": "Starter Relay Circuit Malfunction",
+      "system": "Electrical",
+      "severity": "High",
+      "symptoms": "No start, no crank, Check Engine Light, clicking noise",
+      "common_causes": "Faulty starter relay, Wiring problem, Bad starter motor, Corroded connection, Weak battery",
+      "generic_fixes": "Test starter relay operation, Check relay wiring, Test starter motor, Clean all connections, Test battery voltage"
+    },
+    {
+      "code": "P0657",
+      "description": "Actuator Supply Voltage A Circuit/Open",
+      "system": "Electrical",
+      "severity": "Medium",
+      "symptoms": "Check Engine Light, various actuator malfunctions, limp mode",
+      "common_causes": "Blown fuse, Wiring problem, ECM fault, Short to ground, Open circuit",
+      "generic_fixes": "Check all fuses, Test actuator power supply circuits, Inspect wiring for damage, Test ECM, Check for shorts to ground"
+    },
+    {
+      "code": "P0685",
+      "description": "ECM/PCM Power Relay Control Circuit/Open",
+      "system": "Electrical",
+      "severity": "High",
+      "symptoms": "No start, stalling, Check Engine Light, electrical problems",
+      "common_causes": "Faulty main relay, Wiring problem, Blown fuse, Corroded connector, ECM fault",
+      "generic_fixes": "Test main relay operation, Check relay wiring, Inspect fuses, Clean connectors, Replace main relay"
+    },
+    {
+      "code": "P0701",
+      "description": "Transmission Control System Range/Performance",
+      "system": "Transmission",
+      "severity": "High",
+      "symptoms": "Transmission shifting problems, Check Engine Light, harsh shifts, limp mode",
+      "common_causes": "Transmission mechanical problem, Low fluid, TCM fault, Shift solenoid issue, Wiring problem",
+      "generic_fixes": "Check transmission fluid level and condition, Scan for transmission codes, Test shift solenoids, Inspect TCM wiring, Diagnose transmission mechanically"
+    },
+    {
+      "code": "P0705",
+      "description": "Transmission Range Sensor Circuit Malfunction (PRNDL Input)",
+      "system": "Transmission",
+      "severity": "High",
+      "symptoms": "Won't start in Park, no reverse lights, Check Engine Light, shifting problems",
+      "common_causes": "Faulty transmission range sensor, Wiring problem, Misadjusted linkage, Corroded connector, TCM fault",
+      "generic_fixes": "Test transmission range sensor, Adjust shift linkage, Check sensor wiring, Clean connector, Replace range sensor"
+    },
+    {
+      "code": "P0711",
+      "description": "Transmission Fluid Temperature Sensor Circuit Range/Performance",
+      "system": "Transmission",
+      "severity": "Medium",
+      "symptoms": "Check Engine Light, harsh shifts, transmission doesn't shift properly when cold",
+      "common_causes": "Faulty transmission fluid temperature sensor, Wiring problem, Low transmission fluid, Sensor short, TCM fault",
+      "generic_fixes": "Test transmission fluid temperature sensor, Check sensor wiring, Verify fluid level, Replace temperature sensor, Check TCM"
+    },
+    {
+      "code": "P0712",
+      "description": "Transmission Fluid Temperature Sensor Circuit Low Input",
+      "system": "Transmission",
+      "severity": "Medium",
+      "symptoms": "Check Engine Light, transmission may stay in low gear",
+      "common_causes": "Faulty temperature sensor, Short to ground, Wiring problem, Corroded connector, TCM fault",
+      "generic_fixes": "Test sensor resistance, Check for shorts to ground, Inspect wiring, Replace transmission fluid temperature sensor, Test TCM"
+    },
+    {
+      "code": "P0713",
+      "description": "Transmission Fluid Temperature Sensor Circuit High Input",
+      "system": "Transmission",
+      "severity": "Medium",
+      "symptoms": "Check Engine Light, transmission shifts late",
+      "common_causes": "Faulty temperature sensor, Open circuit, Broken wiring, Poor connection, Sensor unplugged",
+      "generic_fixes": "Test sensor resistance, Check for open circuits, Inspect connector, Verify sensor is plugged in, Replace temperature sensor"
+    },
+    {
+      "code": "P0720",
+      "description": "Output Speed Sensor Circuit Malfunction",
+      "system": "Transmission",
+      "severity": "High",
+      "symptoms": "Speedometer issues, transmission won't shift properly, Check Engine Light, limp mode",
+      "common_causes": "Faulty output speed sensor, Wiring problem, Transmission mechanical issue, Corroded connector, TCM fault",
+      "generic_fixes": "Test output speed sensor, Check sensor wiring, Inspect connector, Verify sensor operation, Check transmission mechanical condition"
+    },
+    {
+      "code": "P0741",
+      "description": "Torque Converter Clutch Circuit Performance or Stuck Off",
+      "system": "Transmission",
+      "severity": "Medium",
+      "symptoms": "Poor fuel economy, transmission slipping, overheating, Check Engine Light",
+      "common_causes": "Faulty torque converter, Bad TCC solenoid, Wiring problem, Low transmission fluid, Internal transmission issue",
+      "generic_fixes": "Check transmission fluid level, Test TCC solenoid, Inspect wiring, Perform transmission pressure tests, May require transmission rebuild"
+    },
+    {
+      "code": "P0743",
+      "description": "Torque Converter Clutch Circuit Electrical",
+      "system": "Transmission",
+      "severity": "Medium",
+      "symptoms": "Check Engine Light, poor fuel economy, transmission slipping",
+      "common_causes": "Faulty TCC solenoid, Wiring problem, Short or open circuit, Corroded connector, TCM fault",
+      "generic_fixes": "Test TCC solenoid operation, Check solenoid wiring, Inspect connector, Replace TCC solenoid, Test TCM"
+    },
+    {
+      "code": "P0750",
+      "description": "Shift Solenoid A Malfunction",
+      "system": "Transmission",
+      "severity": "High",
+      "symptoms": "Transmission won't shift, stuck in gear, Check Engine Light, harsh shifts",
+      "common_causes": "Faulty shift solenoid A, Wiring problem, Low transmission fluid, Internal transmission problem, TCM fault",
+      "generic_fixes": "Test shift solenoid A, Check solenoid wiring, Verify fluid level, Replace shift solenoid, Check transmission valve body"
+    },
+    {
+      "code": "P0755",
+      "description": "Shift Solenoid B Malfunction",
+      "system": "Transmission",
+      "severity": "High",
+      "symptoms": "Transmission won't shift properly, harsh shifts, Check Engine Light, limp mode",
+      "common_causes": "Faulty shift solenoid B, Wiring problem, Low transmission fluid, Internal transmission problem, TCM fault",
+      "generic_fixes": "Test shift solenoid B, Check solenoid wiring, Verify fluid level, Replace shift solenoid, Check transmission valve body"
+    },
+    {
+      "code": "P0760",
+      "description": "Shift Solenoid C Malfunction",
+      "system": "Transmission",
+      "severity": "High",
+      "symptoms": "Transmission shifting issues, Check Engine Light, limp mode, harsh shifts",
+      "common_causes": "Faulty shift solenoid C, Wiring problem, Low transmission fluid, Internal transmission problem, TCM fault",
+      "generic_fixes": "Test shift solenoid C, Check solenoid wiring, Verify fluid level, Replace shift solenoid, Inspect transmission valve body"
+    },
+    {
+      "code": "P0761",
+      "description": "Shift Solenoid C Performance or Stuck Off",
+      "system": "Transmission",
+      "severity": "High",
+      "symptoms": "Transmission won't shift into certain gears, Check Engine Light, limp mode",
+      "common_causes": "Stuck shift solenoid C, Internal transmission problem, Dirty transmission fluid, Valve body issue, Low fluid",
+      "generic_fixes": "Replace shift solenoid C, Change transmission fluid, Clean valve body, Check fluid level, May require transmission overhaul"
+    },
+    {
+      "code": "P0765",
+      "description": "Shift Solenoid D Malfunction",
+      "system": "Transmission",
+      "severity": "High",
+      "symptoms": "Transmission shifting problems, Check Engine Light, limp mode",
+      "common_causes": "Faulty shift solenoid D, Wiring problem, Low transmission fluid, Internal transmission issue, TCM fault",
+      "generic_fixes": "Test shift solenoid D, Check solenoid wiring, Verify fluid level, Replace shift solenoid, Inspect valve body"
+    },
+    {
+      "code": "P0770",
+      "description": "Shift Solenoid E Malfunction",
+      "system": "Transmission",
+      "severity": "High",
+      "symptoms": "Transmission won't shift, harsh shifts, Check Engine Light, limp mode",
+      "common_causes": "Faulty shift solenoid E, Wiring problem, Low transmission fluid, Internal transmission problem, TCM fault",
+      "generic_fixes": "Test shift solenoid E, Check solenoid wiring, Verify fluid level, Replace shift solenoid, Check transmission internals"
+    },
+    {
+      "code": "P1000",
+      "description": "OBD System Readiness Test Not Complete (Ford/Mazda/Jaguar)",
+      "system": "OBD System",
+      "severity": "Low",
+      "symptoms": "Check Engine Light, OBD monitors not ready for emissions test",
+      "common_causes": "Recent code clearing, Battery disconnected, ECM reset, Drive cycle not completed, Pending repairs",
+      "generic_fixes": "Complete drive cycle, Allow monitors to run, Drive vehicle under various conditions, May require multiple drive cycles"
+    },
+    {
+      "code": "P1100",
+      "description": "Mass Air Flow (MAF) Sensor Intermittent (Various Manufacturers)",
+      "system": "Fuel & Air",
+      "severity": "Medium",
+      "symptoms": "Intermittent stalling, rough idle, hesitation, Check Engine Light",
+      "common_causes": "Dirty MAF sensor, Loose MAF connection, Intermittent wiring, Air leak, Damaged MAF sensor",
+      "generic_fixes": "Clean MAF sensor, Check MAF connector, Test MAF wiring, Inspect for air leaks, Replace MAF if intermittent"
+    },
+    {
+      "code": "P1131",
+      "description": "Lack of HO2S Switch - Sensor Indicates Lean Bank 1 Sensor 1",
+      "system": "Fuel & Air",
+      "severity": "Medium",
+      "symptoms": "Check Engine Light, poor fuel economy, rough idle",
+      "common_causes": "Vacuum leak, Faulty oxygen sensor, Exhaust leak, Fuel system problem, MAF sensor issue",
+      "generic_fixes": "Check for vacuum leaks, Test oxygen sensor, Inspect for exhaust leaks, Verify fuel pressure, Clean or replace oxygen sensor"
+    },
+    {
+      "code": "P1400",
+      "description": "EGR Solenoid Circuit Fault (Various Manufacturers)",
+      "system": "Emissions",
+      "severity": "Low",
+      "symptoms": "Check Engine Light, rough idle, failed emissions test",
+      "common_causes": "Faulty EGR solenoid, Wiring problem, Corroded connector, Short circuit, ECM fault",
+      "generic_fixes": "Test EGR solenoid operation, Check solenoid wiring, Clean connector, Replace EGR solenoid, Verify ECM grounds"
+    },
+    {
+      "code": "P1404",
+      "description": "EGR Valve Closed Position Performance (GM)",
+      "system": "Emissions",
+      "severity": "Low",
+      "symptoms": "Check Engine Light, rough idle at cold start",
+      "common_causes": "Carbon buildup in EGR valve, Stuck EGR valve, Faulty position sensor, EGR passage clogged",
+      "generic_fixes": "Clean EGR valve thoroughly, Remove carbon deposits, Test EGR position sensor, Clean EGR passages, Replace EGR valve if stuck"
+    },
+    {
+      "code": "P1456",
+      "description": "Evaporative Emissions Control System Leak Detected (Fuel Tank System) - Honda/Acura",
+      "system": "Emissions",
+      "severity": "Low",
+      "symptoms": "Check Engine Light, fuel smell",
+      "common_causes": "Loose or damaged gas cap, Cracked EVAP canister, Faulty fuel tank pressure sensor, Leaking fuel tank seal",
+      "generic_fixes": "Tighten or replace gas cap, Inspect EVAP canister, Test fuel tank pressure sensor, Check fuel tank seals, Perform smoke test"
+    },
+    {
+      "code": "P2002",
+      "description": "Diesel Particulate Filter Efficiency Below Threshold (Bank 1)",
+      "system": "Emissions",
+      "severity": "Medium",
+      "symptoms": "Check Engine Light, reduced power, increased fuel consumption, black smoke",
+      "common_causes": "Clogged DPF filter, Faulty DPF sensor, Excessive short trips, Wrong oil type, Fuel quality issues",
+      "generic_fixes": "Perform DPF regeneration, Clean or replace DPF, Use correct diesel oil, Check DPF sensors, Drive at highway speeds"
+    },
+    {
+      "code": "P2004",
+      "description": "Intake Manifold Runner Control Stuck Open (Bank 1)",
+      "system": "Fuel & Air",
+      "severity": "Medium",
+      "symptoms": "Poor low-end torque, rough idle, Check Engine Light",
+      "common_causes": "Carbon buildup, Faulty IMRC actuator, Broken linkage, Vacuum leak, Failed solenoid",
+      "generic_fixes": "Clean intake manifold runners, Test IMRC actuator, Inspect linkage, Check vacuum lines, Replace IMRC solenoid"
+    },
+    {
+      "code": "P2006",
+      "description": "Intake Manifold Runner Control Stuck Closed (Bank 1)",
+      "system": "Fuel & Air",
+      "severity": "Medium",
+      "symptoms": "Loss of power at high RPM, Check Engine Light, poor acceleration",
+      "common_causes": "Carbon buildup, Faulty IMRC actuator, Broken linkage, Vacuum leak, Failed solenoid",
+      "generic_fixes": "Clean intake manifold runners, Test IMRC actuator, Inspect linkage, Check vacuum lines, Replace IMRC solenoid"
+    },
+    {
+      "code": "P2008",
+      "description": "Intake Manifold Runner Control Circuit/Open (Bank 1)",
+      "system": "Fuel & Air",
+      "severity": "Medium",
+      "symptoms": "Check Engine Light, possible performance issues",
+      "common_causes": "Open circuit, Faulty IMRC solenoid, Broken wiring, Blown fuse, Poor connection",
+      "generic_fixes": "Test IMRC solenoid circuit, Check fuses, Inspect wiring, Clean connector, Replace IMRC solenoid"
+    },
+    {
+      "code": "P2015",
+      "description": "Intake Manifold Runner Position Sensor/Switch Circuit Range/Performance (Bank 1)",
+      "system": "Fuel & Air",
+      "severity": "Medium",
+      "symptoms": "Check Engine Light, rough idle, poor performance",
+      "common_causes": "Faulty position sensor, Carbon buildup, Worn actuator, Wiring problem, Mechanical binding",
+      "generic_fixes": "Test position sensor, Clean intake manifold, Check actuator operation, Inspect wiring, Replace sensor or actuator"
+    },
+    {
+      "code": "P2100",
+      "description": "Throttle Actuator Control Motor Circuit/Open",
+      "system": "Fuel & Air",
+      "severity": "High",
+      "symptoms": "Throttle not responding, limp mode, Check Engine Light, no acceleration",
+      "common_causes": "Faulty electronic throttle body, Wiring problem, Open circuit, ECM fault, Throttle motor failure",
+      "generic_fixes": "Test throttle motor circuit, Check throttle body wiring, Clean throttle body, Replace electronic throttle body, Verify ECM operation"
+    },
+    {
+      "code": "P2101",
+      "description": "Throttle Actuator Control Motor Circuit Range/Performance",
+      "system": "Fuel & Air",
+      "severity": "High",
+      "symptoms": "Reduced power, limp mode, Check Engine Light, erratic throttle response",
+      "common_causes": "Dirty throttle body, Faulty throttle motor, Carbon buildup, Wiring issue, Throttle position sensor fault",
+      "generic_fixes": "Clean throttle body thoroughly, Test throttle motor, Check throttle position sensors, Perform throttle relearn, Replace throttle body if needed"
+    },
+    {
+      "code": "P2107",
+      "description": "Throttle Actuator Control Module Processor",
+      "system": "Fuel & Air",
+      "severity": "High",
+      "symptoms": "Throttle not working, limp mode, Check Engine Light, no acceleration",
+      "common_causes": "Electronic throttle body failure, ECM fault, Software problem, Electrical damage, Throttle control module failure",
+      "generic_fixes": "Reprogram throttle control module, Test ECM, Check all connections, Replace electronic throttle body, Update ECM software"
+    },
+    {
+      "code": "P2119",
+      "description": "Throttle Actuator Control Throttle Body Range/Performance",
+      "system": "Fuel & Air",
+      "severity": "High",
+      "symptoms": "Limp mode, reduced power, Check Engine Light, poor throttle response",
+      "common_causes": "Dirty throttle body, Carbon buildup, Faulty throttle motor, Throttle plate binding, Electronic throttle body failure",
+      "generic_fixes": "Clean throttle body and plate, Perform throttle relearn procedure, Test throttle motor, Check for mechanical binding, Replace throttle body"
+    },
+    {
+      "code": "P2122",
+      "description": "Throttle/Pedal Position Sensor/Switch D Circuit Low Input",
+      "system": "Fuel & Air",
+      "severity": "High",
+      "symptoms": "Reduced power, limp mode, Check Engine Light, poor acceleration",
+      "common_causes": "Faulty accelerator pedal sensor, Short to ground, Wiring problem, Corroded connector, ECM fault",
+      "generic_fixes": "Test accelerator pedal sensor voltage, Check for shorts to ground, Inspect wiring, Clean connector, Replace pedal position sensor"
+    },
+    {
+      "code": "P2123",
+      "description": "Throttle/Pedal Position Sensor/Switch D Circuit High Input",
+      "system": "Fuel & Air",
+      "severity": "High",
+      "symptoms": "Reduced power, limp mode, Check Engine Light, no acceleration",
+      "common_causes": "Faulty accelerator pedal sensor, Open circuit, Broken wiring, Poor connection, Sensor unplugged",
+      "generic_fixes": "Test accelerator pedal sensor voltage, Check for open circuits, Inspect connector, Verify sensor is plugged in, Replace pedal sensor"
+    },
+    {
+      "code": "P2135",
+      "description": "Throttle/Pedal Position Sensor/Switch A/B Voltage Correlation",
+      "system": "Fuel & Air",
+      "severity": "High",
+      "symptoms": "Limp mode, reduced power, Check Engine Light, throttle not responding",
+      "common_causes": "Faulty throttle position sensors, Dirty throttle body, Wiring problem, Electronic throttle body failure, ECM fault",
+      "generic_fixes": "Clean throttle body, Test both TPS voltages, Check TPS wiring, Perform throttle relearn, Replace electronic throttle body"
+    },
+    {
+      "code": "P2138",
+      "description": "Throttle/Pedal Position Sensor/Switch D/E Voltage Correlation",
+      "system": "Fuel & Air",
+      "severity": "High",
+      "symptoms": "Limp mode, reduced power, Check Engine Light, poor throttle response",
+      "common_causes": "Faulty accelerator pedal position sensor, Wiring problem, Corroded connector, ECM fault, Sensor calibration issue",
+      "generic_fixes": "Test pedal position sensor voltages, Check sensor wiring, Clean connector, Perform pedal sensor relearn, Replace accelerator pedal assembly"
+    },
+    {
+      "code": "P2177",
+      "description": "System Too Lean Off Idle Bank 1",
+      "system": "Fuel & Air",
+      "severity": "Medium",
+      "symptoms": "Hesitation off idle, rough acceleration, Check Engine Light, poor fuel economy",
+      "common_causes": "Vacuum leak, Faulty MAF sensor, Weak fuel pump, Fuel filter clogged, Faulty oxygen sensor",
+      "generic_fixes": "Check for vacuum leaks thoroughly, Test mass airflow sensor, Verify fuel pressure under load, Replace fuel filter, Test oxygen sensors"
+    },
+    {
+      "code": "P2178",
+      "description": "System Too Rich Off Idle Bank 1",
+      "system": "Fuel & Air",
+      "severity": "Medium",
+      "symptoms": "Hesitation off idle, black smoke, poor fuel economy, Check Engine Light",
+      "common_causes": "Leaking fuel injector, Faulty oxygen sensor, Excessive fuel pressure, Faulty MAF sensor, Clogged air filter",
+      "generic_fixes": "Test fuel injectors for leaks, Check fuel pressure, Test oxygen sensors, Clean or replace MAF sensor, Replace air filter"
+    },
+    {
+      "code": "P2188",
+      "description": "System Too Rich at Idle Bank 1",
+      "system": "Fuel & Air",
+      "severity": "Medium",
+      "symptoms": "Rough idle, black smoke at idle, strong fuel smell, Check Engine Light",
+      "common_causes": "Leaking fuel injector, Excessive fuel pressure, Faulty oxygen sensor, Faulty MAF sensor, EVAP purge valve stuck open",
+      "generic_fixes": "Test fuel injectors at idle, Check fuel pressure, Test oxygen sensors, Clean MAF sensor, Test EVAP purge valve"
+    },
+    {
+      "code": "P2195",
+      "description": "O2 Sensor Signal Stuck Lean (Bank 1 Sensor 1)",
+      "system": "Fuel & Air",
+      "severity": "Medium",
+      "symptoms": "Check Engine Light, poor fuel economy, rough idle",
+      "common_causes": "Vacuum leak, Exhaust leak near sensor, Faulty oxygen sensor, Fuel system problem, Contaminated sensor",
+      "generic_fixes": "Check for vacuum and exhaust leaks, Test fuel pressure, Replace oxygen sensor, Verify MAF sensor operation, Check for air leaks"
+    },
+    {
+      "code": "P2196",
+      "description": "O2 Sensor Signal Stuck Rich (Bank 1 Sensor 1)",
+      "system": "Fuel & Air",
+      "severity": "Medium",
+      "symptoms": "Check Engine Light, poor fuel economy, black smoke",
+      "common_causes": "Leaking fuel injector, Excessive fuel pressure, Faulty oxygen sensor, Fuel contamination, Coolant in combustion chamber",
+      "generic_fixes": "Test fuel injectors, Check fuel pressure, Replace oxygen sensor, Test for coolant leaks, Check for carbon buildup"
+    },
+    {
+      "code": "P2270",
+      "description": "O2 Sensor Signal Stuck Lean (Bank 1 Sensor 2)",
+      "system": "Fuel & Air",
+      "severity": "Low",
+      "symptoms": "Check Engine Light, possible catalyst efficiency code",
+      "common_causes": "Exhaust leak after catalyst, Faulty downstream oxygen sensor, Contaminated sensor, Air injection system problem",
+      "generic_fixes": "Check for exhaust leaks, Replace downstream oxygen sensor, Inspect air injection system, Test sensor operation"
+    },
+    {
+      "code": "P2271",
+      "description": "O2 Sensor Signal Stuck Rich (Bank 1 Sensor 2)",
+      "system": "Fuel & Air",
+      "severity": "Low",
+      "symptoms": "Check Engine Light, possible catalyst efficiency code",
+      "common_causes": "Faulty downstream oxygen sensor, Excessive fuel getting through catalyst, Contaminated sensor, Exhaust leak",
+      "generic_fixes": "Replace downstream oxygen sensor, Check for fuel system issues, Inspect for exhaust leaks, Test catalyst efficiency"
+    },
+    {
+      "code": "P2400",
+      "description": "EVAP Leak Detection Pump Control Circuit Open",
+      "system": "Emissions",
+      "severity": "Low",
+      "symptoms": "Check Engine Light",
+      "common_causes": "Faulty EVAP leak detection pump, Open circuit, Wiring problem, Blown fuse, Poor connection",
+      "generic_fixes": "Test leak detection pump circuit, Check fuses, Inspect wiring, Clean connector, Replace EVAP leak detection pump"
+    },
+    {
+      "code": "P2401",
+      "description": "EVAP Leak Detection Pump Control Circuit Low",
+      "system": "Emissions",
+      "severity": "Low",
+      "symptoms": "Check Engine Light",
+      "common_causes": "Short to ground, Faulty leak detection pump, Wiring problem, ECM fault",
+      "generic_fixes": "Test for shorts to ground, Check leak detection pump operation, Inspect wiring, Replace EVAP pump, Test ECM"
+    },
+    {
+      "code": "P2402",
+      "description": "EVAP Leak Detection Pump Control Circuit High",
+      "system": "Emissions",
+      "severity": "Low",
+      "symptoms": "Check Engine Light",
+      "common_causes": "Open circuit, Faulty leak detection pump, Broken wiring, Poor connection, Pump unplugged",
+      "generic_fixes": "Check for open circuits, Test leak detection pump, Inspect connector, Verify pump is connected, Replace EVAP pump"
+    },
+    {
+      "code": "P2413",
+      "description": "Exhaust Gas Recirculation System Performance",
+      "system": "Emissions",
+      "severity": "Low",
+      "symptoms": "Check Engine Light, rough idle, possible pinging under load",
+      "common_causes": "Carbon buildup in EGR system, Faulty EGR valve, Clogged EGR cooler, EGR position sensor fault, Vacuum leak",
+      "generic_fixes": "Clean EGR valve and passages, Clean EGR cooler, Test EGR position sensor, Check vacuum system, Remove carbon deposits"
+    },
+    {
+      "code": "P2610",
+      "description": "ECM/PCM Internal Engine Off Timer Performance",
+      "system": "ECM/PCM",
+      "severity": "Low",
+      "symptoms": "Check Engine Light, possible starting issues",
+      "common_causes": "ECM/PCM software issue, Battery disconnected recently, ECM fault, Power interruption",
+      "generic_fixes": "Reprogram ECM/PCM, Check battery connections, Verify stable power supply, Clear codes and retest, Replace ECM if persistent"
+    },
+    {
+      "code": "P3000",
+      "description": "Ignition System Fault (Manufacturer Specific)",
+      "system": "Ignition",
+      "severity": "High",
+      "symptoms": "Rough running, misfires, poor performance, Check Engine Light",
+      "common_causes": "Multiple ignition coil failures, Wiring harness problem, Bad spark plugs, ECM fault, Power supply issue to ignition",
+      "generic_fixes": "Test all ignition coils, Replace spark plugs, Check ignition power supply, Inspect wiring harness, Test ECM ignition drivers"
+    },
+    {
+      "code": "U0001",
+      "description": "High Speed CAN Communication Bus",
+      "system": "Network",
+      "severity": "Medium",
+      "symptoms": "Multiple system warnings, Check Engine Light, various features not working",
+      "common_causes": "CAN bus short or open, Module communication fault, Wiring problem, Damaged module, Termination resistor problem",
+      "generic_fixes": "Check CAN bus wiring, Test module communication, Verify termination resistors, Inspect for shorts or opens, Replace faulty module"
+    },
+    {
+      "code": "U0100",
+      "description": "Lost Communication with ECM/PCM",
+      "system": "Network",
+      "severity": "High",
+      "symptoms": "No start, Check Engine Light, multiple warnings, systems not functioning",
+      "common_causes": "ECM/PCM failure, CAN bus problem, Wiring issue, Power supply problem, Corroded connector",
+      "generic_fixes": "Check ECM power and ground, Test CAN bus circuits, Inspect connectors, Verify ECM operation, Replace ECM if faulty"
+    },
+    {
+      "code": "U0101",
+      "description": "Lost Communication with TCM",
+      "system": "Network",
+      "severity": "High",
+      "symptoms": "Transmission won't shift, Check Engine Light, no gear display",
+      "common_causes": "TCM failure, CAN bus problem, Wiring issue, Power supply problem, Corroded connector",
+      "generic_fixes": "Check TCM power and ground, Test CAN bus circuits, Inspect connectors, Verify TCM operation, Replace TCM if faulty"
+    },
+    {
+      "code": "U0121",
+      "description": "Lost Communication with Anti-Lock Brake System (ABS) Control Module",
+      "system": "Network",
+      "severity": "Medium",
+      "symptoms": "ABS warning light, Check Engine Light, ABS not functioning, traction control issues",
+      "common_causes": "ABS module failure, CAN bus problem, Wiring issue, Power supply problem, Corroded connector",
+      "generic_fixes": "Check ABS module power and ground, Test CAN bus circuits, Inspect connectors, Verify ABS module operation, Replace ABS module if faulty"
+    },
+    {
+      "code": "U0140",
+      "description": "Lost Communication with Body Control Module (BCM)",
+      "system": "Network",
+      "severity": "Medium",
+      "symptoms": "Various electrical features not working, Check Engine Light, multiple warnings",
+      "common_causes": "BCM failure, CAN bus problem, Wiring issue, Power supply problem, Corroded connector",
+      "generic_fixes": "Check BCM power and ground, Test CAN bus circuits, Inspect connectors, Verify BCM operation, Replace BCM if faulty"
+    },
+    {
+      "code": "U0155",
+      "description": "Lost Communication with Instrument Panel Cluster (IPC)",
+      "system": "Network",
+      "severity": "Low",
+      "symptoms": "Gauges not working, Check Engine Light, warning lights not functioning",
+      "common_causes": "IPC failure, CAN bus problem, Wiring issue, Power supply problem, Corroded connector",
+      "generic_fixes": "Check IPC power and ground, Test CAN bus circuits, Inspect connectors, Verify IPC operation, Replace instrument cluster if faulty"
+    }
+  ]
+}

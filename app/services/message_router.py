@@ -1,8 +1,10 @@
+from datetime import datetime
 from app.services.obd_service import OBDService, validate_obd_code
 from app.services.diagnose import diagnose
 from app.services.normalize import normalize_symptoms
 from app.utils.obd_parser import parse_message
 from app.models.diagnostic import DiagnosticResult, VehicleContext, SymptomDiagnosisResult
+from app.models.session import LastDiagnosis, SessionState
 from app.core.config import settings
 from app.core.logging import logger
 
@@ -35,7 +37,8 @@ class MessageRouter:
         self,
         raw_text: str,
         phone_hash: str,
-        request_id: str
+        request_id: str,
+        session: SessionState | None = None
     ) -> DiagnosticResult | SymptomDiagnosisResult | dict:
         """
         Parse message and route to appropriate diagnosis flow.
@@ -99,6 +102,23 @@ class MessageRouter:
                         )
                         # Continue with original causes
 
+                # Store diagnosis in session for followup context
+                if session:
+                    vehicle_str = " ".join(filter(None, [
+                        vehicle.make,
+                        vehicle.model,
+                        vehicle.year,
+                        vehicle.engine
+                    ])) or None
+
+                    session.last_diagnosis = LastDiagnosis(
+                        code=result.code,
+                        description=result.description,
+                        timestamp=datetime.utcnow(),
+                        vehicle_context=vehicle_str
+                    )
+                    logger.info("last_diagnosis_stored", code=result.code)
+
                 return result
             except Exception as e:
                 logger.error(
@@ -110,7 +130,42 @@ class MessageRouter:
                     "error": "Unable to diagnose code. Please try again."
                 }
 
-        # Route 2: Symptom-based diagnosis
+        # Route 2: Free-text followup with context
+        # If user is asking a followup question about their last diagnosis
+        if session and session.last_diagnosis and self.ai_client:
+            logger.info(
+                "routing_to_followup_with_context",
+                last_code=session.last_diagnosis.code
+            )
+            try:
+                # Build context from last diagnosis
+                context = f"""Previous diagnosis context:
+- OBD Code: {session.last_diagnosis.code}
+- Issue: {session.last_diagnosis.description}
+- Vehicle: {session.last_diagnosis.vehicle_context or 'Not specified'}
+
+User's followup question: {raw_text}
+
+Provide a helpful response based on the previous diagnosis context."""
+
+                response = await self.ai_client.complete(
+                    prompt=context,
+                    temperature=0.3,
+                    max_tokens=500
+                )
+
+                return {
+                    "reply": response,
+                    "type": "followup_response"
+                }
+            except Exception as e:
+                logger.error(
+                    "followup_with_context_failed",
+                    error=str(e)
+                )
+                # Fall through to symptom diagnosis
+
+        # Route 3: Symptom-based diagnosis
         symptoms = normalize_symptoms(raw_text)
         if symptoms:
             logger.info(
