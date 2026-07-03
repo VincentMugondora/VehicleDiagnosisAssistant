@@ -1,52 +1,51 @@
-# 🚀 START HERE - Vehicle Diagnosis Assistant
+# 🚀 Vehicle Diagnosis Assistant - Quick Start Guide
 
-Welcome! Your app is **95% ready** - just 3 steps to get it running.
+## ✅ Current Status: WhatsApp Connected!
+
+Your Baileys WhatsApp server is **connected and receiving messages**.
+However, the FastAPI backend is **NOT RUNNING**, so messages can't be processed.
 
 ---
 
-## ⚡ Quick Start (5 Minutes)
+## ⚡ Start the Backend NOW (1 Minute)
 
-### Step 1: Install Dependencies
-```bash
-pip install -r requirements.txt
+### Open a NEW Terminal Window and Run:
+
+**Option A - PowerShell (Recommended):**
+```powershell
+cd C:\Users\vinmu\Desktop\VehicleDiagnosisAssistant
+.\venv\Scripts\activate
+uvicorn app.main:app --host 0.0.0.0 --port 8001 --reload
 ```
 
-### Step 2: Create `.env` File
-```bash
-# Copy the example (already configured with your keys!)
-cp .env.example .env
+**Option B - Use the Startup Script:**
+```powershell
+.\start_backend.bat
 ```
 
-Your `.env` is already configured with:
-- ✅ Supabase credentials
-- ✅ Cohere API key  
-- ✅ AI enrichment enabled
-
-### Step 3: Setup Database
+**Option C - Git Bash:**
 ```bash
-# 1. Go to Supabase Dashboard: https://supabase.com/dashboard
-# 2. Select project: your-supabase-project-id
-# 3. Go to SQL Editor
-# 4. Paste contents of: supabase/migrations/001_initial_schema.sql
-# 5. Click "Run"
-# 6. Seed OBD codes:
-python scripts/seed_database.py
+./start_backend.sh
 ```
 
-### Step 4: Start Server
+### Verify It's Running:
+Open another terminal and test:
 ```bash
-uvicorn app.main:app --reload --port 8000
-```
-
-### Step 5: Test It!
-```bash
-curl http://localhost:8000/healthz
+curl http://localhost:8001/healthz
 ```
 
 **Expected:**
 ```json
 {"status": "ok", "version": "2.0.0", "env": "development"}
 ```
+
+### Test WhatsApp Integration:
+Send a message to your WhatsApp number:
+```
+P0420
+```
+
+You should get a detailed diagnostic response!
 
 ---
 

@@ -56,12 +56,26 @@ async def startup():
     )
 
     # Initialize Supabase client (validates connection)
+    from app.core.config import check_supabase_connectivity
+
+    # Check if Supabase is reachable
+    if not check_supabase_connectivity(settings.supabase_url):
+        logger.warning(
+            "supabase_unreachable",
+            url=settings.supabase_url,
+            message="Supabase is not reachable. Running in fallback mode without database."
+        )
+        settings.supabase_enabled = False
+        return
+
     try:
         get_supabase_client()
         logger.info("supabase_connected")
+        settings.supabase_enabled = True
     except Exception as e:
         logger.error("supabase_connection_failed", error=str(e))
-        raise
+        logger.warning("running_without_supabase", message="Continuing in fallback mode")
+        settings.supabase_enabled = False
 
 
 @app.get("/healthz")

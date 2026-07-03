@@ -1,4 +1,15 @@
 from pydantic_settings import BaseSettings
+import socket
+
+
+def check_supabase_connectivity(url: str) -> bool:
+    """Check if Supabase URL is reachable"""
+    try:
+        hostname = url.replace("https://", "").replace("http://", "").split("/")[0]
+        socket.gethostbyname(hostname)
+        return True
+    except (socket.gaierror, socket.error):
+        return False
 
 
 class Settings(BaseSettings):
@@ -42,6 +53,7 @@ class Settings(BaseSettings):
     ai_enrich_enabled: bool = False
     internet_fallback_enabled: bool = True
     auto_learn_codes: bool = True  # Enable dynamic code learning from web
+    supabase_enabled: bool = True  # Disable if Supabase is unreachable
 
     # Usage limits
     usage_limit_per_number: int = 20

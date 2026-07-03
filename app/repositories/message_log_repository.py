@@ -1,12 +1,14 @@
 from datetime import datetime, timedelta
 from supabase import Client
+from app.core.config import settings
 
 
 class MessageLogRepository:
     """Repository for message audit logs and rate limiting"""
 
-    def __init__(self, client: Client):
+    def __init__(self, client: Client | None):
         self.client = client
+        self._processed_messages = set()  # In-memory fallback for idempotency
 
     def count_recent(self, phone_hash: str, days: int) -> int:
         """
@@ -19,6 +21,9 @@ class MessageLogRepository:
         Returns:
             Count of messages
         """
+        if not settings.supabase_enabled or self.client is None:
+            return 0  # No rate limiting in fallback mode
+
         window_start = (datetime.utcnow() - timedelta(days=days)).isoformat()
         result = self.client.table("message_logs")\
             .select("*", count="exact")\
@@ -49,6 +54,10 @@ class MessageLogRepository:
             response_text: Bot response
             code: OBD code (if extracted)
         """
+        if not settings.supabase_enabled or self.client is None:
+            self._processed_messages.add(message_id)
+            return  # Skip audit logging in fallback mode
+
         self.client.table("message_logs").insert({
             "message_id": message_id,
             "phone_hash": phone_hash,
@@ -69,6 +78,10 @@ class MessageLogRepository:
         Returns:
             True if message exists in logs
         """
+        if not settings.supabase_enabled or self.client is None:
+            # Use in-memory set for idempotency in fallback mode
+            return message_id in self._processed_messages
+
         result = self.client.table("message_logs")\
             .select("id")\
             .eq("message_id", message_id)\

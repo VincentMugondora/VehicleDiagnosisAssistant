@@ -267,12 +267,13 @@ async function connectToWhatsApp() {
 
         sock = makeWASocket({
             auth: state,
-            printQRInTerminal: false,
+            printQRInTerminal: true,
             browser: ['Vehicle Diagnosis Assistant', 'Chrome', '1.0.0'],
             connectTimeoutMs: 60000,
             defaultQueryTimeoutMs: 60000,
             keepAliveIntervalMs: 30000,
-            logger: pino({ level: 'silent' })
+            logger: pino({ level: 'silent' }),
+            markOnlineOnConnect: true
         })
 
         sock.ev.on('creds.update', saveCreds)
@@ -281,14 +282,23 @@ async function connectToWhatsApp() {
             const { connection, lastDisconnect, qr } = update
 
             if (qr) {
-                logger.info('QR code received')
+                logger.info('QR code received - displaying in terminal')
                 console.log('\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━')
                 console.log('📱 SCAN THIS QR CODE WITH WHATSAPP')
                 console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n')
-                qrcode.generate(qr, { small: true })
+
+                // Generate QR code in terminal (printQRInTerminal also does this, but double display for visibility)
+                try {
+                    qrcode.generate(qr, { small: true })
+                } catch (qrError) {
+                    logger.error({ error: qrError.message }, 'Failed to generate QR code')
+                    console.log('QR Code Data:', qr)
+                }
+
                 console.log('\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━')
-                console.log('Open WhatsApp → Settings → Linked Devices')
-                console.log('Tap "Link a Device" and scan the code above')
+                console.log('📱 Open WhatsApp → Settings → Linked Devices')
+                console.log('📲 Tap "Link a Device" and scan the code above')
+                console.log('⏱️  QR code refreshes every 60 seconds')
                 console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n')
             }
 
@@ -401,6 +411,8 @@ async function connectToWhatsApp() {
                     requestId,
                     from,
                     error: error.message,
+                    code: error.code,
+                    backendUrl: CONFIG.BACKEND_URL,
                     stack: error.stack
                 }, 'Error processing message')
 

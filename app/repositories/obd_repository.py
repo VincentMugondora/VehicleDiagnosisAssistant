@@ -1,10 +1,12 @@
 from supabase import Client
+from app.core.config import settings
+from app.repositories.fallback_obd_data import get_fallback_code
 
 
 class OBDRepository:
     """Repository for OBD code lookups and vehicle overrides"""
 
-    def __init__(self, client: Client):
+    def __init__(self, client: Client | None):
         self.client = client
 
     def get_by_code(self, code: str) -> dict | None:
@@ -17,6 +19,10 @@ class OBDRepository:
         Returns:
             Dict with code info or None if not found
         """
+        # Use fallback data if Supabase is disabled
+        if not settings.supabase_enabled or self.client is None:
+            return get_fallback_code(code)
+
         result = self.client.table("obd_codes")\
             .select("*")\
             .eq("code", code.upper())\
@@ -44,6 +50,10 @@ class OBDRepository:
         Returns:
             Dict with override info or None if not found
         """
+        # No vehicle overrides in fallback mode
+        if not settings.supabase_enabled or self.client is None:
+            return None
+
         result = self.client.table("vehicle_overrides")\
             .select("*")\
             .eq("code", code.upper())\
