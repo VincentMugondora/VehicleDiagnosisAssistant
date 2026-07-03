@@ -21,6 +21,38 @@ class GeminiClient:
         """Initialize Gemini client with API key from config"""
         self.client = genai.Client(api_key=settings.gemini_api_key)
 
+    async def generate(
+        self,
+        prompt: str,
+        temperature: float = 0.3,
+        max_tokens: int = 1000
+    ) -> str:
+        """
+        Generate text using Gemini.
+
+        Args:
+            prompt: The prompt to send
+            temperature: Sampling temperature (0.0-1.0)
+            max_tokens: Maximum tokens to generate
+
+        Returns:
+            Generated text
+        """
+        try:
+            # Use generate_content - model name is already set in config
+            response = self.client.models.generate_content(
+                model=settings.gemini_model,
+                contents=prompt,
+                config={
+                    'temperature': temperature,
+                    'max_output_tokens': max_tokens
+                }
+            )
+            return response.text
+        except Exception as e:
+            logger.error("gemini_generate_failed", error=str(e))
+            raise
+
     def rank_causes_with_retry(
         self,
         base_causes: list[str],

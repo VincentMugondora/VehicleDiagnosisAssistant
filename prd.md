@@ -1,4 +1,4 @@
-# CLAUDE.md — WhatsApp Vehicle Diagnosis Assistant
+# WhatsApp Vehicle Diagnosis Assistant
 
 > Drop this file at the project root. Claude Code reads it automatically on every task.
 > Keep rules concrete. No vague guidance like "write clean code".

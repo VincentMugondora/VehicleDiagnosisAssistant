@@ -17,16 +17,17 @@ class Settings(BaseSettings):
     supabase_url: str
     supabase_service_key: str
 
-    # AI Provider
+    # AI Provider (primary provider to use)
     ai_provider: str = "cohere"  # "cohere" or "gemini"
 
-    # Cohere AI
+    # Cohere AI (primary provider)
     cohere_api_key: str | None = None
-    cohere_model: str = "command-r"
+    cohere_model: str = "command-r-plus-08-2024"
 
-    # Gemini AI (legacy, optional)
+    # Gemini AI (automatic fallback when AI_PROVIDER=cohere)
+    # If Cohere fails, Gemini will be used automatically
     gemini_api_key: str | None = None
-    gemini_model: str = "gemini-1.5-flash"
+    gemini_model: str = "gemini-2.0-flash-exp"
 
     # WhatsApp (Twilio)
     twilio_account_sid: str | None = None
@@ -68,6 +69,17 @@ class Settings(BaseSettings):
     external_cache_ttl_seconds: int = 2592000  # 30 days
     external_enrich_always: bool = True
     external_save_per_vehicle: bool = False
+
+    # Paynow payments (client credentials)
+    paynow_integration_id: str | None = None
+    paynow_integration_key: str | None = None
+    paynow_return_url: str = "https://your-domain.com/payments/return"
+    paynow_result_url: str = "https://your-domain.com/webhook/paynow"
+
+    # Payment config
+    subscription_price: float = 2.0  # Monthly subscription price in USD
+    free_diagnostics_limit: int = 5  # Free diagnostics per week
+    free_diagnostics_window_days: int = 7  # Weekly window
 
     class Config:
         env_file = ".env"

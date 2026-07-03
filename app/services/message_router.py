@@ -154,9 +154,9 @@ Provide a helpful response based on the previous diagnosis context."""
                     max_tokens=500
                 )
 
+                # Return dict with reply key
                 return {
-                    "reply": response,
-                    "type": "followup_response"
+                    "reply": response
                 }
             except Exception as e:
                 logger.error(

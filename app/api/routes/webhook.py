@@ -12,10 +12,12 @@ from app.services.session_manager import SessionManager
 from app.services.message_router import MessageRouter
 from app.services.obd_service import OBDService
 from app.services.ai_client import AIClient
+from app.services.payment_service import PaymentService
 from app.repositories.obd_repository import OBDRepository
 from app.repositories.message_log_repository import MessageLogRepository
 from app.repositories.session_repository import SessionRepository
 from app.repositories.diagnostic_log_repository import DiagnosticLogRepository
+from app.repositories.payment_repository import PaymentRepository
 from app.db.client import get_supabase_client
 from app.utils.phone import hash_phone_number
 from app.api.formatters import (
@@ -38,8 +40,14 @@ def get_repositories():
         "obd_repo": OBDRepository(client),
         "message_repo": MessageLogRepository(client),
         "session_repo": SessionRepository(client),
-        "diagnostic_repo": DiagnosticLogRepository(client)
+        "diagnostic_repo": DiagnosticLogRepository(client),
+        "payment_repo": PaymentRepository(client)
     }
+
+
+def get_payment_service(repos: dict = Depends(get_repositories)):
+    """Get PaymentService with dependencies"""
+    return PaymentService(repos["payment_repo"])
 
 
 def get_session_manager(repos: dict = Depends(get_repositories)):
@@ -138,6 +146,47 @@ async def _check_usage_limit(
         return "Limit reached. Reply later or contact support to upgrade."
 
     return None
+
+
+async def _check_payment_access(
+    payment_service: PaymentService,
+    phone_hash: str,
+    raw_text: str
+) -> str | None:
+    """
+    Check if user can access diagnostic service based on subscription/free tier.
+
+    Args:
+        payment_service: PaymentService instance
+        phone_hash: SHA-256 hash of phone number
+        raw_text: User's message text
+
+    Returns:
+        Error message if access denied, None if access allowed
+    """
+    # Check if this is a payment-related command (allow these through)
+    payment_keywords = ['subscribe', 'payment', 'pay', 'subscription']
+    if any(keyword in raw_text.lower() for keyword in payment_keywords):
+        return None
+
+    # Check access
+    access_info = payment_service.check_user_access(phone_hash)
+
+    if access_info["can_access"]:
+        return None  # Access allowed
+
+    # Access denied - return payment prompt
+    diagnostics_used = access_info["diagnostics_used"]
+
+    return (
+        f"You've used all {diagnostics_used} free diagnostics this week.\n\n"
+        f"📱 Subscribe for unlimited diagnostics!\n"
+        f"💵 Only $2/month\n\n"
+        f"To subscribe, reply with:\n"
+        f"SUBSCRIBE [your email] [your EcoCash number]\n\n"
+        f"Example:\n"
+        f"SUBSCRIBE john@example.com 0771234567"
+    )
 
 
 async def _send_reply_via_twilio(to_number: str, body: str):
@@ -324,7 +373,8 @@ async def baileys_webhook(
     request: Request,
     session_manager: SessionManager = Depends(get_session_manager),
     message_router: MessageRouter = Depends(get_message_router),
-    repos: dict = Depends(get_repositories)
+    repos: dict = Depends(get_repositories),
+    payment_service: PaymentService = Depends(get_payment_service)
 ):
     """
     Baileys WhatsApp webhook handler.
@@ -367,7 +417,7 @@ async def baileys_webhook(
         logger.info("duplicate_message_ignored")
         return {"ok": True, "status": "duplicate"}
 
-    # Check usage limit
+    # Check usage limit (old rate limiting - keep for abuse prevention)
     limit_msg = await _check_usage_limit(repos["message_repo"], phone_hash)
     if limit_msg:
         repos["message_repo"].insert_audit(
@@ -381,8 +431,96 @@ async def baileys_webhook(
         )
         return {"reply": limit_msg, "status": "rate_limited"}
 
+    # Check payment access (subscription/free tier)
+    payment_access_msg = await _check_payment_access(
+        payment_service, phone_hash, raw_text
+    )
+    if payment_access_msg:
+        repos["message_repo"].insert_audit(
+            message_id=message_id,
+            phone_hash=phone_hash,
+            request_id=request.state.request_id,
+            session_id=None,
+            request_text=raw_text,
+            response_text=payment_access_msg,
+            code=None
+        )
+        return {"reply": payment_access_msg, "status": "payment_required"}
+
     # Load session
     session = session_manager.load_session(phone_hash)
+
+    # Check for payment commands first (SUBSCRIBE, STATUS, CANCEL, RENEW)
+    from app.services.payment_commands import (
+        parse_subscribe_command,
+        parse_status_command,
+        parse_cancel_command,
+        parse_renew_command,
+        handle_subscribe_command,
+        handle_status_command,
+        handle_cancel_command,
+        handle_renew_command
+    )
+
+    if parse_subscribe_command(raw_text):
+        reply = await handle_subscribe_command(raw_text, payment_service)
+
+        repos["message_repo"].insert_audit(
+            message_id=message_id,
+            phone_hash=phone_hash,
+            request_id=request.state.request_id,
+            session_id=None,
+            request_text=raw_text,
+            response_text=reply,
+            code=None
+        )
+
+        return {"reply": reply}
+
+    if parse_status_command(raw_text):
+        reply = await handle_status_command(phone_hash, payment_service)
+
+        repos["message_repo"].insert_audit(
+            message_id=message_id,
+            phone_hash=phone_hash,
+            request_id=request.state.request_id,
+            session_id=None,
+            request_text=raw_text,
+            response_text=reply,
+            code=None
+        )
+
+        return {"reply": reply}
+
+    if parse_cancel_command(raw_text):
+        reply = await handle_cancel_command(phone_hash, payment_service)
+
+        repos["message_repo"].insert_audit(
+            message_id=message_id,
+            phone_hash=phone_hash,
+            request_id=request.state.request_id,
+            session_id=None,
+            request_text=raw_text,
+            response_text=reply,
+            code=None
+        )
+
+        return {"reply": reply}
+
+    if parse_renew_command(raw_text):
+        reply = await handle_renew_command(raw_text, payment_service)
+
+        repos["message_repo"].insert_audit(
+            message_id=message_id,
+            phone_hash=phone_hash,
+            request_id=request.state.request_id,
+            session_id=None,
+            request_text=raw_text,
+            response_text=reply,
+            code=None
+        )
+
+        return {"reply": reply}
 
     # Route message with session context for followups
     try:
@@ -424,9 +562,28 @@ async def baileys_webhook(
             confidence=result.confidence
         )
 
+        # Increment usage counter (for free tier tracking)
+        try:
+            usage_count = payment_service.increment_user_usage(phone_hash)
+            logger.info("usage_incremented", phone_hash=phone_hash, count=usage_count)
+        except Exception as e:
+            logger.warning("usage_increment_failed", error=str(e))
+
     elif isinstance(result, SymptomDiagnosisResult):
         reply_parts = format_symptom_response(result)
         code = None
+
+        # Increment usage for symptom diagnosis too
+        try:
+            payment_service.increment_user_usage(phone_hash)
+        except Exception as e:
+            logger.warning("usage_increment_failed", error=str(e))
+
+    elif isinstance(result, dict) and "reply" in result:
+        # Handle followup responses (AI-generated explanations)
+        reply_parts = [result["reply"]]
+        code = None
+
     else:
         reply_parts = format_error_response(result.get("error", "Error"))
         code = None

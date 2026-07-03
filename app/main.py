@@ -4,7 +4,7 @@ from app.core.config import settings
 from app.core.logging import setup_logging, logger
 from app.core.middleware import RequestContextMiddleware
 from app.db.client import get_supabase_client
-from app.api.routes import webhook
+from app.api.routes import webhook, payments
 
 # Setup structured logging
 setup_logging()
@@ -12,7 +12,7 @@ setup_logging()
 app = FastAPI(
     title="Vehicle Diagnosis Assistant API",
     version="2.0.0",
-    description="WhatsApp-based OBD-II diagnostic assistant with PostgreSQL/Supabase backend"
+    description="WhatsApp-based OBD-II diagnostic assistant with PostgreSQL/Supabase backend and Paynow payments"
 )
 
 # Register middleware
@@ -20,6 +20,7 @@ app.add_middleware(RequestContextMiddleware)
 
 # Register routes
 app.include_router(webhook.router)
+app.include_router(payments.router)
 
 
 # Global exception handler to catch and log all errors
@@ -72,10 +73,30 @@ async def startup():
         get_supabase_client()
         logger.info("supabase_connected")
         settings.supabase_enabled = True
+
+        # Start payment poller (only if Paynow configured)
+        if settings.paynow_integration_id and settings.paynow_integration_key:
+            from app.services.payment_poller import start_payment_poller
+            await start_payment_poller()
+            logger.info("payment_poller_enabled")
+        else:
+            logger.info("payment_poller_disabled_no_credentials")
+
     except Exception as e:
         logger.error("supabase_connection_failed", error=str(e))
         logger.warning("running_without_supabase", message="Continuing in fallback mode")
         settings.supabase_enabled = False
+
+
+@app.on_event("shutdown")
+async def shutdown():
+    """Clean up on shutdown"""
+    try:
+        from app.services.payment_poller import stop_payment_poller
+        stop_payment_poller()
+        logger.info("payment_poller_stopped")
+    except:
+        pass
 
 
 @app.get("/healthz")
