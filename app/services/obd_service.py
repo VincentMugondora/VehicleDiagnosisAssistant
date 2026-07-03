@@ -92,7 +92,8 @@ class OBDService:
                     "Clear code and retest"
                 ],
                 confidence=0.30,
-                source="fallback"
+                source="fallback",
+                system=None  # Unknown system for generic fallback
             )
 
         # Parse base causes and checks
@@ -151,7 +152,8 @@ class OBDService:
                     causes=merged_causes,
                     checks=merged_checks,
                     confidence=0.98,
-                    source="vehicle_override"
+                    source="vehicle_override",
+                    system=base.get("system")  # Include system from base code
                 )
 
         # Return base code without override
@@ -162,7 +164,8 @@ class OBDService:
             causes=base_causes,
             checks=base_checks,
             confidence=0.85,
-            source="local_db"
+            source="local_db",
+            system=base.get("system")  # Include system field
         )
 
     async def _fetch_and_learn(self, code: str) -> Optional[DiagnosticResult]:
@@ -223,7 +226,8 @@ class OBDService:
                 causes=causes or ["Component malfunction"],
                 checks=checks or ["Diagnose with scanner"],
                 confidence=0.75,  # Good confidence for AI-generated
-                source="ai_learned"
+                source="ai_learned",
+                system=generated_data.get("system")  # Include AI-generated system if available
             )
 
         except Exception as e:

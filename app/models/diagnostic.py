@@ -25,6 +25,7 @@ class DiagnosticResult(BaseModel):
     checks: list[str]
     confidence: float
     source: str  # "local_db" | "vehicle_override" | "external"
+    system: str | None = None  # Vehicle system (e.g., "Emissions", "Fuel System")
 
 
 class SymptomDiagnosisResult(BaseModel):

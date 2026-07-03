@@ -7,6 +7,75 @@ from app.models.system_diagram import SystemDiagram
 from app.core.logging import logger
 
 
+# ============================================================================
+# SYSTEM NAME SYNONYM MAP
+# ============================================================================
+# Maps common variations and abbreviations to canonical system names.
+# Add new entries here when adding diagrams for systems with multiple names.
+#
+# Format: "search_term": ["canonical_system_name_1", "canonical_system_name_2"]
+# ============================================================================
+
+SYSTEM_SYNONYMS = {
+    # Catalytic converter variations
+    "catalyst": ["catalytic converter", "catalyst system"],
+    "cat converter": ["catalytic converter"],
+    "catalytic converter system": ["catalytic converter"],
+
+    # O2 sensor variations
+    "o2 sensor": ["oxygen sensor", "o2 sensor"],
+    "oxygen sensor": ["o2 sensor", "oxygen sensor"],
+    "lambda sensor": ["oxygen sensor", "o2 sensor"],
+
+    # EGR variations
+    "egr": ["egr valve", "exhaust gas recirculation"],
+    "egr valve": ["egr", "exhaust gas recirculation"],
+    "exhaust gas recirculation": ["egr valve", "egr"],
+
+    # MAF variations
+    "maf": ["mass air flow", "maf sensor"],
+    "mass air flow": ["maf", "maf sensor"],
+    "maf sensor": ["mass air flow", "maf"],
+
+    # Fuel system variations
+    "fuel": ["fuel system"],  # FIX: Prioritize fuel system when just "fuel" searched
+    "fuel system": ["fuel injector", "fuel pump"],
+    "fuel injector": ["fuel system", "fuel injection"],
+    "fuel pump": ["fuel system"],
+
+    # Ignition variations
+    "ignition": ["ignition coil", "spark plug"],
+    "ignition coil": ["ignition", "ignition system"],
+    "spark plug": ["ignition", "ignition system"],
+
+    # Evaporative system
+    "evap": ["evaporative emission", "evap system"],
+    "evaporative emission": ["evap", "evap system"],
+    "evap system": ["evaporative emission", "evap"],
+
+    # Transmission
+    "transmission": ["transmission system", "gearbox"],
+    "gearbox": ["transmission"],
+
+    # Cooling system
+    "cooling": ["cooling system", "coolant"],
+    "coolant": ["cooling system", "cooling"],
+    "thermostat": ["cooling system"],
+
+    # Throttle
+    "throttle": ["throttle body", "throttle position"],
+    "throttle body": ["throttle", "throttle position"],
+
+    # Air intake
+    "air intake": ["intake manifold", "intake system"],
+    "intake": ["air intake", "intake manifold"],
+}
+
+# ============================================================================
+# END SYNONYM MAP
+# ============================================================================
+
+
 class SystemDiagramRepository:
     """Handle system diagram database operations"""
 
@@ -89,6 +158,17 @@ class SystemDiagramRepository:
                 return result
 
         # Strategy 3: Substring match (system name contains search term)
+        # Require minimum search length to avoid overly generic matches
+        MIN_SEARCH_LENGTH = 5
+
+        if len(system_lower) < MIN_SEARCH_LENGTH:
+            logger.debug(
+                "substring_match_skipped",
+                system=system,
+                reason=f"search_term_too_short (< {MIN_SEARCH_LENGTH} chars)"
+            )
+            return None
+
         try:
             response = (
                 self.client.table("system_diagrams")
@@ -97,27 +177,39 @@ class SystemDiagramRepository:
             )
 
             if response.data:
+                # Collect all matches with scores for specificity
+                matches = []
+
                 for record in response.data:
                     record_system = record['system'].lower()
+
                     # Check if search term is in record system name
                     if system_lower in record_system:
-                        logger.info(
-                            "system_diagram_found",
-                            system=system,
-                            matched_system=record['system'],
-                            match_type="substring"
-                        )
-                        return SystemDiagram.from_dict(record)
+                        # Score by specificity (longer search term relative to system name = more specific)
+                        specificity_score = len(system_lower) / len(record_system)
+                        matches.append((specificity_score, record, "substring"))
 
                     # Check if record system is in search term
-                    if record_system in system_lower:
-                        logger.info(
-                            "system_diagram_found",
-                            system=system,
-                            matched_system=record['system'],
-                            match_type="contains"
-                        )
-                        return SystemDiagram.from_dict(record)
+                    elif record_system in system_lower:
+                        # Lower score for "contains" matches (less specific)
+                        specificity_score = len(record_system) / len(system_lower)
+                        matches.append((specificity_score, record, "contains"))
+
+                # Return most specific match
+                if matches:
+                    # Sort by score (highest = most specific)
+                    matches.sort(key=lambda x: x[0], reverse=True)
+                    best_score, best_record, match_type = matches[0]
+
+                    logger.info(
+                        "system_diagram_found",
+                        system=system,
+                        matched_system=best_record['system'],
+                        match_type=match_type,
+                        specificity_score=f"{best_score:.2f}",
+                        num_candidates=len(matches)
+                    )
+                    return SystemDiagram.from_dict(best_record)
 
         except Exception as e:
             logger.error(
@@ -137,65 +229,12 @@ class SystemDiagramRepository:
         """
         Get common synonyms/variations for a system name.
 
+        Uses the SYSTEM_SYNONYMS constant defined at top of file.
+
         Args:
             system: System name (lowercase)
 
         Returns:
             List of synonyms to try
         """
-        # Map common variations
-        synonym_map = {
-            # Catalytic converter variations
-            "catalyst": ["catalytic converter", "catalyst system"],
-            "cat converter": ["catalytic converter"],
-            "catalytic converter system": ["catalytic converter"],
-
-            # O2 sensor variations
-            "o2 sensor": ["oxygen sensor", "o2 sensor"],
-            "oxygen sensor": ["o2 sensor", "oxygen sensor"],
-            "lambda sensor": ["oxygen sensor", "o2 sensor"],
-
-            # EGR variations
-            "egr": ["egr valve", "exhaust gas recirculation"],
-            "egr valve": ["egr", "exhaust gas recirculation"],
-            "exhaust gas recirculation": ["egr valve", "egr"],
-
-            # MAF variations
-            "maf": ["mass air flow", "maf sensor"],
-            "mass air flow": ["maf", "maf sensor"],
-            "maf sensor": ["mass air flow", "maf"],
-
-            # Fuel system variations
-            "fuel system": ["fuel injector", "fuel pump"],
-            "fuel injector": ["fuel system", "fuel injection"],
-            "fuel pump": ["fuel system"],
-
-            # Ignition variations
-            "ignition": ["ignition coil", "spark plug"],
-            "ignition coil": ["ignition", "ignition system"],
-            "spark plug": ["ignition", "ignition system"],
-
-            # Evaporative system
-            "evap": ["evaporative emission", "evap system"],
-            "evaporative emission": ["evap", "evap system"],
-            "evap system": ["evaporative emission", "evap"],
-
-            # Transmission
-            "transmission": ["transmission system", "gearbox"],
-            "gearbox": ["transmission"],
-
-            # Cooling system
-            "cooling": ["cooling system", "coolant"],
-            "coolant": ["cooling system", "cooling"],
-            "thermostat": ["cooling system"],
-
-            # Throttle
-            "throttle": ["throttle body", "throttle position"],
-            "throttle body": ["throttle", "throttle position"],
-
-            # Air intake
-            "air intake": ["intake manifold", "intake system"],
-            "intake": ["air intake", "intake manifold"],
-        }
-
-        return synonym_map.get(system, [])
+        return SYSTEM_SYNONYMS.get(system, [])

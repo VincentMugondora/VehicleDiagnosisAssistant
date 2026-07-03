@@ -15,11 +15,13 @@ from app.services.ai_client import AIClient
 from app.services.payment_service import PaymentService
 from app.services.user_state_machine import UserStateMachine
 from app.services.payment_command_handlers import PaymentCommandHandler
+from app.services.image_sender import ImageSender, format_attribution
 from app.repositories.obd_repository import OBDRepository
 from app.repositories.message_log_repository import MessageLogRepository
 from app.repositories.session_repository import SessionRepository
 from app.repositories.diagnostic_log_repository import DiagnosticLogRepository
 from app.repositories.payment_repository import PaymentRepository
+from app.repositories.system_diagram_repository import SystemDiagramRepository
 from app.db.client import get_supabase_client
 from app.utils.phone import hash_phone_number
 from app.api.formatters import (
@@ -43,7 +45,8 @@ def get_repositories():
         "message_repo": MessageLogRepository(client),
         "session_repo": SessionRepository(client),
         "diagnostic_repo": DiagnosticLogRepository(client),
-        "payment_repo": PaymentRepository(client)
+        "payment_repo": PaymentRepository(client),
+        "diagram_repo": SystemDiagramRepository(client)
     }
 
 
@@ -582,8 +585,56 @@ async def baileys_webhook(
 
     # Format response
     if isinstance(result, DiagnosticResult):
+        # TASK 3: Check for system diagram BEFORE formatting text response
+        diagram = None
+        if result.system:
+            try:
+                diagram = repos["diagram_repo"].get_by_system_fuzzy(result.system)
+                if diagram:
+                    logger.info(
+                        "system_diagram_found_for_diagnosis",
+                        system=result.system,
+                        diagram_system=diagram.system,
+                        code=result.code
+                    )
+
+                    # Send image FIRST (before text diagnosis)
+                    image_sender = ImageSender(
+                        baileys_webhook_url=getattr(settings, 'baileys_outbound_url', None),
+                        timeout=10.0
+                    )
+
+                    image_sent = await image_sender.send_system_diagram(
+                        to_number=from_number,
+                        diagram=diagram
+                    )
+
+                    if not image_sent:
+                        logger.warning(
+                            "system_diagram_send_failed_continuing",
+                            system=result.system,
+                            code=result.code
+                        )
+                        # Continue anyway - image failure never blocks text diagnosis
+
+            except Exception as e:
+                logger.error(
+                    "system_diagram_lookup_error",
+                    system=result.system,
+                    code=result.code,
+                    error=str(e)
+                )
+                # Continue anyway - diagram errors never block text diagnosis
+
+        # Format text response
         reply_parts = format_diagnostic_response(result)
         code = result.code
+
+        # Append attribution if diagram was found
+        if diagram and diagram.attribution_text:
+            attribution = format_attribution(diagram)
+            if attribution:
+                reply_parts.append(attribution)
 
         # Log diagnostic
         vehicle_str = " ".join(filter(None, [
