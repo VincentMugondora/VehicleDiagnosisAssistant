@@ -238,3 +238,117 @@ class SystemDiagramRepository:
             List of synonyms to try
         """
         return SYSTEM_SYNONYMS.get(system, [])
+
+    def insert(
+        self,
+        system: str,
+        image_url: str,
+        source: str,
+        license: str,
+        attribution_text: Optional[str] = None,
+        caption: Optional[str] = None
+    ) -> Optional[SystemDiagram]:
+        """
+        Insert a new system diagram.
+
+        Args:
+            system: System name (will be normalized to lowercase)
+            image_url: Public HTTPS URL to diagram image
+            source: Image source (e.g., "Wikimedia Commons")
+            license: Image license (e.g., "CC BY-SA 4.0")
+            attribution_text: Optional attribution line
+            caption: Optional short caption
+
+        Returns:
+            SystemDiagram if successful, None on error
+        """
+        try:
+            data = {
+                'system': system.lower().strip(),
+                'image_url': image_url,
+                'source': source,
+                'license': license,
+                'attribution_text': attribution_text,
+                'caption': caption
+            }
+
+            response = (
+                self.client.table("system_diagrams")
+                .insert(data)
+                .execute()
+            )
+
+            if response.data:
+                logger.info(
+                    "system_diagram_inserted",
+                    system=system
+                )
+                return SystemDiagram.from_dict(response.data[0])
+
+            return None
+
+        except Exception as e:
+            logger.error(
+                "system_diagram_insert_failed",
+                system=system,
+                error=str(e)
+            )
+            return None
+
+    def upsert(
+        self,
+        system: str,
+        image_url: str,
+        source: str,
+        license: str,
+        attribution_text: Optional[str] = None,
+        caption: Optional[str] = None
+    ) -> Optional[SystemDiagram]:
+        """
+        Insert or update a system diagram.
+
+        Uses system name as unique key (case-insensitive).
+
+        Args:
+            system: System name (will be normalized to lowercase)
+            image_url: Public HTTPS URL to diagram image
+            source: Image source (e.g., "Wikimedia Commons")
+            license: Image license (e.g., "CC BY-SA 4.0")
+            attribution_text: Optional attribution line
+            caption: Optional short caption
+
+        Returns:
+            SystemDiagram if successful, None on error
+        """
+        try:
+            data = {
+                'system': system.lower().strip(),
+                'image_url': image_url,
+                'source': source,
+                'license': license,
+                'attribution_text': attribution_text,
+                'caption': caption
+            }
+
+            response = (
+                self.client.table("system_diagrams")
+                .upsert(data, on_conflict='system')
+                .execute()
+            )
+
+            if response.data:
+                logger.info(
+                    "system_diagram_upserted",
+                    system=system
+                )
+                return SystemDiagram.from_dict(response.data[0])
+
+            return None
+
+        except Exception as e:
+            logger.error(
+                "system_diagram_upsert_failed",
+                system=system,
+                error=str(e)
+            )
+            return None

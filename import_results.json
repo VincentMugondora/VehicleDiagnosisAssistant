@@ -1,0 +1,27 @@
+{
+  "validated": [
+    {
+      "system": "catalytic converter",
+      "image_url": "https://upload.wikimedia.org/wikipedia/commons/f/f8/CNX_Chem_12_07_CatConvert.png",
+      "source": "Wikimedia Commons (OpenStax)",
+      "license": "CC BY 4.0",
+      "attribution_text": "Image by OpenStax, CC BY 4.0, via Wikimedia Commons",
+      "caption": "",
+      "original_row": {
+        "System": "catalytic converter",
+        "Image URL": "https://upload.wikimedia.org/wikipedia/commons/f/f8/CNX_Chem_12_07_CatConvert.png",
+        "Source": "Wikimedia Commons (OpenStax)",
+        "License": "CC BY 4.0",
+        "Attribution Text": "Image by OpenStax, CC BY 4.0, via Wikimedia Commons",
+        "Caption (<60 chars)": "Catalytic converter diagram showing emission reduction",
+        "Status": "Approved",
+        "Notes": null
+      }
+    }
+  ],
+  "failed": [],
+  "summary": {
+    "validated": 1,
+    "failed": 0
+  }
+}
