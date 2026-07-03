@@ -107,6 +107,13 @@ class OBDService:
             if c.strip()
         ]
 
+        # If no causes/checks in database, provide generic troubleshooting guidance
+        # (Wal33D dataset has accurate descriptions but no enrichment data)
+        if not base_causes:
+            base_causes = self._generate_generic_causes(code, base.get("description", ""))
+        if not base_checks:
+            base_checks = self._generate_generic_checks(code, base.get("description", ""))
+
         # Check for vehicle-specific override
         if (vehicle.make and vehicle.model and
             vehicle.year and vehicle.engine):
@@ -241,3 +248,151 @@ class OBDService:
                 seen.add(key)
                 result.append(item)
         return result
+
+    def _generate_generic_causes(self, code: str, description: str) -> list[str]:
+        """
+        Generate generic likely causes based on code and description.
+
+        Used when database has no enrichment data (e.g., Wal33D codes).
+
+        Args:
+            code: OBD code
+            description: Code description
+
+        Returns:
+            List of generic causes
+        """
+        desc_lower = description.lower()
+
+        # System-specific patterns
+        if "sensor" in desc_lower:
+            return [
+                "Faulty sensor",
+                "Damaged wiring or connector",
+                "Sensor out of calibration",
+                "ECM issue"
+            ]
+        elif any(word in desc_lower for word in ["circuit", "electrical", "voltage", "short", "open"]):
+            return [
+                "Wiring damage or corrosion",
+                "Loose or damaged connector",
+                "Component failure",
+                "Intermittent electrical fault"
+            ]
+        elif any(word in desc_lower for word in ["lean", "rich", "fuel", "air"]):
+            return [
+                "Vacuum leak",
+                "Faulty MAF or O2 sensor",
+                "Fuel pressure issue",
+                "Air filter restriction"
+            ]
+        elif "misfire" in desc_lower:
+            return [
+                "Bad spark plug or coil",
+                "Fuel injector issue",
+                "Low compression",
+                "Vacuum leak"
+            ]
+        elif any(word in desc_lower for word in ["evap", "leak", "purge"]):
+            return [
+                "Loose or damaged gas cap",
+                "EVAP system leak",
+                "Faulty purge valve",
+                "Damaged canister or hoses"
+            ]
+        elif any(word in desc_lower for word in ["catalyst", "cat", "converter"]):
+            return [
+                "Degraded catalytic converter",
+                "Exhaust leak before cat",
+                "Faulty O2 sensors",
+                "Engine running rich/lean"
+            ]
+        elif any(word in desc_lower for word in ["transmission", "tcm", "shift"]):
+            return [
+                "Transmission fluid issue",
+                "Solenoid failure",
+                "Internal transmission fault",
+                "TCM software issue"
+            ]
+        else:
+            # Generic fallback
+            return [
+                "Component malfunction",
+                "Wiring or connector issue",
+                "Sensor failure",
+                "ECM software issue"
+            ]
+
+    def _generate_generic_checks(self, code: str, description: str) -> list[str]:
+        """
+        Generate generic recommended checks based on code and description.
+
+        Used when database has no enrichment data (e.g., Wal33D codes).
+
+        Args:
+            code: OBD code
+            description: Code description
+
+        Returns:
+            List of generic checks
+        """
+        desc_lower = description.lower()
+
+        # System-specific patterns
+        if "sensor" in desc_lower:
+            return [
+                "Inspect sensor connector and wiring",
+                "Test sensor with multimeter",
+                "Check sensor mounting and condition",
+                "Clear code and retest"
+            ]
+        elif any(word in desc_lower for word in ["circuit", "electrical", "voltage"]):
+            return [
+                "Check wiring for damage or corrosion",
+                "Test connector terminals",
+                "Verify voltage at component",
+                "Clear code and road test"
+            ]
+        elif any(word in desc_lower for word in ["lean", "rich", "fuel", "air"]):
+            return [
+                "Inspect for vacuum leaks",
+                "Check MAF/O2 sensors",
+                "Test fuel pressure",
+                "Inspect air filter"
+            ]
+        elif "misfire" in desc_lower:
+            return [
+                "Check spark plugs and coils",
+                "Test fuel injectors",
+                "Perform compression test",
+                "Inspect for vacuum leaks"
+            ]
+        elif any(word in desc_lower for word in ["evap", "leak", "purge"]):
+            return [
+                "Tighten or replace gas cap",
+                "Smoke test EVAP system",
+                "Inspect hoses and canister",
+                "Test purge valve operation"
+            ]
+        elif any(word in desc_lower for word in ["catalyst", "cat", "converter"]):
+            return [
+                "Check O2 sensor readings",
+                "Inspect for exhaust leaks",
+                "Test cat efficiency with scanner",
+                "Check for engine running issues"
+            ]
+        elif any(word in desc_lower for word in ["transmission", "tcm", "shift"]):
+            return [
+                "Check transmission fluid level and condition",
+                "Scan for additional transmission codes",
+                "Test shift solenoids",
+                "Update TCM software if available"
+            ]
+        else:
+            # Generic fallback
+            return [
+                "Scan for additional codes",
+                "Inspect related components",
+                "Check wiring and connectors",
+                "Clear code and retest"
+            ]

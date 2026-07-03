@@ -1,0 +1,32 @@
+# Simple Follow-up Fix (Without Enabling Full AI)
+
+# If you want follow-up conversations but don't want to enable AI_ENRICH_ENABLED
+# for cause ranking, you can create a separate flag.
+
+# Add to .env:
+FOLLOWUP_ENABLED=true
+
+# Add to app/core/config.py:
+followup_enabled: bool = Field(default=False, validation_alias="FOLLOWUP_ENABLED")
+
+# Modify app/services/message_router.py __init__:
+
+def __init__(self, obd_service: OBDService):
+    self.obd_service = obd_service
+    self.ai_client = None
+
+    # Initialize AI client for follow-ups (separate from enrichment)
+    if settings.ai_enrich_enabled or settings.followup_enabled:
+        try:
+            from app.services.ai_client import AIClient
+            self.ai_client = AIClient()
+        except Exception as e:
+            logger.warning(
+                "ai_client_initialization_failed",
+                error=str(e)
+            )
+
+# This way:
+# - AI_ENRICH_ENABLED=false, FOLLOWUP_ENABLED=true → Follow-ups work, no cause ranking
+# - AI_ENRICH_ENABLED=true → Both features enabled
+# - Both false → No AI usage at all

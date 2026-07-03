@@ -1,7 +1,8 @@
 import hmac
 import base64
 import hashlib
-from datetime import datetime   
+import traceback
+from datetime import datetime
 from typing import Dict, Any
 import httpx
 from fastapi import APIRouter, Request, Response, status, Depends
@@ -384,12 +385,25 @@ async def baileys_webhook(
     session = session_manager.load_session(phone_hash)
 
     # Route message with session context for followups
-    result = await message_router.route_message(
-        raw_text=raw_text,
-        phone_hash=phone_hash,
-        request_id=request.state.request_id,
-        session=session  # Pass session for conversation memory
-    )
+    try:
+        result = await message_router.route_message(
+            raw_text=raw_text,
+            phone_hash=phone_hash,
+            request_id=request.state.request_id,
+            session=session  # Pass session for conversation memory
+        )
+    except Exception as e:
+        logger.error(
+            "message_routing_failed",
+            error=str(e),
+            error_type=type(e).__name__,
+            raw_text=raw_text,
+            traceback=traceback.format_exc()
+        )
+        # Return fallback error response
+        result = {
+            "error": "Sorry, there was an error processing your request. Please try again later."
+        }
 
     # Format response
     if isinstance(result, DiagnosticResult):
