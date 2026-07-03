@@ -418,15 +418,20 @@ class PaymentService:
                 auto_renew=False
             )
 
+            # Parse end_date (Supabase returns ISO string)
+            end_date = subscription["end_date"]
+            if isinstance(end_date, str):
+                end_date = datetime.fromisoformat(end_date.replace('Z', '+00:00'))
+
             logger.info(
                 "subscription_cancelled",
                 phone_hash=phone_hash,
-                expires_at=subscription["end_date"]
+                expires_at=end_date
             )
 
             return {
                 "success": True,
-                "expires_at": subscription["end_date"].strftime("%Y-%m-%d")
+                "expires_at": end_date.strftime("%Y-%m-%d")
             }
 
         except Exception as e:

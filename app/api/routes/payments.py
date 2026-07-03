@@ -9,6 +9,7 @@ from app.models.payment import (
     UsageCheckResponse
 )
 from app.services.payment_service import PaymentService
+from app.services.user_state_machine import UserStateMachine
 from app.repositories.payment_repository import PaymentRepository
 from app.db.client import get_supabase_client
 from app.utils.phone import hash_phone_number
@@ -124,6 +125,8 @@ async def paynow_webhook(
 
     Paynow posts payment status updates to this endpoint.
     This provides definitive payment confirmation (polling is for real-time updates).
+
+    Uses state machine for idempotent transition to ACTIVE_SUBSCRIBER.
     """
     try:
         # Get POST form data
@@ -145,13 +148,43 @@ async def paynow_webhook(
                 order_reference = status_response.reference if hasattr(status_response, 'reference') else data.get("reference")
 
                 if order_reference:
-                    # Process the payment
-                    await payment_service.check_payment_status(order_reference)
+                    # Get transaction and phone_hash
+                    client = get_supabase_client()
+                    payment_repo = PaymentRepository(client)
+                    state_machine = UserStateMachine(payment_repo)
 
-                    logger.info(
-                        "paynow_webhook_payment_confirmed",
-                        reference=order_reference
-                    )
+                    transaction = payment_repo.get_transaction_by_order_reference(order_reference)
+
+                    if transaction:
+                        phone_hash = transaction["phone_hash"]
+                        transaction_id = transaction["id"]
+
+                        # Use state machine for idempotent transition
+                        success, new_state, reason = state_machine.transition_to_active_subscriber(
+                            phone_hash=phone_hash,
+                            transaction_id=transaction_id,
+                            order_reference=order_reference
+                        )
+
+                        if success:
+                            logger.info(
+                                "paynow_webhook_payment_confirmed",
+                                reference=order_reference,
+                                phone_hash=phone_hash,
+                                new_state=new_state.state.value,
+                                expires_at=new_state.subscription_end_date.isoformat() if new_state.subscription_end_date else None
+                            )
+                        else:
+                            logger.info(
+                                "paynow_webhook_already_processed",
+                                reference=order_reference,
+                                reason=reason
+                            )
+                    else:
+                        logger.warning(
+                            "paynow_webhook_transaction_not_found",
+                            reference=order_reference
+                        )
 
         return {"status": "ok"}
 

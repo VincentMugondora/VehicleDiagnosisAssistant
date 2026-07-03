@@ -13,6 +13,8 @@ from app.services.message_router import MessageRouter
 from app.services.obd_service import OBDService
 from app.services.ai_client import AIClient
 from app.services.payment_service import PaymentService
+from app.services.user_state_machine import UserStateMachine
+from app.services.payment_command_handlers import PaymentCommandHandler
 from app.repositories.obd_repository import OBDRepository
 from app.repositories.message_log_repository import MessageLogRepository
 from app.repositories.session_repository import SessionRepository
@@ -48,6 +50,20 @@ def get_repositories():
 def get_payment_service(repos: dict = Depends(get_repositories)):
     """Get PaymentService with dependencies"""
     return PaymentService(repos["payment_repo"])
+
+
+def get_state_machine(repos: dict = Depends(get_repositories)):
+    """Get UserStateMachine with dependencies"""
+    return UserStateMachine(repos["payment_repo"])
+
+
+def get_command_handler(
+    repos: dict = Depends(get_repositories),
+    payment_service: PaymentService = Depends(get_payment_service)
+):
+    """Get PaymentCommandHandler with dependencies"""
+    state_machine = UserStateMachine(repos["payment_repo"])
+    return PaymentCommandHandler(state_machine, payment_service)
 
 
 def get_session_manager(repos: dict = Depends(get_repositories)):
@@ -149,44 +165,66 @@ async def _check_usage_limit(
 
 
 async def _check_payment_access(
-    payment_service: PaymentService,
+    state_machine: UserStateMachine,
     phone_hash: str,
     raw_text: str
-) -> str | None:
+) -> tuple[str | None, Any]:
     """
     Check if user can access diagnostic service based on subscription/free tier.
 
+    Uses state machine for single source of truth.
+
     Args:
-        payment_service: PaymentService instance
+        state_machine: UserStateMachine instance
         phone_hash: SHA-256 hash of phone number
         raw_text: User's message text
 
     Returns:
-        Error message if access denied, None if access allowed
+        Tuple of (error_message, state_info)
+        - error_message: Error message if access denied, None if access allowed
+        - state_info: UserStateInfo object for use in command handlers
     """
-    # Check if this is a payment-related command (allow these through)
-    payment_keywords = ['subscribe', 'payment', 'pay', 'subscription']
+    # Resolve current state
+    state = state_machine.resolve_state(phone_hash)
+
+    # Payment commands always allowed (checked separately)
+    payment_keywords = ['subscribe', 'renew', 'cancel', 'status', 'help']
     if any(keyword in raw_text.lower() for keyword in payment_keywords):
-        return None
+        return None, state
 
-    # Check access
-    access_info = payment_service.check_user_access(phone_hash)
+    # Check if user can access diagnostics
+    if state.can_access_diagnostic:
+        return None, state  # Access allowed
 
-    if access_info["can_access"]:
-        return None  # Access allowed
-
-    # Access denied - return payment prompt
-    diagnostics_used = access_info["diagnostics_used"]
-
-    return (
-        f"You've used all {diagnostics_used} free diagnostics this week.\n\n"
-        f"📱 Subscribe for unlimited diagnostics!\n"
-        f"💵 Only $2/month\n\n"
-        f"To subscribe, reply with:\n"
-        f"SUBSCRIBE [your email] [your EcoCash number]\n\n"
-        f"Example:\n"
-        f"SUBSCRIBE john@example.com 0771234567"
-    )
+    # Access denied - return payment prompt based on state
+    if state.state.value == "pending_payment":
+        return (
+            f"⏳ Payment in progress\n\n"
+            f"Order: {state.pending_order_reference}\n\n"
+            f"📱 Check your phone for EcoCash prompt.\n\n"
+            f"While you wait, you have {state.diagnostics_remaining} free diagnostics remaining this week."
+        ), state
+    elif state.state.value == "expired":
+        return (
+            f"⚠️ Subscription expired\n\n"
+            f"You've used {state.diagnostics_used}/5 free diagnostics this week.\n\n"
+            f"To renew unlimited access:\n"
+            f"RENEW <email> <phone>\n\n"
+            f"Example:\n"
+            f"RENEW john@example.com 0771234567\n\n"
+            f"💵 Only $2/month"
+        ), state
+    else:
+        # FREE_TIER limit reached
+        return (
+            f"You've used all {state.diagnostics_used} free diagnostics this week.\n\n"
+            f"📱 Subscribe for unlimited diagnostics!\n"
+            f"💵 Only $2/month\n\n"
+            f"To subscribe, reply with:\n"
+            f"SUBSCRIBE <email> <phone>\n\n"
+            f"Example:\n"
+            f"SUBSCRIBE john@example.com 0771234567"
+        ), state
 
 
 async def _send_reply_via_twilio(to_number: str, body: str):
@@ -374,7 +412,9 @@ async def baileys_webhook(
     session_manager: SessionManager = Depends(get_session_manager),
     message_router: MessageRouter = Depends(get_message_router),
     repos: dict = Depends(get_repositories),
-    payment_service: PaymentService = Depends(get_payment_service)
+    payment_service: PaymentService = Depends(get_payment_service),
+    state_machine: UserStateMachine = Depends(get_state_machine),
+    command_handler: PaymentCommandHandler = Depends(get_command_handler)
 ):
     """
     Baileys WhatsApp webhook handler.
@@ -431,9 +471,9 @@ async def baileys_webhook(
         )
         return {"reply": limit_msg, "status": "rate_limited"}
 
-    # Check payment access (subscription/free tier)
-    payment_access_msg = await _check_payment_access(
-        payment_service, phone_hash, raw_text
+    # Check payment access using state machine (subscription/free tier)
+    payment_access_msg, user_state = await _check_payment_access(
+        state_machine, phone_hash, raw_text
     )
     if payment_access_msg:
         repos["message_repo"].insert_audit(
@@ -450,20 +490,14 @@ async def baileys_webhook(
     # Load session
     session = session_manager.load_session(phone_hash)
 
-    # Check for payment commands first (SUBSCRIBE, STATUS, CANCEL, RENEW)
-    from app.services.payment_commands import (
-        parse_subscribe_command,
-        parse_status_command,
-        parse_cancel_command,
-        parse_renew_command,
-        handle_subscribe_command,
-        handle_status_command,
-        handle_cancel_command,
-        handle_renew_command
-    )
-
-    if parse_subscribe_command(raw_text):
-        reply = await handle_subscribe_command(raw_text, payment_service)
+    # Check for payment commands first (SUBSCRIBE, RENEW, CANCEL, STATUS, HELP)
+    # SUBSCRIBE or RENEW
+    if command_handler.parse_subscribe_or_renew(raw_text):
+        parsed = command_handler.parse_subscribe_or_renew(raw_text)
+        email, phone, is_renew = parsed
+        reply = await command_handler.handle_subscribe_or_renew(
+            phone_hash, email, phone, is_renew
+        )
 
         repos["message_repo"].insert_audit(
             message_id=message_id,
@@ -477,8 +511,9 @@ async def baileys_webhook(
 
         return {"reply": reply}
 
-    if parse_status_command(raw_text):
-        reply = await handle_status_command(phone_hash, payment_service)
+    # STATUS
+    if command_handler.parse_status(raw_text):
+        reply = await command_handler.handle_status(phone_hash)
 
         repos["message_repo"].insert_audit(
             message_id=message_id,
@@ -492,8 +527,9 @@ async def baileys_webhook(
 
         return {"reply": reply}
 
-    if parse_cancel_command(raw_text):
-        reply = await handle_cancel_command(phone_hash, payment_service)
+    # CANCEL
+    if command_handler.parse_cancel(raw_text):
+        reply = await command_handler.handle_cancel(phone_hash)
 
         repos["message_repo"].insert_audit(
             message_id=message_id,
@@ -507,8 +543,9 @@ async def baileys_webhook(
 
         return {"reply": reply}
 
-    if parse_renew_command(raw_text):
-        reply = await handle_renew_command(raw_text, payment_service)
+    # HELP
+    if command_handler.parse_help(raw_text):
+        reply = await command_handler.handle_help(phone_hash)
 
         repos["message_repo"].insert_audit(
             message_id=message_id,
