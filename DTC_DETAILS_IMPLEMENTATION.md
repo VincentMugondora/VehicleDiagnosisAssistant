@@ -23,11 +23,11 @@ Added five new tables to support richer diagnostics, all keyed to the existing `
 
 ## Tables Created
 
-### 1. **vehicles** - Vehicle Fitment
+### 1. **code_vehicle_fitment** - Vehicle Fitment
 Which vehicles does a code apply to?
 
 ```sql
-CREATE TABLE vehicles (
+CREATE TABLE code_vehicle_fitment (
     id UUID PRIMARY KEY,
     code_id TEXT → obd_codes(code),
     make TEXT,
@@ -349,7 +349,7 @@ from app.db.supabase_client import get_supabase_client
 client = get_supabase_client()
 
 # Direct inserts (bypassing repository since it's read-only)
-client.table("vehicles").insert({
+client.table("code_vehicle_fitment").insert({
     'code_id': 'P0420',
     'make': 'Toyota',
     'model': 'Camry',
@@ -376,14 +376,14 @@ client.table("repair_steps").insert({
 -- Check tables exist
 SELECT table_name FROM information_schema.tables
 WHERE table_schema = 'public'
-  AND table_name IN ('vehicles', 'repair_steps', 'parts',
+  AND table_name IN ('code_vehicle_fitment', 'repair_steps', 'parts',
                      'common_symptoms', 'related_codes');
 
 -- Check foreign keys
 SELECT constraint_name, table_name
 FROM information_schema.table_constraints
 WHERE constraint_type = 'FOREIGN KEY'
-  AND table_name IN ('vehicles', 'repair_steps', 'parts',
+  AND table_name IN ('code_vehicle_fitment', 'repair_steps', 'parts',
                      'common_symptoms', 'related_codes');
 ```
 
@@ -556,7 +556,7 @@ response += f"\n\n📖 Full repair guide:\nhttps://yourdomain.com/codes/{code}"
 
 ### To Roll Back (if needed):
 ```sql
-DROP TABLE IF EXISTS vehicles CASCADE;
+DROP TABLE IF EXISTS code_vehicle_fitment CASCADE;
 DROP TABLE IF EXISTS repair_steps CASCADE;
 DROP TABLE IF EXISTS parts CASCADE;
 DROP TABLE IF EXISTS common_symptoms CASCADE;

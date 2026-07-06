@@ -6,7 +6,7 @@
 **File:** `migrations/add_dtc_detail_tables.sql`
 
 **Run in Supabase SQL Editor** - Creates 5 tables:
-1. `vehicles` - Vehicle fitment (make, model, year_start, year_end, engine)
+1. `code_vehicle_fitment` - Vehicle fitment (make, model, year_start, year_end, engine)
 2. `repair_steps` - Step-by-step instructions (step_number, instruction)
 3. `parts` - Required parts (part_name, part_number)
 4. `common_symptoms` - Driver symptoms (symptom)

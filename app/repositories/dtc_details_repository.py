@@ -1,5 +1,5 @@
 """
-Repository for DTC detail tables (vehicles, repair_steps, parts,
+Repository for DTC detail tables (code_vehicle_fitment, repair_steps, parts,
 common_symptoms, related_codes).
 
 Provides read-only access to enriched diagnostic data keyed to obd_codes.
@@ -16,7 +16,7 @@ class DTCDetailsRepository:
         self.client = client
 
     # ========================================================================
-    # VEHICLES - Which vehicles does a code apply to?
+    # CODE_VEHICLE_FITMENT - Which vehicles does a code apply to?
     # ========================================================================
 
     def get_vehicles_for_code(self, code: str) -> list[dict]:
@@ -32,7 +32,7 @@ class DTCDetailsRepository:
         """
         try:
             response = (
-                self.client.table("vehicles")
+                self.client.table("code_vehicle_fitment")
                 .select("*")
                 .eq("code_id", code.upper())
                 .order("make, model, year_start")
@@ -76,7 +76,7 @@ class DTCDetailsRepository:
         """
         try:
             query = (
-                self.client.table("vehicles")
+                self.client.table("code_vehicle_fitment")
                 .select("*")
                 .eq("code_id", code.upper())
             )
@@ -354,7 +354,7 @@ class DTCDetailsRepository:
         try:
             # Quick count queries (limit 1 for efficiency)
             has_vehicles = len(
-                self.client.table("vehicles")
+                self.client.table("code_vehicle_fitment")
                 .select("id", count="exact")
                 .eq("code_id", code_upper)
                 .limit(1)
