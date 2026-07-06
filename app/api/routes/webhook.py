@@ -647,7 +647,7 @@ async def baileys_webhook(
                     # Send image FIRST (before text diagnosis)
                     image_sender = ImageSender(
                         baileys_webhook_url=getattr(settings, 'baileys_outbound_url', None),
-                        timeout=60.0  # Allow up to 60s for Wikimedia image download + WhatsApp send
+                        timeout=15.0  # Images are cached locally, should be fast
                     )
 
                     image_sent = await image_sender.send_system_diagram(

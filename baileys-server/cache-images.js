@@ -19,10 +19,20 @@ const path = require('path')
 const crypto = require('crypto')
 const { createClient } = require('@supabase/supabase-js')
 
-require('dotenv').config({ path: '../.env' })
+// Load .env from parent directory
+const dotenvPath = path.join(__dirname, '..', '.env')
+require('dotenv').config({ path: dotenvPath })
 
 const CACHE_DIR = path.join(__dirname, 'cached-images')
 const BASE_URL = process.env.BAILEYS_BASE_URL || 'http://localhost:3000'
+
+// Validate environment
+if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_KEY) {
+    console.error('❌ Missing required environment variables:')
+    console.error('   SUPABASE_URL and SUPABASE_SERVICE_KEY must be set in .env')
+    console.error(`   Looked for .env at: ${dotenvPath}`)
+    process.exit(1)
+}
 
 // Supabase client
 const supabase = createClient(
@@ -31,9 +41,29 @@ const supabase = createClient(
 )
 
 /**
- * Download file from URL
+ * Download file from URL with retry logic
  */
-function downloadFile(url) {
+async function downloadFile(url, retries = 3) {
+    for (let attempt = 0; attempt <= retries; attempt++) {
+        try {
+            return await downloadFileInternal(url)
+        } catch (err) {
+            // If rate limited (429), wait exponentially longer and retry
+            if (err.message.includes('429') && attempt < retries) {
+                const backoffMs = Math.pow(2, attempt) * 5000  // 5s, 10s, 20s
+                console.log(`  ⏳ Rate limited, waiting ${backoffMs / 1000}s before retry ${attempt + 1}/${retries}...`)
+                await new Promise(resolve => setTimeout(resolve, backoffMs))
+                continue
+            }
+            throw err
+        }
+    }
+}
+
+/**
+ * Download file from URL (internal)
+ */
+function downloadFileInternal(url) {
     return new Promise((resolve, reject) => {
         const client = url.startsWith('https') ? https : http
 
@@ -47,7 +77,7 @@ function downloadFile(url) {
         client.get(url, options, (response) => {
             if (response.statusCode === 301 || response.statusCode === 302) {
                 // Follow redirect
-                return downloadFile(response.headers.location).then(resolve).catch(reject)
+                return downloadFileInternal(response.headers.location).then(resolve).catch(reject)
             }
 
             if (response.statusCode !== 200) {
@@ -164,8 +194,8 @@ async function cacheAllDiagrams(dryRun = false) {
                 cached++
             }
 
-            // Rate limit
-            await new Promise(resolve => setTimeout(resolve, 1000))
+            // Rate limit - wait 3 seconds between requests to avoid 429
+            await new Promise(resolve => setTimeout(resolve, 3000))
 
         } catch (err) {
             console.log(`  ❌ Error: ${err.message}`)
