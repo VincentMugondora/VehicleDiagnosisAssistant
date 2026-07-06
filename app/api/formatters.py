@@ -34,16 +34,6 @@ def format_diagnostic_response(result: DiagnosticResult) -> list[str]:
 
 _Always confirm with live scanner data before replacing parts._"""
 
-    # Add confidence indicator if available
-    if result.confidence >= 0.9:
-        confidence_label = "High"
-    elif result.confidence >= 0.7:
-        confidence_label = "Medium"
-    else:
-        confidence_label = "Low"
-
-    base += f"\n_Confidence: {confidence_label}_"
-
     # Split by 1,500 chars if needed
     return _split_message(base, max_length=1500)
 
