@@ -370,11 +370,211 @@ python scripts\import_obd_datasets.py
 
 ---
 
-**Estimated Time:** 10-15 minutes  
+**Estimated Time:** 15-25 minutes  
 **Difficulty:** Easy (if WARP is disabled)  
-**Result:** Full production-ready system
+**Result:** Full production-ready system with payments and rich diagnostics
 
 ---
 
-**Last Updated:** 2026-07-03  
-**Your Current Status:** Step 1 needed (disable WARP)
+## Complete Database Inventory
+
+### Tables by Category
+
+| Category | Table Name | Rows (Estimated) | Purpose |
+|----------|-----------|------------------|---------|
+| **Core OBD** | obd_codes | 5,000+ | Master DTC code database |
+| | message_logs | Growing | WhatsApp message audit trail |
+| | diagnostic_logs | Growing | Analytics/usage tracking |
+| | conversation_sessions | Active users | Multi-turn conversation state |
+| | external_obd_cache | As needed | Cache external API responses |
+| | obd_summaries | As needed | AI-generated summaries |
+| | vehicle_overrides | As needed | Vehicle-specific known issues |
+| **DTC Details** | code_vehicle_fitment | 50,000+ | Which vehicles per code |
+| | repair_steps | 25,000+ | Step-by-step repair instructions |
+| | parts | 15,000+ | Required parts |
+| | common_symptoms | 10,000+ | Driver-reported symptoms |
+| | related_codes | 20,000+ | Related DTC codes |
+| **Educational** | system_diagrams | 100+ | System diagram URLs |
+| **Payments** | transactions | Growing | Payment records |
+| | subscriptions | Active users | Active subscriptions |
+| | user_usage | Active users | Free tier usage tracking |
+
+**Total: 16 user tables** (plus Supabase internal tables)
+
+### Database Functions
+
+| Function Name | Returns | Purpose |
+|--------------|---------|---------|
+| update_updated_at_column() | TRIGGER | Auto-update timestamps |
+| has_active_subscription(phone_hash) | BOOLEAN | Check subscription status |
+| get_weekly_usage(phone_hash) | INT | Get diagnostic count for week |
+| increment_user_usage(phone_hash) | INT | Increment usage counter |
+
+### Views
+
+| View Name | Purpose |
+|-----------|---------|
+| active_subscriptions | Currently active subscriptions only |
+
+---
+
+## Migration File Reference
+
+| Order | File | Creates |
+|-------|------|---------|
+| 1 | `supabase/migrations/001_initial_schema.sql` | 7 core tables |
+| 2 | `migrations/add_system_diagrams_table.sql` | 1 educational table |
+| 3 | `migrations/add_dtc_detail_tables.sql` | 5 DTC detail tables + triggers |
+| 4 | `migrations/add_payments_tables.sql` | 3 payment tables + functions + view |
+
+---
+
+## Data Population Checklist
+
+### Immediate Priority (Required for Launch)
+
+- [ ] **obd_codes**: Import base 132+ codes via `scripts/import_obd_datasets.py`
+- [ ] Test codes: P0420, P0300, P0171, P0128
+
+### High Priority (Enhances UX)
+
+- [ ] **system_diagrams**: Add 10-20 most common systems
+  - Catalytic converter, O2 sensor, MAF sensor, throttle body
+  - Source: Wikimedia Commons (CC-licensed)
+
+### Medium Priority (Rich Diagnostics)
+
+- [ ] **code_vehicle_fitment**: Top 100 codes × top 20 vehicle models
+- [ ] **repair_steps**: Instructions for top 50 common codes
+- [ ] **parts**: Parts for top 50 common codes
+- [ ] **common_symptoms**: Symptoms for top 50 codes
+- [ ] **related_codes**: Relationships for top 50 codes
+
+### Low Priority (Build Over Time)
+
+- [ ] **vehicle_overrides**: Add as discovered
+- [ ] **obd_summaries**: Auto-populated by AI system
+- [ ] **external_obd_cache**: Auto-populated during operation
+
+---
+
+## Environment Variables Required
+
+```env
+# Supabase Database
+SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_KEY=your-anon-key
+SUPABASE_SERVICE_KEY=your-service-role-key
+
+# Paynow Payment Gateway (Zimbabwe)
+PAYNOW_INTEGRATION_ID=your-paynow-id
+PAYNOW_INTEGRATION_KEY=your-paynow-key
+PAYNOW_RETURN_URL=https://your-domain.com/payment/return
+PAYNOW_RESULT_URL=https://your-domain.com/payment/callback
+
+# WhatsApp Business API
+WHATSAPP_TOKEN=your-meta-token
+WHATSAPP_PHONE_NUMBER_ID=your-phone-id
+WHATSAPP_VERIFY_TOKEN=your-webhook-verify-token
+
+# Optional: External OBD APIs
+EXTERNAL_API_KEY=your-api-key
+```
+
+---
+
+## Post-Setup Testing Checklist
+
+### Core Functionality
+
+- [ ] Test OBD code lookup (P0420)
+- [ ] Test multi-turn conversation
+- [ ] Verify session persistence after restart
+- [ ] Check message logging works
+
+### Payment Flow
+
+- [ ] Test subscription purchase (dev/test mode)
+- [ ] Verify transaction recorded
+- [ ] Check subscription activated
+- [ ] Test usage limits (free tier)
+
+### DTC Details (Once Populated)
+
+- [ ] Test vehicle fitment query
+- [ ] Test repair steps retrieval
+- [ ] Test parts lookup
+- [ ] Test symptom matching
+
+### Educational Content (Once Populated)
+
+- [ ] Test system diagram retrieval
+- [ ] Verify image URLs work
+- [ ] Check attribution text
+
+---
+
+## Troubleshooting Reference
+
+### Database Connection Issues
+
+**Symptom:** "supabase_unreachable" in logs
+
+Solutions:
+
+1. Disable Cloudflare WARP
+2. Check .env has correct SUPABASE_URL and SUPABASE_SERVICE_KEY
+3. Test connection: `curl https://your-project.supabase.co`
+4. Verify Supabase project is not paused
+
+### Table Missing Errors
+
+**Symptom:** "relation does not exist" errors
+
+Solutions:
+
+1. Run migrations in order (see Migration File Reference above)
+2. Check Supabase Table Editor to verify tables exist
+3. Re-run migration SQL if needed
+
+### Permission Errors
+
+**Symptom:** "401 Unauthorized" or "403 Forbidden"
+
+Solutions:
+
+1. Use service_role key, not anon key
+2. Check grants in migration files ran successfully
+3. Manually grant permissions if needed
+
+### Payment Function Errors
+
+**Symptom:** Functions not found
+
+Solutions:
+
+1. Verify `migrations/add_payments_tables.sql` ran completely
+2. Check functions exist: SQL Editor → Database → Functions
+3. Re-run payment migration if needed
+
+---
+
+## Success Indicators
+
+You're fully set up when:
+
+- ✅ All 16 user tables exist in Table Editor
+- ✅ 4 functions visible in Database → Functions
+- ✅ 1 view (active_subscriptions) exists
+- ✅ 132+ OBD codes in obd_codes table
+- ✅ Backend logs show "supabase_connected"
+- ✅ Test code P0420 returns local_db source
+- ✅ Sessions persist across backend restarts
+- ✅ Messages logged to message_logs table
+- ✅ Payment functions can be called
+
+---
+
+**Last Updated:** 2026-07-06  
+**Schema Version:** v4 (with payments + DTC details)  
+**Your Current Status:** Ready to begin setup
