@@ -119,13 +119,26 @@ class PaymentService:
 
             if response.success:
                 # Update transaction with Paynow response
+                # Extract instructions - handle both string and object types
+                instructions = None
+                if hasattr(response, 'instructions'):
+                    raw_inst = response.instructions
+                    # Check if it's a type/class instead of an instance
+                    if isinstance(raw_inst, type):
+                        # It's a class, not a string - Paynow SDK bug/quirk
+                        instructions = "Approve the payment on your phone"
+                    elif isinstance(raw_inst, str):
+                        instructions = raw_inst
+                    elif raw_inst is not None:
+                        instructions = str(raw_inst)
+
                 self.payment_repo.update_transaction_paynow_response(
                     order_reference=order_reference,
                     paynow_reference=response.reference if hasattr(response, 'reference') else None,
                     poll_url=response.poll_url,
                     paynow_response={
                         "success": True,
-                        "instructions": response.instructions,
+                        "instructions": instructions,
                         "poll_url": response.poll_url
                     }
                 )
@@ -140,7 +153,7 @@ class PaymentService:
                     "success": True,
                     "order_reference": order_reference,
                     "poll_url": response.poll_url,
-                    "instructions": response.instructions,
+                    "instructions": instructions,
                     "transaction_id": transaction["id"]
                 }
             else:

@@ -460,6 +460,7 @@ async def baileys_webhook(
 
     Validates API key, checks idempotency, processes message.
     """
+    print(f"[DEBUG] Baileys webhook called with payload: {payload.model_dump()}")
     logger.info("baileys_webhook_started", payload=payload.model_dump())
 
     # Validate API key
@@ -530,6 +531,8 @@ async def baileys_webhook(
     session = session_manager.load_session(phone_hash)
 
     # Check for payment commands first (SUBSCRIBE, RENEW, CANCEL, STATUS, HELP)
+    logger.info("checking_payment_commands", raw_text=raw_text)
+
     # SUBSCRIBE or RENEW
     if command_handler.parse_subscribe_or_renew(raw_text):
         parsed = command_handler.parse_subscribe_or_renew(raw_text)
@@ -551,7 +554,9 @@ async def baileys_webhook(
         return {"reply": reply}
 
     # STATUS
+    logger.info("checking_status_command", raw_text=raw_text, parsed=command_handler.parse_status(raw_text))
     if command_handler.parse_status(raw_text):
+        logger.info("status_command_matched")
         reply = await command_handler.handle_status(phone_hash)
 
         repos["message_repo"].insert_audit(
