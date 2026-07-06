@@ -19,11 +19,13 @@ from app.core.logging import logger
 SYSTEM_SYNONYMS = {
     # Catalytic converter variations
     "catalyst": ["catalytic converter", "catalyst system"],
+    "cat": ["catalytic converter"],  # Common abbreviation
     "cat converter": ["catalytic converter"],
     "catalytic converter system": ["catalytic converter"],
 
     # O2 sensor variations
     "o2 sensor": ["oxygen sensor", "o2 sensor"],
+    "o2": ["oxygen sensor"],  # Common abbreviation
     "oxygen sensor": ["o2 sensor", "oxygen sensor"],
     "lambda sensor": ["oxygen sensor", "o2 sensor"],
 
@@ -33,12 +35,13 @@ SYSTEM_SYNONYMS = {
     "exhaust gas recirculation": ["egr valve", "egr"],
 
     # MAF variations
-    "maf": ["mass air flow", "maf sensor"],
-    "mass air flow": ["maf", "maf sensor"],
-    "maf sensor": ["mass air flow", "maf"],
+    "maf": ["mass air flow sensor"],  # Fixed: point to correct system name
+    "mass air flow": ["mass air flow sensor"],
+    "mass air flow sensor": ["mass air flow"],
+    "maf sensor": ["mass air flow sensor"],
 
     # Fuel system variations
-    "fuel": ["fuel system"],  # FIX: Prioritize fuel system when just "fuel" searched
+    "fuel": ["fuel injector", "fuel pump"],  # Common abbreviation maps to both fuel systems
     "fuel system": ["fuel injector", "fuel pump"],
     "fuel injector": ["fuel system", "fuel injection"],
     "fuel pump": ["fuel system"],

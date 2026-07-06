@@ -1,0 +1,24 @@
+oxygen sensor
+egr valve
+evap system
+mass air flow sensor
+throttle body
+ignition coil
+spark plugs
+fuel injector
+fuel pump
+map sensor
+camshaft position sensor
+crankshaft position sensor
+knock sensor
+coolant temperature sensor
+thermostat
+pcv valve
+radiator
+timing belt
+alternator
+battery
+brake pads
+wheel speed sensor
+transmission
+air intake manifold
