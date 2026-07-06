@@ -141,14 +141,23 @@ async def _check_usage_limit(
     if limit <= 0:
         return None
 
-    # Check if number is whitelisted
-    allowed = [
+    # Check if number is whitelisted by hashing allowed numbers
+    import hashlib
+    allowed_numbers = [
         n.strip()
         for n in settings.allowed_numbers.split(",")
         if n.strip()
     ]
-    # Note: Can't check raw number since we only have hash
-    # For whitelisting, need to hash allowed numbers and compare
+
+    # Hash each allowed number and check if phone_hash matches
+    for allowed_num in allowed_numbers:
+        allowed_hash = hashlib.sha256(allowed_num.encode()).hexdigest()
+        if phone_hash == allowed_hash:
+            logger.info(
+                "whitelisted_number_bypassing_limit",
+                phone_hash=phone_hash
+            )
+            return None  # Bypass limit check for whitelisted numbers
 
     count = message_repo.count_recent(
         phone_hash,
@@ -187,6 +196,33 @@ async def _check_payment_access(
         - error_message: Error message if access denied, None if access allowed
         - state_info: UserStateInfo object for use in command handlers
     """
+    # Check if number is whitelisted (same logic as usage limit check)
+    import hashlib
+    allowed_numbers = [
+        n.strip()
+        for n in settings.allowed_numbers.split(",")
+        if n.strip()
+    ]
+
+    # Hash each allowed number and check if phone_hash matches
+    for allowed_num in allowed_numbers:
+        allowed_hash = hashlib.sha256(allowed_num.encode()).hexdigest()
+        if phone_hash == allowed_hash:
+            logger.info(
+                "whitelisted_number_bypassing_payment_check",
+                phone_hash=phone_hash
+            )
+            # Create a fake "subscribed" state for whitelisted numbers
+            from app.services.user_state_machine import UserStateInfo, UserState
+            return None, UserStateInfo(
+                state=UserState.ACTIVE_SUBSCRIBER,
+                phone_hash=phone_hash,
+                diagnostics_used=0,
+                diagnostics_remaining=999999,
+                can_access_diagnostic=True,
+                reason="whitelisted"
+            )
+
     # Resolve current state
     state = state_machine.resolve_state(phone_hash)
 
