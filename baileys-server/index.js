@@ -146,12 +146,6 @@ if (CONFIG.ALLOWED_ORIGINS.length > 0) {
 app.use(express.json({ limit: '100kb' }))
 app.use(express.urlencoded({ extended: true, limit: '100kb' }))
 
-// Serve cached diagram images (static files, no auth required for WhatsApp access)
-app.use('/cached-images', express.static('cached-images', {
-    maxAge: '1y',  // Cache for 1 year
-    immutable: true
-}))
-
 // Rate limiting
 const limiter = rateLimit({
     windowMs: CONFIG.RATE_LIMIT_WINDOW,
