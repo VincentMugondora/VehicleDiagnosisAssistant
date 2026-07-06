@@ -1,6 +1,24 @@
-# ✅ Database Setup Checklist
+# ✅ Complete Database Setup Checklist
 
-Quick reference checklist for setting up Supabase.
+**Complete reference for setting up all database tables, functions, and features.**
+
+Last Updated: 2026-07-06  
+Total Tables Required: **17**  
+Total Functions: **4**  
+Total Views: **1**
+
+---
+
+## Quick Summary
+
+### What This System Needs:
+1. **7 Core Tables** - OBD codes, sessions, logging
+2. **5 DTC Detail Tables** - Vehicle fitment, repair steps, parts, symptoms
+3. **3 Payment Tables** - Transactions, subscriptions, usage tracking
+4. **1 Educational Table** - System diagrams
+5. **1 Auxiliary Table** - External OBD cache
+6. **4 Database Functions** - Payment/subscription helpers
+7. **1 View** - Active subscriptions
 
 ---
 
@@ -10,6 +28,7 @@ Quick reference checklist for setting up Supabase.
 - [ ] I have a Supabase project (or will create one)
 - [ ] I have the project URL and service_role key
 - [ ] Backend is currently running (we'll restart it later)
+- [ ] All migration files are present in my project
 
 ---
 
@@ -124,7 +143,98 @@ python -c "from app.db.client import get_supabase_client; client = get_supabase_
 
 ---
 
-## Step 7: Restart Backend
+## Step 7: Run Additional Migrations
+
+### A. DTC Detail Tables (Vehicle Fitment, Repair Steps, Parts)
+
+In Supabase SQL Editor:
+
+- [ ] Opened file: `migrations/add_dtc_detail_tables.sql`
+- [ ] Copied all content
+- [ ] Pasted into new SQL query
+- [ ] Clicked Run
+- [ ] Verified success messages in output
+- [ ] Checked Table Editor for new tables:
+  - [ ] code_vehicle_fitment
+  - [ ] repair_steps
+  - [ ] parts
+  - [ ] common_symptoms
+  - [ ] related_codes
+
+### B. System Diagrams Table
+
+In Supabase SQL Editor:
+
+- [ ] Opened file: `migrations/add_system_diagrams_table.sql`
+- [ ] Copied all content
+- [ ] Pasted into new SQL query
+- [ ] Clicked Run
+- [ ] Verified `system_diagrams` table exists
+
+### C. Payment & Subscription Tables
+
+In Supabase SQL Editor:
+
+- [ ] Opened file: `migrations/add_payments_tables.sql`
+- [ ] Copied all content
+- [ ] Pasted into new SQL query
+- [ ] Clicked Run
+- [ ] Verified success messages
+- [ ] Checked Table Editor for new tables:
+  - [ ] transactions
+  - [ ] subscriptions
+  - [ ] user_usage
+- [ ] Verified functions created:
+  - [ ] has_active_subscription()
+  - [ ] get_weekly_usage()
+  - [ ] increment_user_usage()
+- [ ] Verified view created:
+  - [ ] active_subscriptions
+
+---
+
+## Step 8: Verify All Tables Exist
+
+Run this in Supabase SQL Editor:
+
+```sql
+-- Check table count (should be 17)
+SELECT COUNT(*) as table_count
+FROM information_schema.tables
+WHERE table_schema = 'public'
+  AND table_type = 'BASE TABLE';
+
+-- List all tables
+SELECT table_name
+FROM information_schema.tables
+WHERE table_schema = 'public'
+  AND table_type = 'BASE TABLE'
+ORDER BY table_name;
+```
+
+Expected tables (17 total):
+
+- [ ] obd_codes
+- [ ] message_logs
+- [ ] diagnostic_logs
+- [ ] conversation_sessions
+- [ ] external_obd_cache
+- [ ] obd_summaries
+- [ ] vehicle_overrides
+- [ ] code_vehicle_fitment
+- [ ] repair_steps
+- [ ] parts
+- [ ] common_symptoms
+- [ ] related_codes
+- [ ] system_diagrams
+- [ ] transactions
+- [ ] subscriptions
+- [ ] user_usage
+- [ ] (Plus internal Supabase tables)
+
+---
+
+## Step 9: Restart Backend
 
 - [ ] Went to terminal running backend
 - [ ] Pressed **Ctrl+C** to stop it
