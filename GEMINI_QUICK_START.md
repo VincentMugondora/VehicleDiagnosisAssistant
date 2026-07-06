@@ -11,7 +11,7 @@ Your Gemini backup is **configured and working**.
 AI_PROVIDER=cohere
 
 # Backup Provider (automatic)
-GEMINI_API_KEY=${GEMINI_API_KEY}
+GEMINI_API_KEY=your-gemini-api-key-here
 GEMINI_MODEL=gemini-2.0-flash-exp
 ```
 

@@ -6,14 +6,14 @@
 ## Configuration Summary
 
 ### Primary Provider: Cohere ✅
-- **API Key**: `${COHERE_API_KEY}` (Configured)
+- **API Key**: `[Configured in .env]`
 - **Model**: `command-r-plus-08-2024`
 - **Status**: ✅ **WORKING**
 - **Test Result**: Successfully ranked causes and generated completions
 
 ### Backup Provider: Gemini ✅
-- **API Key**: `${GEMINI_API_KEY}` (Configured)
-- **Project**: Vehicle (Project #602644638978)
+- **API Key**: `[Configured in .env]`
+- **Project**: Vehicle
 - **Model**: `gemini-1.5-flash`
 - **Status**: ✅ **CONFIGURED** (Automatic fallback ready)
 
@@ -49,11 +49,11 @@
 AI_PROVIDER=cohere
 
 # Cohere AI (Primary)
-COHERE_API_KEY=${COHERE_API_KEY}
+COHERE_API_KEY=your-cohere-api-key-here
 COHERE_MODEL=command-r-plus-08-2024
 
 # Gemini AI (Automatic Backup)
-GEMINI_API_KEY=${GEMINI_API_KEY}
+GEMINI_API_KEY=your-gemini-api-key-here
 GEMINI_MODEL=gemini-1.5-flash
 ```
 

@@ -11,12 +11,12 @@
 
 #### Configured
 - ✅ **Cohere** as primary AI provider
-  - API Key: `${COHERE_API_KEY}`
+  - API Key: `[Configured in .env]`
   - Model: `command-r-plus-08-2024`
   - Status: **Working**
 
 - ✅ **Gemini** as automatic backup
-  - API Key: `${GEMINI_API_KEY}`
+  - API Key: `[Configured in .env]`
   - Model: `gemini-1.5-flash`
   - Status: **Configured**
 
@@ -330,8 +330,8 @@ Result: ALL PASSING
 ## 🔐 API Keys & Credentials
 
 ### Configured ✅
-- **Cohere**: `${COHERE_API_KEY}`
-- **Gemini**: `${GEMINI_API_KEY}`
+- **Cohere**: Configured in `.env` (not shown for security)
+- **Gemini**: Configured in `.env` (not shown for security)
 - **Supabase**: Connected and working
 - **Baileys**: WhatsApp integration working
 
