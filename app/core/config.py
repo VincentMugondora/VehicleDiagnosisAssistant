@@ -38,6 +38,7 @@ class Settings(BaseSettings):
 
     # WhatsApp (Baileys)
     baileys_api_key: str | None = None
+    baileys_outbound_url: str | None = None  # URL to send images back to Baileys
 
     # App behavior
     app_env: str = "development"

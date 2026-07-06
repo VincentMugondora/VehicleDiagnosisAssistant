@@ -460,6 +460,55 @@ app.post('/send', authenticateApiKey, validateSendMessage, async (req, res) => {
     }
 })
 
+// API endpoint to send images
+app.post('/send-image', authenticateApiKey, async (req, res) => {
+    const { to, image, caption } = req.body
+
+    if (!sock || metrics.connectionStatus !== 'connected') {
+        logger.warn({ requestId: req.id }, 'Send image attempted while disconnected')
+        return res.status(503).json({ error: 'WhatsApp not connected' })
+    }
+
+    if (!to || !image || !image.url) {
+        logger.warn({ requestId: req.id }, 'Invalid send image request')
+        return res.status(400).json({ error: 'Missing required fields: to, image.url' })
+    }
+
+    try {
+        const formattedTo = to.includes('@') ? to : `${to}@s.whatsapp.net`
+
+        // Send image message
+        const messagePayload = {
+            image: { url: image.url }
+        }
+
+        // Add caption if provided
+        if (caption) {
+            messagePayload.caption = caption
+        }
+
+        await sock.sendMessage(formattedTo, messagePayload)
+        metrics.messagesSent++
+
+        logger.info({
+            requestId: req.id,
+            to: formattedTo,
+            imageUrl: image.url
+        }, 'Image sent via API')
+
+        res.json({ success: true, message: 'Image sent', request_id: req.id })
+    } catch (error) {
+        metrics.errors++
+        logger.error({
+            requestId: req.id,
+            error: error.message,
+            to: to,
+            imageUrl: image?.url
+        }, 'Failed to send image via API')
+        res.status(500).json({ error: 'Failed to send image' })
+    }
+})
+
 // Health check endpoint
 app.get('/health', (req, res) => {
     const uptime = Date.now() - metrics.startTime

@@ -130,11 +130,18 @@ class ImageSender:
         )
 
         # Send via HTTP POST to Baileys webhook
+        headers = {"Content-Type": "application/json"}
+
+        # Add API key if configured
+        baileys_api_key = getattr(settings, 'baileys_api_key', None)
+        if baileys_api_key:
+            headers["X-API-Key"] = baileys_api_key
+
         async with httpx.AsyncClient(timeout=self.timeout) as client:
             response = await client.post(
                 self.baileys_webhook_url,
                 json=payload,
-                headers={"Content-Type": "application/json"}
+                headers=headers
             )
 
             # Check response

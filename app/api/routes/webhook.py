@@ -587,13 +587,23 @@ async def baileys_webhook(
     if isinstance(result, DiagnosticResult):
         # TASK 3: Check for system diagram BEFORE formatting text response
         diagram = None
-        if result.system:
+
+        # Extract component name from OBD code description
+        from app.services.component_mapper import extract_component_from_description
+        component = extract_component_from_description(result.description, code=result.code)
+
+        # Try component first, then fallback to system category
+        search_term = component or result.system
+
+        if search_term:
             try:
-                diagram = repos["diagram_repo"].get_by_system_fuzzy(result.system)
+                diagram = repos["diagram_repo"].get_by_system_fuzzy(search_term)
                 if diagram:
                     logger.info(
                         "system_diagram_found_for_diagnosis",
                         system=result.system,
+                        component=component,
+                        search_term=search_term,
                         diagram_system=diagram.system,
                         code=result.code
                     )
