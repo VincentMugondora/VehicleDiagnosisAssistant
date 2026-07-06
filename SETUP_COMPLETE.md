@@ -8,13 +8,13 @@
 ## ✅ What Was Accomplished
 
 ### 1. Gemini API Configured
-- API Key: `[Configured in .env]`
+- API Key: Set via `GEMINI_API_KEY` environment variable
 - Project: Vehicle
 - Model: `gemini-1.5-flash`
 - **Status**: ✅ Configured as automatic backup
 
 ### 2. Cohere API Configured
-- API Key: `[Configured in .env]`
+- API Key: Set via `COHERE_API_KEY` environment variable
 - Model: `command-r-plus-08-2024`
 - **Status**: ✅ Working as primary provider
 
@@ -106,11 +106,11 @@ tail -f logs/app.log | grep -E "ai_|cohere_|gemini_"
 ```bash
 # Primary Provider
 AI_PROVIDER=cohere
-COHERE_API_KEY=your-cohere-api-key-here
+COHERE_API_KEY=${COHERE_API_KEY}  # Set your API key in environment
 COHERE_MODEL=command-r-plus-08-2024
 
 # Backup Provider (Automatic)
-GEMINI_API_KEY=your-gemini-api-key-here
+GEMINI_API_KEY=${GEMINI_API_KEY}  # Set your API key in environment
 GEMINI_MODEL=gemini-1.5-flash
 ```
 
@@ -181,8 +181,8 @@ grep -E "ai_|cohere_|gemini_" logs/app.log | tail -20
 
 ### Test API Keys
 ```bash
-# Test Cohere (replace with your actual key)
-python -c "import cohere; cohere.Client('your-api-key').chat(message='test', model='command-r-plus-08-2024', max_tokens=5); print('Cohere OK')"
+# Test Cohere using environment variable
+python -c "import os, cohere; cohere.Client(os.getenv('COHERE_API_KEY')).chat(message='test', model='command-r-plus-08-2024', max_tokens=5); print('Cohere OK')"
 
 # Test full system
 python test_production_ready.py

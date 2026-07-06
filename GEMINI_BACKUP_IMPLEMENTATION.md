@@ -33,7 +33,7 @@ Successfully implemented automatic AI provider fallback system where Gemini serv
 ```bash
 AI_PROVIDER=cohere
 COHERE_MODEL=command-r-plus-08-2024  # Updated from deprecated command-r
-GEMINI_API_KEY=your-gemini-api-key-here
+GEMINI_API_KEY=${GEMINI_API_KEY}  # Set your Gemini API key in environment
 GEMINI_MODEL=gemini-2.0-flash-exp  # Updated to latest model
 ```
 
@@ -132,7 +132,7 @@ The system logs the following for monitoring:
 ## API Keys Configured
 
 ### Gemini (Backup)
-- **API Key**: `[Configured in .env]`
+- **API Key**: Set via `GEMINI_API_KEY` environment variable
 - **Project**: Vehicle
 - **Model**: `gemini-2.0-flash-exp`
 - **Status**: ✅ Configured and tested
