@@ -84,5 +84,5 @@ print("DTC Population (Top 5 Codes)")
 print("=" * 40)
 for code, info in data.items():
     ins(code, info)
-print("
-Done!")
+print("")
+print("Done!")
