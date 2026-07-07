@@ -16,18 +16,9 @@ def get_supabase_client() -> Client | None:
         return None
 
     if _client is None:
-        # Create client with connection pooling optimizations
+        # Create client - connection pooling handled by underlying httpx
         _client = create_client(
             settings.supabase_url,
-            settings.supabase_service_key,
-            options={
-                "schema": "public",
-                "headers": {
-                    "X-Client-Info": "vehicle-diagnosis-assistant/2.0"
-                },
-                "auto_refresh_token": True,
-                "persist_session": False,
-                "detect_session_in_url": False,
-            }
+            settings.supabase_service_key
         )
     return _client
