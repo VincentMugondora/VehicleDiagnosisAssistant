@@ -477,6 +477,13 @@ app.post('/send-image', authenticateApiKey, async (req, res) => {
     try {
         const formattedTo = to.includes('@') ? to : `${to}@s.whatsapp.net`
 
+        logger.info({
+            requestId: req.id,
+            to: formattedTo,
+            imageUrl: image.url,
+            hasCaption: !!caption
+        }, 'Attempting to send image')
+
         // Send image message
         const messagePayload = {
             image: { url: image.url }
@@ -486,6 +493,11 @@ app.post('/send-image', authenticateApiKey, async (req, res) => {
         if (caption) {
             messagePayload.caption = caption
         }
+
+        logger.debug({
+            requestId: req.id,
+            payload: messagePayload
+        }, 'Calling sock.sendMessage()')
 
         await sock.sendMessage(formattedTo, messagePayload)
         metrics.messagesSent++
@@ -502,10 +514,17 @@ app.post('/send-image', authenticateApiKey, async (req, res) => {
         logger.error({
             requestId: req.id,
             error: error.message,
+            errorName: error.name,
+            errorCode: error.code,
+            errorStack: error.stack,
             to: to,
-            imageUrl: image?.url
+            imageUrl: image?.url,
+            caption: caption
         }, 'Failed to send image via API')
-        res.status(500).json({ error: 'Failed to send image' })
+        res.status(500).json({
+            error: 'Failed to send image',
+            details: process.env.NODE_ENV === 'development' ? error.message : undefined
+        })
     }
 })
 
