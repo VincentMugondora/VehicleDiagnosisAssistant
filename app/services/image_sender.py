@@ -146,23 +146,23 @@ class ImageSender:
             timeout=self.timeout
         )
 
-            # Check response
-            if response.status_code == 200:
-                logger.info(
-                    "system_diagram_sent",
-                    to=to_number,
-                    system=diagram.system
-                )
-                return True
-            else:
-                logger.warning(
-                    "system_diagram_send_failed",
-                    to=to_number,
-                    system=diagram.system,
-                    status_code=response.status_code,
-                    response=response.text[:200]
-                )
-                return False
+        # Check response
+        if response.status_code == 200:
+            logger.info(
+                "system_diagram_sent",
+                to=to_number,
+                system=diagram.system
+            )
+            return True
+        else:
+            logger.warning(
+                "system_diagram_send_failed",
+                to=to_number,
+                system=diagram.system,
+                status_code=response.status_code,
+                response=response.text[:200]
+            )
+            return False
 
 
 def format_attribution(diagram: SystemDiagram) -> Optional[str]:
