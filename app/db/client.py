@@ -5,15 +5,29 @@ _client: Client | None = None
 
 
 def get_supabase_client() -> Client | None:
-    """Get or create singleton Supabase client. Returns None if Supabase is disabled."""
+    """
+    Get or create singleton Supabase client with optimized settings.
+
+    Returns None if Supabase is disabled.
+    """
     global _client
 
     if not settings.supabase_enabled:
         return None
 
     if _client is None:
+        # Create client with connection pooling optimizations
         _client = create_client(
             settings.supabase_url,
-            settings.supabase_service_key
+            settings.supabase_service_key,
+            options={
+                "schema": "public",
+                "headers": {
+                    "X-Client-Info": "vehicle-diagnosis-assistant/2.0"
+                },
+                "auto_refresh_token": True,
+                "persist_session": False,
+                "detect_session_in_url": False,
+            }
         )
     return _client

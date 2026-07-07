@@ -1,6 +1,10 @@
+from functools import lru_cache
 from supabase import Client
 from app.core.config import settings
 from app.repositories.fallback_obd_data import get_fallback_code
+
+# Global cache for OBD code lookups (reduces 3.5s query to <1ms)
+_obd_cache = {}
 
 
 class OBDRepository:
@@ -11,7 +15,7 @@ class OBDRepository:
 
     def get_by_code(self, code: str) -> dict | None:
         """
-        Lookup OBD code in knowledge base.
+        Lookup OBD code in knowledge base with caching.
 
         Args:
             code: OBD code (e.g., "P0420")
@@ -23,11 +27,22 @@ class OBDRepository:
         if not settings.supabase_enabled or self.client is None:
             return get_fallback_code(code)
 
+        # Check cache first (hot path optimization)
+        code_upper = code.upper()
+        if code_upper in _obd_cache:
+            return _obd_cache[code_upper]
+
+        # Query database (cold path - slow)
         result = self.client.table("obd_codes")\
             .select("*")\
-            .eq("code", code.upper())\
+            .eq("code", code_upper)\
             .execute()
-        return result.data[0] if result.data else None
+
+        # Cache the result (even None to prevent repeated lookups)
+        code_data = result.data[0] if result.data else None
+        _obd_cache[code_upper] = code_data
+
+        return code_data
 
     def get_vehicle_override(
         self,

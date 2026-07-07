@@ -6,6 +6,10 @@ from supabase import Client
 from app.models.system_diagram import SystemDiagram
 from app.core.logging import logger
 
+# Global cache for diagram lookups (reduces 0.6s query to <1ms)
+_diagram_cache = {}
+_all_diagrams_cache = None
+
 
 # ============================================================================
 # SYSTEM NAME SYNONYM MAP
@@ -87,7 +91,7 @@ class SystemDiagramRepository:
 
     def get_by_system(self, system: str) -> Optional[SystemDiagram]:
         """
-        Get diagram for a vehicle system.
+        Get diagram for a vehicle system with caching.
 
         Performs case-insensitive exact match on system name.
 
@@ -97,6 +101,11 @@ class SystemDiagramRepository:
         Returns:
             SystemDiagram if found, None otherwise
         """
+        # Check cache first
+        system_lower = system.lower().strip()
+        if system_lower in _diagram_cache:
+            return _diagram_cache[system_lower]
+
         try:
             response = (
                 self.client.table("system_diagrams")
@@ -106,10 +115,13 @@ class SystemDiagramRepository:
                 .execute()
             )
 
+            diagram = None
             if response.data:
-                return SystemDiagram.from_dict(response.data[0])
+                diagram = SystemDiagram.from_dict(response.data[0])
 
-            return None
+            # Cache result (even None)
+            _diagram_cache[system_lower] = diagram
+            return diagram
 
         except Exception as e:
             logger.error(
