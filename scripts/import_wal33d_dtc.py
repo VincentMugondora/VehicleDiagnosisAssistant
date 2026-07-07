@@ -208,6 +208,9 @@ def main():
     print("=" * 80)
     print()
 
+    # Check for --yes flag to skip confirmation
+    auto_confirm = "--yes" in sys.argv or "-y" in sys.argv
+
     # Check Supabase config
     if not settings.supabase_enabled:
         print("❌ Supabase is disabled. Enable it in .env:")
@@ -237,7 +240,12 @@ def main():
 
         # Step 5: Confirm before uploading
         print(f"\n📤 Ready to upload {len(transformed)} codes to Supabase.")
-        confirm = input("Continue? [y/N]: ").strip().lower()
+
+        if auto_confirm:
+            print("✅ Auto-confirmed (--yes flag)")
+            confirm = "y"
+        else:
+            confirm = input("Continue? [y/N]: ").strip().lower()
 
         if confirm != "y":
             print("❌ Import cancelled.")
