@@ -1,0 +1,50 @@
+================================================================================
+URGENT FIXES APPLIED - 2026-07-07
+================================================================================
+
+ISSUES FIXED:
+-------------
+1. ❌ AI client crash: "await outside async function" at cohere_client.py:118
+   ✅ FIXED: Changed to time.sleep() for sync function
+
+2. ❌ Timeout errors: "timeout of 60000ms exceeded" 
+   ✅ FIXED: Increased Baileys timeout from 60s → 120s
+
+3. ❌ Connection drops: [WinError 10054] on PayNow polling
+   ✅ FIXED: Added HTTP connection pooling with auto-retry
+
+FILES CHANGED:
+--------------
+1. app/services/cohere_client.py (line 118)
+2. baileys-server/.env (REQUEST_TIMEOUT=120000)
+3. baileys-server/.env.example (updated default)
+4. app/core/http_clients.py (NEW - connection pooling)
+
+NEXT STEPS:
+-----------
+1. RESTART both services:
+   - Kill Python backend (Ctrl+C)
+   - Kill Baileys server (Ctrl+C)
+   - Start backend: python -m uvicorn main:app --reload
+   - Start Baileys: cd baileys-server && node index.js
+
+2. TEST with these messages:
+   - "P0171" (simple, should be fast)
+   - "P0171 Toyota Corolla 2015" (AI enrichment, may take 60s)
+
+3. MONITOR logs for:
+   ✅ No "await outside async" errors
+   ✅ No timeout errors
+   ✅ Fewer [WinError 10054] errors
+
+EXPECTED RESULTS:
+-----------------
+- AI enrichment works (was broken)
+- Messages under 120s complete successfully (was timing out at 60s)
+- More stable PayNow polling (fewer connection drops)
+
+DETAILED DOCS:
+--------------
+See TIMEOUT_FIXES.md for full technical details
+
+================================================================================

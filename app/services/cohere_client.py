@@ -72,6 +72,7 @@ class CohereClient:
         Raises:
             GeminiUnavailable: If all retries fail (named for compatibility)
         """
+        import time
         prompt = self._build_prompt(base_causes, vehicle_context)
 
         for attempt in range(max_retries):
@@ -115,7 +116,7 @@ class CohereClient:
                         wait_seconds=wait,
                         error=error_str
                     )
-                    await asyncio.sleep(wait)
+                    time.sleep(wait)
                     continue
 
                 # Final attempt failed or non-retryable error
