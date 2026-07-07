@@ -1,0 +1,5 @@
+This directory contains local fallback images for system diagrams.
+
+Images are served via FastAPI static files at /static/images/
+
+Placeholder images are used when Wikimedia Commons URLs are unavailable.

@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 400" width="600" height="400">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#f8f9fa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#e9ecef;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <rect width="600" height="400" fill="url(#bg)"/>
+
+  <!-- Icon/Shape representing component -->
+  <rect x="200" y="120" width="200" height="120" rx="10" fill="#6c757d" stroke="#495057" stroke-width="3"/>
+  <circle cx="230" cy="160" r="15" fill="#adb5bd"/>
+  <circle cx="270" cy="160" r="15" fill="#adb5bd"/>
+  <circle cx="230" cy="200" r="15" fill="#adb5bd"/>
+  <circle cx="270" cy="200" r="15" fill="#adb5bd"/>
+  <circle cx="330" cy="160" r="15" fill="#adb5bd"/>
+  <circle cx="370" cy="160" r="15" fill="#adb5bd"/>
+  <circle cx="330" cy="200" r="15" fill="#adb5bd"/>
+  <circle cx="370" cy="200" r="15" fill="#adb5bd"/>
+
+  <!-- Title -->
+  <text x="300" y="280" text-anchor="middle" font-family="Arial, sans-serif" font-size="28" font-weight="bold" fill="#212529">Oxygen Sensor</text>
+
+  <!-- Subtitle -->
+  <text x="300" y="320" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" fill="#6c757d">Diagram Placeholder</text>
+  <text x="300" y="345" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#adb5bd">Vehicle Diagnosis Assistant</text>
+</svg>

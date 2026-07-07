@@ -1,5 +1,7 @@
+from pathlib import Path
 from fastapi import FastAPI, Request, status
 from fastapi.responses import JSONResponse
+from fastapi.staticfiles import StaticFiles
 from app.core.config import settings
 from app.core.logging import setup_logging, logger
 from app.core.middleware import RequestContextMiddleware
@@ -15,6 +17,12 @@ app = FastAPI(
     version="2.0.0",
     description="WhatsApp-based OBD-II diagnostic assistant with PostgreSQL/Supabase backend and Paynow payments"
 )
+
+# Mount static files for local image hosting
+static_path = Path(__file__).parent / "static"
+if static_path.exists():
+    app.mount("/static", StaticFiles(directory=str(static_path)), name="static")
+    logger.info("static_files_mounted", path=str(static_path))
 
 # Register middleware (order matters: first added = outermost = runs first)
 app.add_middleware(RequestSizeLimitMiddleware)
