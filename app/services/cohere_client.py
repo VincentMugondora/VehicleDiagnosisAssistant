@@ -115,7 +115,7 @@ class CohereClient:
                         wait_seconds=wait,
                         error=error_str
                     )
-                    time.sleep(wait)
+                    await asyncio.sleep(wait)
                     continue
 
                 # Final attempt failed or non-retryable error

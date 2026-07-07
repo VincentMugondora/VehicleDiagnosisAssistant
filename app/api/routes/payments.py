@@ -140,6 +140,9 @@ async def paynow_webhook(
         )
 
         # Process webhook using Paynow SDK validation
+        # NOTE: The Paynow SDK's process_status_update() method validates
+        # the webhook signature using the integration key to prevent forgery.
+        # If signature validation fails, it will raise an exception.
         if payment_service.paynow:
             status_response = payment_service.paynow.process_status_update(data)
 

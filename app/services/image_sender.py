@@ -137,12 +137,14 @@ class ImageSender:
         if baileys_api_key:
             headers["X-API-Key"] = baileys_api_key
 
-        async with httpx.AsyncClient(timeout=self.timeout) as client:
-            response = await client.post(
-                self.baileys_webhook_url,
-                json=payload,
-                headers=headers
-            )
+        from app.core.http_clients import get_image_client
+        client = get_image_client()
+        response = await client.post(
+            self.baileys_webhook_url,
+            json=payload,
+            headers=headers,
+            timeout=self.timeout
+        )
 
             # Check response
             if response.status_code == 200:

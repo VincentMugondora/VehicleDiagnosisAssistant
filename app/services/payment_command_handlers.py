@@ -60,12 +60,23 @@ class PaymentCommandHandler:
         email = parts[1]
         phone = parts[2]
 
-        # Validate email
-        if '@' not in email or '.' not in email.split('@')[1]:
+        # Validate email format
+        if '@' not in email:
+            return None
+        email_parts = email.split('@')
+        if len(email_parts) != 2:
+            return None
+        username, domain = email_parts
+        if not username or not domain or '.' not in domain:
+            return None
+        # Basic length checks
+        if len(email) > 254 or len(username) > 64:
             return None
 
         # Clean and validate phone
-        phone = phone.replace(' ', '').replace('-', '')
+        phone = phone.replace(' ', '').replace('-', '').replace('+263', '0')
+        if not phone.isdigit():
+            return None
         if not phone.startswith('0') or len(phone) != 10:
             return None
 

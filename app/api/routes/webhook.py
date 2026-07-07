@@ -297,10 +297,11 @@ async def _send_reply_via_twilio(to_number: str, body: str):
     auth = (settings.twilio_account_sid, settings.twilio_auth_token)
 
     try:
-        async with httpx.AsyncClient(timeout=10) as client:
-            await client.post(url, data=data, auth=auth)
+        from app.core.http_clients import get_twilio_client
+        client = get_twilio_client()
+        await client.post(url, data=data, auth=auth)
         logger.info("twilio_reply_sent", to=to_number)
-    except Exception as e:
+    except Exception as e:  # pylint: disable=broad-exception-caught
         logger.error("twilio_reply_failed", error=str(e))
 
 

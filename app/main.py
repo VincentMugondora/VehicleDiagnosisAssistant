@@ -3,6 +3,7 @@ from fastapi.responses import JSONResponse
 from app.core.config import settings
 from app.core.logging import setup_logging, logger
 from app.core.middleware import RequestContextMiddleware
+from app.middleware.size_limit import RequestSizeLimitMiddleware
 from app.db.client import get_supabase_client
 from app.api.routes import webhook, payments
 
@@ -15,7 +16,8 @@ app = FastAPI(
     description="WhatsApp-based OBD-II diagnostic assistant with PostgreSQL/Supabase backend and Paynow payments"
 )
 
-# Register middleware
+# Register middleware (order matters: first added = outermost = runs first)
+app.add_middleware(RequestSizeLimitMiddleware)
 app.add_middleware(RequestContextMiddleware)
 
 # Register routes
@@ -27,12 +29,6 @@ app.include_router(payments.router)
 @app.exception_handler(Exception)
 async def global_exception_handler(request: Request, exc: Exception):
     """Catch all unhandled exceptions and log them"""
-    import traceback
-    with open("error.log", "a") as f:
-        f.write(f"Exception for path {request.url.path}:\n")
-        f.write(traceback.format_exc())
-        f.write("\n")
-
     logger.error(
         "unhandled_exception",
         error=str(exc),
@@ -43,7 +39,7 @@ async def global_exception_handler(request: Request, exc: Exception):
     )
     return JSONResponse(
         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-        content={"error": "Internal server error", "detail": str(exc)}
+        content={"error": "Internal server error"}
     )
 
 
@@ -95,7 +91,15 @@ async def shutdown():
         from app.services.payment_poller import stop_payment_poller
         stop_payment_poller()
         logger.info("payment_poller_stopped")
-    except:
+    except Exception:  # pylint: disable=broad-exception-caught
+        pass
+
+    # Close shared HTTP clients
+    try:
+        from app.core.http_clients import close_all_clients
+        await close_all_clients()
+        logger.info("http_clients_closed")
+    except Exception:  # pylint: disable=broad-exception-caught
         pass
 
 
