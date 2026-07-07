@@ -20,6 +20,7 @@ Successfully populated the DTC details tables (common_symptoms, repair_steps, pa
    - https://obdguide.com/en/codes
    - https://www.dtcsearch.com/
    - Verified consistency across 2+ sources per code
+   - ❌ **Evaluated & Rejected:** Kaggle "OBD2 Powertrain Codes" dataset - contains only condition descriptions, no probable causes/symptoms despite claim
 
 3. **Paraphrased All Content**
    - No copy-pasted text (copyright compliance)
