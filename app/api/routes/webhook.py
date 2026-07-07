@@ -461,7 +461,6 @@ async def baileys_webhook(
 
     Validates API key, checks idempotency, processes message.
     """
-    print(f"[DEBUG] Baileys webhook called with payload: {payload.model_dump()}")
     logger.info("baileys_webhook_started", payload=payload.model_dump())
 
     # Validate API key
