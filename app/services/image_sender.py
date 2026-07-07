@@ -137,8 +137,9 @@ class ImageSender:
         if baileys_api_key:
             headers["X-API-Key"] = baileys_api_key
 
-        from app.core.http_clients import get_image_client
-        client = get_image_client()
+        # Use existing Baileys HTTP client for all Baileys outbound calls
+        from app.core.http_clients import get_baileys_client
+        client = get_baileys_client()
         response = await client.post(
             self.baileys_webhook_url,
             json=payload,
