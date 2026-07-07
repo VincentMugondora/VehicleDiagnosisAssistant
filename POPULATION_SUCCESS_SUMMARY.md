@@ -57,6 +57,11 @@ Successfully populated the DTC details tables (common_symptoms, repair_steps, pa
 ✅ **P0442** - EVAP System Small Leak
 - 4 symptoms, 4 repair steps, 11 parts, 3 related codes
 
+✅ **C0035** - Right Front Wheel Speed Sensor Supply *(CORRECTED)*
+- 5 symptoms, 9 repair steps, 5 parts, 3 related codes
+- **Note:** Corrected from "Left Front" to match production obd_codes data
+- Includes manufacturer variation hedge in repair steps
+
 ### Codes with Partial Data (Parts Only)
 
 ⚠️ **P0101, P0102, P0103** - MAF Sensor variants (parts only)
