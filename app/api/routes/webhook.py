@@ -461,7 +461,8 @@ async def baileys_webhook(
 
     Validates API key, checks idempotency, processes message.
     """
-    logger.info("baileys_webhook_started", payload=payload.model_dump())
+    # Don't log payload - can contain emojis that crash Windows console
+    logger.info("baileys_webhook_started")
 
     # Validate API key
     if settings.baileys_api_key:
