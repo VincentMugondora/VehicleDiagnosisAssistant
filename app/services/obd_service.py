@@ -77,23 +77,23 @@ class OBDService:
                 if web_result:
                     return web_result
 
-            # Return generic fallback
+            # Return minimal unknown code response
+            # Do not provide generic suggestions - accuracy over coverage
             return DiagnosticResult(
                 code=code.upper(),
-                description="Generic OBD-II diagnostic trouble code",
+                description=f"Code {code.upper()} is not in our database yet.",
                 causes=[
-                    "Faulty sensor",
-                    "Wiring or connector issue",
-                    "ECM software fault"
+                    "This code may be vehicle-specific",
+                    "Check your vehicle's service manual for details"
                 ],
                 checks=[
-                    "Inspect wiring",
-                    "Check connectors",
-                    "Clear code and retest"
+                    f"Search online: '{code.upper()} [your vehicle make/model]'",
+                    "Visit a qualified mechanic for professional diagnosis",
+                    "Clear code and monitor if problem recurs"
                 ],
-                confidence=0.30,
-                source="fallback",
-                system=None  # Unknown system for generic fallback
+                confidence=0.10,  # Very low - we don't know what this code means
+                source="unknown",
+                system=None  # Unknown system
             )
 
         # Parse base causes and checks
