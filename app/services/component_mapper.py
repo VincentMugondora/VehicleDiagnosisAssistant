@@ -46,6 +46,7 @@ COMPONENT_PATTERNS = [
     (r'\bcamshaft\s*position', 'camshaft position sensor'),
     (r'\bcrankshaft\s*position', 'crankshaft position sensor'),
     (r'\bwheel\s*speed', 'wheel speed sensor'),
+    (r'\bcoolant.*temp|\bect\s*sensor|\bcoolant\s*sensor', 'engine coolant temperature sensor'),
 
     # Electrical
     (r'\bbattery\b', 'battery'),

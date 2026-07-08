@@ -259,6 +259,20 @@ COMPONENT_REGISTRY: List[ComponentDefinition] = [
         description="Monitors wheel rotation speed for ABS and traction control"
     ),
 
+    ComponentDefinition(
+        canonical_name="engine coolant temperature sensor",
+        display_name="Engine Coolant Temperature Sensor",
+        aliases=[
+            ("coolant temp sensor", 95),
+            ("ect sensor", 95),
+            ("coolant sensor", 90),
+            ("temp sensor", 80),
+        ],
+        image_filename=None,  # TODO: Add image
+        category="sensors",
+        description="Monitors engine coolant temperature for fuel management"
+    ),
+
     # -------------------------------------------------------------------------
     # ELECTRICAL
     # -------------------------------------------------------------------------
