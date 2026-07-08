@@ -2,11 +2,13 @@
 Service for sending images via WhatsApp (Baileys).
 
 Handles system diagram images with timeouts and error recovery.
+Only sends images for high-confidence component matches (≥80%).
 """
 import asyncio
 from typing import Optional
 import httpx
 from app.models.system_diagram import SystemDiagram
+from app.models.component_registry import ComponentMatch
 from app.core.logging import logger
 from app.core.config import settings
 
