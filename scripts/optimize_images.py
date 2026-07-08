@@ -129,11 +129,13 @@ def main():
     print('SUMMARY')
     print('=' * 80)
     print()
-    print(f'{'Component':<30} {'Original':<12} {'Optimized':<12} {'Reduction'}")
+    header = f"{'Component':<30} {'Original':<12} {'Optimized':<12} {'Reduction'}"
+    print(header)
     print('-' * 80)
 
     for r in sorted(results, key=lambda x: x['original_kb'], reverse=True):
-        print(f\"{r['system']:<30} {r['original_kb']:>8.1f} KB  {r['optimized_kb']:>8.1f} KB  -{r['reduction']:>5.1f}%\")
+        row = f"{r['system']:<30} {r['original_kb']:>8.1f} KB  {r['optimized_kb']:>8.1f} KB  -{r['reduction']:>5.1f}%"
+        print(row)
 
     print('=' * 80)
     print()
