@@ -630,9 +630,13 @@ async def baileys_webhook(
         # TASK 3: Check for system diagram BEFORE formatting text response
         diagram = None
 
-        # Extract component name from OBD code description
-        from app.services.component_mapper import extract_component_from_description
+        # Extract component name from OBD code description and code prefix
+        from app.services.component_mapper import extract_component_from_description, extract_component_from_code_prefix
         component = extract_component_from_description(result.description, code=result.code)
+
+        # If description doesn't match, try code prefix patterns (e.g., P0307 -> ignition coil)
+        if not component:
+            component = extract_component_from_code_prefix(result.code)
 
         # Try component first, then fallback to system category
         search_term = component or result.system
