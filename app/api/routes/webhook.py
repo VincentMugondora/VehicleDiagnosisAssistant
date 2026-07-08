@@ -627,37 +627,53 @@ async def baileys_webhook(
 
     # Format response
     if isinstance(result, DiagnosticResult):
-        # TASK 3: Check for system diagram BEFORE formatting text response
+        # NEW CONFIDENCE-BASED IMAGE SYSTEM
+        # Only send images for high-confidence component matches (≥80%)
         diagram = None
+        component_match = None
 
-        # Extract component name from OBD code description and code prefix
-        from app.services.component_mapper import extract_component_from_description, extract_component_from_code_prefix
-        component = extract_component_from_description(result.description, code=result.code)
+        # Extract component with confidence scoring
+        from app.services.component_mapper import extract_best_component_match, should_send_image
 
-        # If description doesn't match, try code prefix patterns (e.g., P0307 -> ignition coil)
-        if not component:
-            component = extract_component_from_code_prefix(result.code)
+        component_match = extract_best_component_match(
+            description=result.description,
+            code=result.code
+        )
 
-        # Try component first, then fallback to system category
-        search_term = component or result.system
+        # Determine search term for diagram lookup
+        if component_match:
+            search_term = component_match.component.canonical_name
+        else:
+            search_term = result.system  # Fallback to system category
 
-        if search_term:
+        # Log the image decision
+        image_decision = {
+            "code": result.code,
+            "detected_component": component_match.component.canonical_name if component_match else None,
+            "confidence": component_match.confidence if component_match else 0,
+            "has_image": component_match.component.image_filename if component_match else None,
+            "should_send": should_send_image(component_match) if component_match else False,
+        }
+
+        logger.info("image_decision", **image_decision)
+
+        # Only attempt image send if confidence threshold met
+        if component_match and should_send_image(component_match):
             try:
                 diagram = repos["diagram_repo"].get_by_system_fuzzy(search_term)
                 if diagram:
                     logger.info(
-                        "system_diagram_found_for_diagnosis",
-                        system=result.system,
-                        component=component,
-                        search_term=search_term,
-                        diagram_system=diagram.system,
-                        code=result.code
+                        "high_confidence_component_match",
+                        code=result.code,
+                        component=component_match.component.canonical_name,
+                        confidence=component_match.confidence,
+                        diagram_system=diagram.system
                     )
 
                     # Send image FIRST (before text diagnosis)
                     image_sender = ImageSender(
                         baileys_webhook_url=getattr(settings, 'baileys_outbound_url', None),
-                        timeout=15.0  # Images are cached locally, should be fast
+                        timeout=15.0
                     )
 
                     image_sent = await image_sender.send_system_diagram(
@@ -665,22 +681,60 @@ async def baileys_webhook(
                         diagram=diagram
                     )
 
-                    if not image_sent:
-                        logger.warning(
-                            "system_diagram_send_failed_continuing",
-                            system=result.system,
-                            code=result.code
+                    if image_sent:
+                        logger.info(
+                            "image_sent_successfully",
+                            code=result.code,
+                            component=component_match.component.canonical_name,
+                            confidence=component_match.confidence
                         )
-                        # Continue anyway - image failure never blocks text diagnosis
+                    else:
+                        logger.warning(
+                            "image_send_failed_continuing",
+                            code=result.code,
+                            component=component_match.component.canonical_name
+                        )
+                else:
+                    logger.info(
+                        "high_confidence_match_but_no_diagram",
+                        code=result.code,
+                        component=component_match.component.canonical_name,
+                        confidence=component_match.confidence
+                    )
 
             except Exception as e:
                 logger.error(
-                    "system_diagram_lookup_error",
-                    system=result.system,
+                    "image_send_error",
                     code=result.code,
                     error=str(e)
                 )
-                # Continue anyway - diagram errors never block text diagnosis
+                # Continue anyway - image errors never block text diagnosis
+        else:
+            # Log why image was not sent
+            if component_match:
+                if component_match.confidence < 80:
+                    logger.info(
+                        "image_not_sent_low_confidence",
+                        code=result.code,
+                        component=component_match.component.canonical_name,
+                        confidence=component_match.confidence,
+                        status="TEXT_ONLY"
+                    )
+                elif not component_match.component.image_filename:
+                    logger.info(
+                        "image_not_sent_no_file",
+                        code=result.code,
+                        component=component_match.component.canonical_name,
+                        confidence=component_match.confidence,
+                        status="TEXT_ONLY"
+                    )
+            else:
+                logger.info(
+                    "image_not_sent_no_component_match",
+                    code=result.code,
+                    description=result.description[:50],
+                    status="TEXT_ONLY"
+                )
 
         # Format text response
         reply_parts = format_diagnostic_response(result)
