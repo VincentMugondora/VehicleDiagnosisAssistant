@@ -14,23 +14,23 @@ COMPONENT_PATTERNS = [
     (r'\bcatalyst\b|\bcatalytic converter\b', 'catalytic converter'),
     (r'\bo2\s*sensor\b|\boxygen sensor\b|\blambda\s*sensor\b', 'oxygen sensor'),
     (r'\begr\b|\bexhaust gas recirculation\b', 'egr valve'),
-    (r'\bevap\b|\bevaporative\s*emission', 'evap system'),
+    (r'\bevap\b|\bevaporative\s*emission|\bpurge\s*valve', 'evap system'),
 
     # Air Intake
-    (r'\bmaf\b|\bmass air flow\b', 'mass air flow sensor'),
+    (r'\bmaf\b|\bmass.*air\s*flow|\bair\s*flow\s*sensor', 'mass air flow sensor'),
     (r'\bmap\b|\bmanifold absolute pressure\b', 'map sensor'),
-    (r'\bthrottle\s*body\b|\bthrottle\s*position', 'throttle body'),
+    (r'\bthrottle\s*body\b|\bthrottle\s*position|\bthrottle\s*actuator', 'throttle body'),
     (r'\bintake\s*manifold\b|\bair\s*intake', 'air intake manifold'),
 
     # Ignition & Fuel
     (r'\bignition\s*coil\b', 'ignition coil'),
     (r'\bspark\s*plug', 'spark plug'),
-    (r'\bfuel\s*injector', 'fuel injector'),
+    (r'\bfuel\s*injector|\binjector\b|\binjection\b', 'fuel injector'),
     (r'\bfuel\s*pump', 'fuel pump'),
 
     # Sensors
-    (r'\bcamshaft\s*position\s*sensor', 'camshaft position sensor'),
-    (r'\bcrankshaft\s*position\s*sensor', 'crankshaft position sensor'),
+    (r'\bcamshaft\s*position', 'camshaft position sensor'),
+    (r'\bcrankshaft\s*position', 'crankshaft position sensor'),
     (r'\bknock\s*sensor', 'knock sensor'),
     (r'\bcoolant\s*temp', 'coolant temperature sensor'),
 
@@ -48,7 +48,7 @@ COMPONENT_PATTERNS = [
 
     # Brakes
     (r'\bbrake\s*pad', 'brake pads'),
-    (r'\bwheel\s*speed\s*sensor', 'wheel speed sensor'),
+    (r'\bwheel\s*speed', 'wheel speed sensor'),
 
     # Transmission
     (r'\btransmission\b|\bgearbox\b', 'transmission'),
