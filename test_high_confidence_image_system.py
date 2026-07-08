@@ -8,7 +8,13 @@ Verifies that:
 4. Logging captures all image decisions
 """
 import sys
+import os
 from pathlib import Path
+
+# Fix Windows console encoding
+if sys.platform == 'win32':
+    import io
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
 # Add project root to path
 sys.path.insert(0, str(Path(__file__).parent))
