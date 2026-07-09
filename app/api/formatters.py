@@ -1,15 +1,22 @@
 from app.models.diagnostic import DiagnosticResult, SymptomDiagnosisResult
 from app.core.config import settings
+from app.services.diagnostic_formatter import format_diagnostic_report
 
 
 def format_diagnostic_response(result: DiagnosticResult) -> list[str]:
     """
-    Format diagnostic result into WhatsApp messages (max 1,500 chars each).
+    Format diagnostic result into WhatsApp messages using standardized report format.
 
-    Uses markdown formatting per CLAUDE.md requirements:
-    - *bold* for headers
-    - • bullets for lists
-    - _italic_ for disclaimers
+    Uses the comprehensive diagnostic report formatter that includes:
+    - Fault code and system
+    - What it means (description)
+    - Common symptoms
+    - Likely causes
+    - Recommended diagnostic steps
+    - Severity assessment
+    - Pre-replacement checks
+    - Technician tip
+    - Footer disclaimer
 
     Args:
         result: DiagnosticResult to format
@@ -17,25 +24,11 @@ def format_diagnostic_response(result: DiagnosticResult) -> list[str]:
     Returns:
         List of message strings (split if >1,500 chars)
     """
-    max_causes = settings.reply_max_causes
-    max_checks = settings.reply_max_checks
-
-    base = f"""*Fault code:* {result.code}
-*System:* {result.source}
-
-*What it means:*
-{result.description}
-
-*Likely causes:*
-{chr(10).join(f"• {c}" for c in result.causes[:max_causes])}
-
-*Recommended action:*
-{chr(10).join(f"{i+1}. {c}" for i, c in enumerate(result.checks[:max_checks]))}
-
-_Always confirm with live scanner data before replacing parts._"""
+    # Generate standardized diagnostic report
+    report = format_diagnostic_report(result)
 
     # Split by 1,500 chars if needed
-    return _split_message(base, max_length=1500)
+    return _split_message(report, max_length=1500)
 
 
 def format_symptom_response(result: SymptomDiagnosisResult) -> list[str]:

@@ -6,6 +6,7 @@ from app.core.errors import OBDCodeNotFound
 from app.core.logging import logger
 from app.services.ai_code_generator import AICodeGenerator
 from app.services.ai_client import AIClient
+from app.services.selective_enrichment import SelectiveEnrichment
 
 _OBD_REGEX = re.compile(r"^[PBCU][0-9]{4}$", re.IGNORECASE)
 
@@ -41,10 +42,12 @@ class OBDService:
         self.ai_client = ai_client
         self.auto_learn = auto_learn  # Enable/disable dynamic learning
 
-        # Initialize AI code generator if AI client provided
+        # Initialize AI services if AI client provided
         self.code_generator = None
+        self.selective_enrichment = None
         if self.ai_client:
             self.code_generator = AICodeGenerator(self.ai_client)
+            self.selective_enrichment = SelectiveEnrichment(self.ai_client)
 
     async def get_obd_info(
         self,
@@ -65,8 +68,13 @@ class OBDService:
         Raises:
             OBDCodeNotFound: If code not in database and no fallback available
         """
+        logger.info("obd_lookup_started", code=code)
+
         # Lookup base code
         base = self.obd_repo.get_by_code(code)
+
+        if base:
+            logger.info("obd_code_found_in_db", code=code, has_symptoms=bool(base.get("symptoms")))
 
         if not base:
             logger.warning("obd_code_not_found", code=code)
@@ -93,10 +101,11 @@ class OBDService:
                 ],
                 confidence=0.10,  # Very low - we don't know what this code means
                 source="unknown",
-                system=None  # Unknown system
+                system=None,  # Unknown system
+                symptoms=None  # No symptoms for unknown codes
             )
 
-        # Parse base causes and checks
+        # Parse all fields from database
         base_causes = [
             c.strip()
             for c in (base.get("common_causes") or "").split(",")
@@ -107,13 +116,57 @@ class OBDService:
             for c in re.split(r"[,\n;]+", base.get("generic_fixes") or "")
             if c.strip()
         ]
+        base_symptoms = [
+            s.strip()
+            for s in (base.get("symptoms") or "").split(",")
+            if s.strip()
+        ]
+        base_severity = base.get("severity")  # e.g., "High", "Moderate", "Low"
+        base_severity_explanation = base.get("severity_explanation")
+        base_technician_tip = base.get("technician_tip")
+        base_pre_replacement_checks = [
+            c.strip()
+            for c in (base.get("pre_replacement_checks") or "").split(",")
+            if c.strip()
+        ]
 
-        # If no causes/checks in database, provide generic troubleshooting guidance
-        # (Wal33D dataset has accurate descriptions but no enrichment data)
-        if not base_causes:
-            base_causes = self._generate_generic_causes(code, base.get("description", ""))
-        if not base_checks:
-            base_checks = self._generate_generic_checks(code, base.get("description", ""))
+        # Check if we need AI enrichment
+        needs_enrichment = (
+            not base_causes or
+            not base_checks or
+            not base_symptoms or
+            not base_severity or
+            not base_technician_tip or
+            not base_pre_replacement_checks
+        )
+
+        if needs_enrichment:
+            logger.info(
+                "enrichment_needed",
+                code=code,
+                missing_symptoms=not base_symptoms,
+                missing_causes=not base_causes,
+                missing_checks=not base_checks,
+                missing_severity=not base_severity,
+                missing_tip=not base_technician_tip,
+                missing_pre_checks=not base_pre_replacement_checks
+            )
+
+        # If missing any enrichment data and AI is available, enrich and save
+        if needs_enrichment and self.auto_learn and self.code_generator:
+            enriched = await self._enrich_and_save(code, base)
+            if enriched:
+                # Use enriched data
+                base_causes = enriched.get("causes") or base_causes
+                base_checks = enriched.get("checks") or base_checks
+                base_symptoms = enriched.get("symptoms") or base_symptoms
+                base_severity = enriched.get("severity") or base_severity
+                base_severity_explanation = enriched.get("severity_explanation") or base_severity_explanation
+                base_technician_tip = enriched.get("technician_tip") or base_technician_tip
+                base_pre_replacement_checks = enriched.get("pre_replacement_checks") or base_pre_replacement_checks
+        else:
+            if needs_enrichment:
+                logger.info("enrichment_skipped", code=code, reason="ai_not_available")
 
         # Check for vehicle-specific override
         if (vehicle.make and vehicle.model and
@@ -146,6 +199,9 @@ class OBDService:
                     override_checks + base_checks
                 )
 
+                # Build enrichment metadata for vehicle override case
+                enrichment_meta = self._build_enrichment_metadata(base)
+
                 return DiagnosticResult(
                     code=code.upper(),
                     description=base.get("description", ""),
@@ -153,19 +209,36 @@ class OBDService:
                     checks=merged_checks,
                     confidence=0.98,
                     source="vehicle_override",
-                    system=base.get("system")  # Include system from base code
+                    system=base.get("system"),
+                    symptoms=base_symptoms or None,
+                    severity=base_severity,
+                    severity_explanation=base_severity_explanation,
+                    technician_tip=base_technician_tip,
+                    pre_replacement_checks=base_pre_replacement_checks or None,
+                    enrichment_meta=enrichment_meta
                 )
 
         # Return base code without override
-        logger.info("obd_lookup_success", code=code, source="local_db")
+        source = "enriched" if needs_enrichment and base_symptoms else "local_db"
+        logger.info("obd_lookup_success", code=code, source=source)
+
+        # Build enrichment metadata from database
+        enrichment_meta = self._build_enrichment_metadata(base)
+
         return DiagnosticResult(
             code=code.upper(),
             description=base.get("description", ""),
             causes=base_causes,
             checks=base_checks,
-            confidence=0.85,
-            source="local_db",
-            system=base.get("system")  # Include system field
+            confidence=0.90 if source == "enriched" else 0.85,
+            source=source,
+            system=base.get("system"),
+            symptoms=base_symptoms or None,
+            severity=base_severity,
+            severity_explanation=base_severity_explanation,
+            technician_tip=base_technician_tip,
+            pre_replacement_checks=base_pre_replacement_checks or None,
+            enrichment_meta=enrichment_meta
         )
 
     async def _fetch_and_learn(self, code: str) -> Optional[DiagnosticResult]:
@@ -201,7 +274,10 @@ class OBDService:
                     "common_causes": generated_data.get("common_causes", ""),
                     "generic_fixes": generated_data.get("generic_fixes", ""),
                     "system": generated_data.get("system", "Powertrain"),
-                    "severity": generated_data.get("severity", "Medium")
+                    "severity": generated_data.get("severity", "Moderate"),
+                    "severity_explanation": generated_data.get("severity_explanation", ""),
+                    "technician_tip": generated_data.get("technician_tip", ""),
+                    "pre_replacement_checks": generated_data.get("pre_replacement_checks", "")
                 })
                 logger.info("auto_save_success", code=code)
             except Exception as e:
@@ -219,6 +295,16 @@ class OBDService:
                 for c in (generated_data.get("generic_fixes") or "").split(",")
                 if c.strip()
             ]
+            symptoms = [
+                s.strip()
+                for s in (generated_data.get("symptoms") or "").split(",")
+                if s.strip()
+            ]
+            pre_replacement_checks = [
+                c.strip()
+                for c in (generated_data.get("pre_replacement_checks") or "").split(",")
+                if c.strip()
+            ]
 
             return DiagnosticResult(
                 code=code.upper(),
@@ -227,12 +313,159 @@ class OBDService:
                 checks=checks or ["Diagnose with scanner"],
                 confidence=0.75,  # Good confidence for AI-generated
                 source="ai_learned",
-                system=generated_data.get("system")  # Include AI-generated system if available
+                system=generated_data.get("system"),
+                symptoms=symptoms or None,
+                severity=generated_data.get("severity"),
+                severity_explanation=generated_data.get("severity_explanation"),
+                technician_tip=generated_data.get("technician_tip"),
+                pre_replacement_checks=pre_replacement_checks or None
             )
 
         except Exception as e:
             logger.error("fetch_and_learn_error", code=code, error=str(e))
             return None
+
+    async def _enrich_and_save_selective(
+        self,
+        code: str,
+        base_data: dict,
+        missing_fields: list[str]
+    ) -> Optional[dict]:
+        """
+        Selectively enrich ONLY the missing fields using AI.
+        More efficient and accurate than regenerating everything.
+
+        Args:
+            code: OBD code
+            base_data: Existing database entry
+            missing_fields: List of field names that need generation
+
+        Returns:
+            Dict with enriched fields or None if enrichment fails
+        """
+        if not self.selective_enrichment:
+            logger.warning("selective_enrichment_not_available", code=code)
+            return None
+
+        try:
+            enrichment_start = __import__('time').time()
+            logger.info("enrichment_started", code=code, fields=missing_fields)
+
+            # Generate only missing fields (returns both data and metadata)
+            generated_fields = await self.selective_enrichment.enrich_missing_fields(
+                code=code,
+                existing_data=base_data,
+                missing_fields=missing_fields
+            )
+
+            if not generated_fields:
+                logger.warning("enrichment_failed", code=code)
+                return None
+
+            # Separate data fields from metadata fields
+            enriched_fields = {}
+            metadata_fields = {}
+
+            # Map internal field names to database column names
+            field_map = {
+                "symptoms": "symptoms",
+                "common_causes": "common_causes",
+                "generic_fixes": "generic_fixes",
+                "severity": "severity",
+                "severity_explanation": "severity_explanation",
+                "technician_tip": "technician_tip",
+                "pre_replacement_checks": "pre_replacement_checks"
+            }
+
+            for internal_field, db_field in field_map.items():
+                if internal_field in generated_fields:
+                    value = generated_fields[internal_field]
+                    # Convert lists to comma-separated strings for database
+                    if isinstance(value, list):
+                        enriched_fields[db_field] = ", ".join(value)
+                    else:
+                        enriched_fields[db_field] = value
+
+                # Copy metadata if present
+                meta_key = f"{internal_field}_meta"
+                if meta_key in generated_fields:
+                    # Map to database metadata column name
+                    db_meta_key = f"{db_field}_meta"
+                    metadata_fields[db_meta_key] = generated_fields[meta_key]
+
+            # Update database with enriched fields and metadata
+            try:
+                self.obd_repo.enrich_code(code, enriched_fields, metadata_fields)
+                enrichment_duration = __import__('time').time() - enrichment_start
+                logger.info(
+                    "enrichment_completed",
+                    code=code,
+                    fields_enriched=list(enriched_fields.keys()),
+                    duration_ms=int(enrichment_duration * 1000)
+                )
+            except Exception as e:
+                logger.error("enrichment_save_failed", code=code, error=str(e))
+                # Continue anyway - we can still return the data to user
+
+            # Return in format expected by get_obd_info
+            result = {}
+            if "symptoms" in generated_fields:
+                result["symptoms"] = generated_fields["symptoms"]
+            if "common_causes" in generated_fields:
+                result["causes"] = generated_fields["common_causes"]
+            if "generic_fixes" in generated_fields:
+                result["checks"] = generated_fields["generic_fixes"]
+            if "severity" in generated_fields:
+                result["severity"] = generated_fields["severity"]
+            if "severity_explanation" in generated_fields:
+                result["severity_explanation"] = generated_fields["severity_explanation"]
+            if "technician_tip" in generated_fields:
+                result["technician_tip"] = generated_fields["technician_tip"]
+            if "pre_replacement_checks" in generated_fields:
+                result["pre_replacement_checks"] = generated_fields["pre_replacement_checks"]
+
+            return result
+
+        except Exception as e:
+            logger.error("enrichment_error", code=code, error=str(e))
+            return None
+
+    async def _enrich_and_save(self, code: str, base_data: dict) -> Optional[dict]:
+        """
+        Enrich existing database entry with missing fields using AI.
+        Now uses selective enrichment for better accuracy and efficiency.
+
+        Args:
+            code: OBD code
+            base_data: Existing database entry
+
+        Returns:
+            Dict with enriched fields or None if enrichment fails
+        """
+        # Determine which fields are missing
+        missing_fields = []
+
+        if not base_data.get("symptoms"):
+            missing_fields.append("symptoms")
+        if not base_data.get("common_causes"):
+            missing_fields.append("common_causes")
+        if not base_data.get("generic_fixes"):
+            missing_fields.append("generic_fixes")
+        if not base_data.get("severity"):
+            missing_fields.append("severity")
+        if not base_data.get("severity_explanation"):
+            missing_fields.append("severity_explanation")
+        if not base_data.get("technician_tip"):
+            missing_fields.append("technician_tip")
+        if not base_data.get("pre_replacement_checks"):
+            missing_fields.append("pre_replacement_checks")
+
+        if not missing_fields:
+            logger.info("no_enrichment_needed", code=code)
+            return None
+
+        # Use selective enrichment (smarter and more efficient)
+        return await self._enrich_and_save_selective(code, base_data, missing_fields)
 
     def _dedupe_list(self, items: list[str]) -> list[str]:
         """
@@ -253,150 +486,72 @@ class OBDService:
                 result.append(item)
         return result
 
-    def _generate_generic_causes(self, code: str, description: str) -> list[str]:
+    def _build_enrichment_metadata(self, base_data: dict):
         """
-        Generate generic likely causes based on code and description.
-
-        Used when database has no enrichment data (e.g., Wal33D codes).
+        Build EnrichmentMetadata from database metadata columns.
 
         Args:
-            code: OBD code
-            description: Code description
+            base_data: Database record with metadata columns
 
         Returns:
-            List of generic causes
+            EnrichmentMetadata or None if no metadata present
         """
-        desc_lower = description.lower()
+        from app.models.enrichment import EnrichmentMetadata, FieldMetadata
 
-        # System-specific patterns
-        if "sensor" in desc_lower:
-            return [
-                "Faulty sensor",
-                "Damaged wiring or connector",
-                "Sensor out of calibration",
-                "ECM issue"
-            ]
-        elif any(word in desc_lower for word in ["circuit", "electrical", "voltage", "short", "open"]):
-            return [
-                "Wiring damage or corrosion",
-                "Loose or damaged connector",
-                "Component failure",
-                "Intermittent electrical fault"
-            ]
-        elif any(word in desc_lower for word in ["lean", "rich", "fuel", "air"]):
-            return [
-                "Vacuum leak",
-                "Faulty MAF or O2 sensor",
-                "Fuel pressure issue",
-                "Air filter restriction"
-            ]
-        elif "misfire" in desc_lower:
-            return [
-                "Bad spark plug or coil",
-                "Fuel injector issue",
-                "Low compression",
-                "Vacuum leak"
-            ]
-        elif any(word in desc_lower for word in ["evap", "leak", "purge"]):
-            return [
-                "Loose or damaged gas cap",
-                "EVAP system leak",
-                "Faulty purge valve",
-                "Damaged canister or hoses"
-            ]
-        elif any(word in desc_lower for word in ["catalyst", "cat", "converter"]):
-            return [
-                "Degraded catalytic converter",
-                "Exhaust leak before cat",
-                "Faulty O2 sensors",
-                "Engine running rich/lean"
-            ]
-        elif any(word in desc_lower for word in ["transmission", "tcm", "shift"]):
-            return [
-                "Transmission fluid issue",
-                "Solenoid failure",
-                "Internal transmission fault",
-                "TCM software issue"
-            ]
-        else:
-            # Generic fallback
-            return [
-                "Component malfunction",
-                "Wiring or connector issue",
-                "Sensor failure",
-                "ECM software issue"
-            ]
+        # Check if any metadata fields are present
+        has_metadata = any([
+            base_data.get("symptoms_meta"),
+            base_data.get("causes_meta"),
+            base_data.get("severity_meta"),
+            base_data.get("technician_tip_meta"),
+            base_data.get("pre_replacement_checks_meta")
+        ])
 
-    def _generate_generic_checks(self, code: str, description: str) -> list[str]:
-        """
-        Generate generic recommended checks based on code and description.
+        if not has_metadata:
+            return None
 
-        Used when database has no enrichment data (e.g., Wal33D codes).
+        # Build FieldMetadata objects from JSONB fields
+        def parse_field_meta(meta_dict):
+            if not meta_dict:
+                return None
+            try:
+                return FieldMetadata(**meta_dict)
+            except:
+                return None
 
-        Args:
-            code: OBD code
-            description: Code description
+        symptoms_meta = parse_field_meta(base_data.get("symptoms_meta"))
+        causes_meta = parse_field_meta(base_data.get("causes_meta"))
+        severity_meta = parse_field_meta(base_data.get("severity_meta"))
+        technician_tip_meta = parse_field_meta(base_data.get("technician_tip_meta"))
+        pre_replacement_checks_meta = parse_field_meta(base_data.get("pre_replacement_checks_meta"))
 
-        Returns:
-            List of generic checks
-        """
-        desc_lower = description.lower()
+        # Determine overall enrichment status
+        from app.models.enrichment import EnrichmentStatus, calculate_knowledge_score
 
-        # System-specific patterns
-        if "sensor" in desc_lower:
-            return [
-                "Inspect sensor connector and wiring",
-                "Test sensor with multimeter",
-                "Check sensor mounting and condition",
-                "Clear code and retest"
-            ]
-        elif any(word in desc_lower for word in ["circuit", "electrical", "voltage"]):
-            return [
-                "Check wiring for damage or corrosion",
-                "Test connector terminals",
-                "Verify voltage at component",
-                "Clear code and road test"
-            ]
-        elif any(word in desc_lower for word in ["lean", "rich", "fuel", "air"]):
-            return [
-                "Inspect for vacuum leaks",
-                "Check MAF/O2 sensors",
-                "Test fuel pressure",
-                "Inspect air filter"
-            ]
-        elif "misfire" in desc_lower:
-            return [
-                "Check spark plugs and coils",
-                "Test fuel injectors",
-                "Perform compression test",
-                "Inspect for vacuum leaks"
-            ]
-        elif any(word in desc_lower for word in ["evap", "leak", "purge"]):
-            return [
-                "Tighten or replace gas cap",
-                "Smoke test EVAP system",
-                "Inspect hoses and canister",
-                "Test purge valve operation"
-            ]
-        elif any(word in desc_lower for word in ["catalyst", "cat", "converter"]):
-            return [
-                "Check O2 sensor readings",
-                "Inspect for exhaust leaks",
-                "Test cat efficiency with scanner",
-                "Check for engine running issues"
-            ]
-        elif any(word in desc_lower for word in ["transmission", "tcm", "shift"]):
-            return [
-                "Check transmission fluid level and condition",
-                "Scan for additional transmission codes",
-                "Test shift solenoids",
-                "Update TCM software if available"
-            ]
-        else:
-            # Generic fallback
-            return [
-                "Scan for additional codes",
-                "Inspect related components",
-                "Check wiring and connectors",
-                "Clear code and retest"
-            ]
+        knowledge_score = calculate_knowledge_score(
+            has_description=bool(base_data.get("description")),
+            has_symptoms=bool(base_data.get("symptoms")),
+            has_causes=bool(base_data.get("common_causes")),
+            has_checks=bool(base_data.get("generic_fixes")),
+            has_severity=bool(base_data.get("severity")),
+            has_severity_explanation=bool(base_data.get("severity_explanation")),
+            has_technician_tip=bool(base_data.get("technician_tip")),
+            has_pre_replacement_checks=bool(base_data.get("pre_replacement_checks")),
+            has_system=bool(base_data.get("system"))
+        )
+
+        enrichment_status = base_data.get("enrichment_status", "not_enriched")
+        if enrichment_status == "not_enriched" and knowledge_score >= 80:
+            enrichment_status = "ai_generated"  # Auto-upgrade if complete
+
+        return EnrichmentMetadata(
+            symptoms_meta=symptoms_meta,
+            causes_meta=causes_meta,
+            severity_meta=severity_meta,
+            technician_tip_meta=technician_tip_meta,
+            pre_replacement_checks_meta=pre_replacement_checks_meta,
+            enrichment_status=EnrichmentStatus(enrichment_status) if enrichment_status else EnrichmentStatus.NOT_ENRICHED,
+            knowledge_score=knowledge_score,
+            last_enriched=base_data.get("last_enriched"),
+            enrichment_version=base_data.get("schema_version", 1)
+        )

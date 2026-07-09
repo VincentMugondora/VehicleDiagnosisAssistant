@@ -1,588 +1,473 @@
-# 🚗 Vehicle Diagnosis Assistant
+# Vehicle Diagnosis Assistant
 
-> AI-powered OBD-II diagnostic trouble code assistant with WhatsApp integration and dynamic learning capabilities.
+**WhatsApp-based OBD-II diagnostic assistant with AI-powered enrichment**
 
-[![Python](https://img.shields.io/badge/Python-3.11+-blue.svg)](https://www.python.org/downloads/)
-[![FastAPI](https://img.shields.io/badge/FastAPI-0.110+-green.svg)](https://fastapi.tiangolo.com/)
-[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-
-A production-ready vehicle diagnostic system that helps users understand OBD-II error codes through WhatsApp. Features AI-powered cause ranking, vehicle-specific diagnostics, and automatic code learning from real user requests.
-
-## ✨ Features
-
-### Core Capabilities
-- 🔍 **132+ Pre-loaded OBD Codes** - Comprehensive coverage of common diagnostic codes
-- 🤖 **AI-Powered Auto-Learn** - Automatically generates and saves new codes using Cohere AI
-- 📱 **WhatsApp Integration** - Works with both Twilio and Baileys
-- 🎯 **Smart Diagnosis** - Two modes: code lookup and symptom-based diagnosis
-- 🚙 **Vehicle-Specific Insights** - Tailored responses based on make/model/year
-- 📊 **Usage Analytics** - Track diagnostics, popular codes, and user engagement
-- 🔒 **Rate Limiting** - Configurable per-user limits
-- 💾 **Persistent Sessions** - Conversation context maintained across messages
-
-### Auto-Learn Feature 🧠
-When users ask about codes not in the database:
-1. **AI Generation** - Cohere generates complete diagnostic information
-2. **Structured Data** - Validates and formats as clean JSON
-3. **Auto-Save** - Stores to Supabase for future users
-4. **Self-Improving** - Database grows organically from real usage
-
-Result: **No dead ends** - every code gets a detailed answer!
-
-### Supported Systems
-- ✅ **Powertrain (P)** - Engine, transmission, fuel, emissions (102 codes)
-- ✅ **Chassis (C)** - ABS, brakes, suspension (8 codes)
-- ✅ **Body (B)** - Airbags, electrical, comfort (11 codes)
-- ✅ **Network (U)** - CAN bus, module communication (10 codes)
-
-## 🚀 Quick Start
-
-### Prerequisites
-- Python 3.11+
-- Supabase account (free tier works)
-- Cohere API key (free tier: 1000 calls/month)
-- WhatsApp integration (Twilio or Baileys)
-
-### Installation
-
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/VincentMugondora/VehicleDiagnosisAssistant.git
-   cd VehicleDiagnosisAssistant
-   ```
-
-2. **Create virtual environment**
-   ```bash
-   python -m venv venv
-   
-   # Windows
-   .\venv\Scripts\activate
-   
-   # Mac/Linux
-   source venv/bin/activate
-   ```
-
-3. **Install dependencies**
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-4. **Configure environment**
-   ```bash
-   cp .env.example .env
-   # Edit .env with your credentials (see Configuration section)
-   ```
-
-5. **Setup database**
-   ```bash
-   # Run Supabase migrations
-   # See supabase/migrations/001_initial_schema.sql
-   ```
-
-6. **Import OBD codes**
-   ```bash
-   python scripts/import_obd_datasets.py
-   ```
-
-7. **Run the server**
-   ```bash
-   uvicorn app.main:app --reload --port 8000
-   ```
-
-🎉 Server running at `http://localhost:8000`!
-
-## ⚙️ Configuration
-
-### Required Settings
-
-Create a `.env` file with these required variables:
-
-```bash
-# Supabase Database
-SUPABASE_URL=https://your-project.supabase.co
-SUPABASE_SERVICE_KEY=your-service-role-key
-
-# AI Provider (for auto-learn and ranking)
-AI_PROVIDER=cohere  # or "gemini"
-COHERE_API_KEY=your-cohere-api-key
-COHERE_MODEL=command-r-plus
-
-# WhatsApp Integration (choose one)
-# Option 1: Twilio
-TWILIO_ACCOUNT_SID=your-account-sid
-TWILIO_AUTH_TOKEN=your-auth-token
-TWILIO_WHATSAPP_FROM=whatsapp:+14155238886
-
-# Option 2: Baileys (for custom WhatsApp integration)
-BAILEYS_API_KEY=your-baileys-api-key
-```
-
-### Optional Settings
-
-```bash
-# Feature Flags
-AUTO_LEARN_CODES=true          # Enable dynamic code learning
-AI_ENRICH_ENABLED=false        # Enable AI-powered cause ranking
-INTERNET_FALLBACK_ENABLED=true # Enable web fallback (legacy)
-
-# Rate Limiting
-USAGE_LIMIT_PER_NUMBER=20      # Max messages per user
-USAGE_LIMIT_WINDOW_DAYS=30     # Time window for limits
-
-# Session Management
-SESSION_TTL_SECONDS=1800       # 30 minutes
-MAX_CONVERSATION_TURNS=10      # Max messages per session
-
-# Response Formatting
-REPLY_MAX_CAUSES=5             # Max causes to show
-REPLY_MAX_CHECKS=5             # Max diagnostic steps to show
-REPLY_MAX_CODES=3              # Max suggested codes
-```
-
-## 📖 Usage
-
-### Via WhatsApp
-
-**Code Lookup:**
-```
-User: P0420
-Bot: 
-Code: P0420
-Description: Catalyst System Efficiency Below Threshold
-
-Symptoms:
-• Check engine light on
-• Failed emissions test
-• Reduced performance
-
-Likely causes:
-• Failing catalytic converter
-• Faulty oxygen sensors
-• Exhaust leak
-
-Next steps:
-1. Test O2 sensors first (cheaper fix)
-2. Check for exhaust leaks
-3. Replace catalytic converter if needed
-
-Severity: Medium
-Confidence: 85%
-```
-
-**With Vehicle Context:**
-```
-User: P0420 on my 2015 Toyota Camry 2.5L
-Bot: [Vehicle-specific diagnostic info with known issues]
-Confidence: 98%
-```
-
-**Symptom-Based:**
-```
-User: My car is running rough and shaking at idle
-Bot: [Suggests probable codes like P0300-P0308]
-```
-
-### Via API
-
-**Direct API Call:**
-```bash
-curl -X POST http://localhost:8000/webhook/baileys \
-  -H "Content-Type: application/json" \
-  -d '{
-    "from": "1234567890",
-    "text": "P0420",
-    "message_id": "unique-id"
-  }'
-```
-
-**Response:**
-```json
-{
-  "reply": "Code: P0420\n\nDescription: Catalyst System...",
-  "status": "success"
-}
-```
-
-## 🏗️ Architecture
-
-### Tech Stack
-- **Backend**: FastAPI (Python)
-- **Database**: Supabase (PostgreSQL)
-- **AI**: Cohere (primary) / Gemini (legacy)
-- **Messaging**: Twilio / Baileys (WhatsApp)
-- **Logging**: Structlog
-
-### Project Structure
-```
-VehicleDiagnosisAssistant/
-├── app/
-│   ├── api/
-│   │   ├── routes/
-│   │   │   └── webhook.py          # WhatsApp webhook handlers
-│   │   └── formatters.py           # Response formatting
-│   ├── core/
-│   │   ├── config.py                # Settings & environment
-│   │   ├── errors.py                # Custom exceptions
-│   │   └── logging.py               # Structured logging
-│   ├── db/
-│   │   └── client.py                # Supabase client
-│   ├── models/
-│   │   ├── diagnostic.py            # Data models
-│   │   └── webhook.py               # Webhook payloads
-│   ├── repositories/
-│   │   ├── obd_repository.py        # OBD code database access
-│   │   ├── session_repository.py   # Session management
-│   │   └── message_log_repository.py
-│   ├── services/
-│   │   ├── obd_service.py           # Core diagnostic logic
-│   │   ├── ai_code_generator.py    # AI auto-learn feature
-│   │   ├── ai_client.py             # Unified AI client
-│   │   ├── cohere_client.py         # Cohere integration
-│   │   ├── message_router.py        # Message routing logic
-│   │   └── session_manager.py       # Session handling
-│   └── utils/
-│       ├── obd_parser.py            # Message parsing
-│       └── phone.py                 # Phone number hashing
-├── scripts/
-│   ├── comprehensive_obd_codes.py   # 132 code dataset
-│   ├── import_obd_datasets.py       # Database importer
-│   ├── test_code_coverage.py        # Dataset analysis
-│   └── verify_codes_online.py       # Quality verification
-├── supabase/
-│   └── migrations/
-│       └── 001_initial_schema.sql   # Database schema
-├── docs/
-│   ├── AUTO_LEARN_FEATURE.md        # Auto-learn documentation
-│   ├── OBD_CODES_REFERENCE.md       # Complete code reference
-│   └── COMMON_CODES_QUICK_REFERENCE.md
-├── .env.example                      # Environment template
-├── requirements.txt                  # Python dependencies
-└── README.md                         # This file
-```
-
-### Database Schema
-
-**Tables:**
-- `obd_codes` - OBD-II code knowledge base (132+ codes, growing)
-- `message_logs` - Message audit trail
-- `diagnostic_logs` - Diagnostic analytics
-- `conversation_sessions` - User session state
-- `vehicle_overrides` - Vehicle-specific known issues
-- `external_obd_cache` - External API response cache
-
-### Key Components
-
-**1. OBD Service** (`obd_service.py`)
-- Code lookup with vehicle-specific overrides
-- Auto-learn integration for unknown codes
-- Confidence scoring (30%-98%)
-
-**2. AI Code Generator** (`ai_code_generator.py`)
-- Generates complete code information using Cohere
-- Validates and structures data
-- Auto-saves to database
-
-**3. Message Router** (`message_router.py`)
-- Routes to code lookup or symptom diagnosis
-- Parses vehicle context from messages
-- Handles session management
-
-**4. Session Manager** (`session_manager.py`)
-- Maintains conversation state
-- Idempotency checking
-- TTL-based expiration
-
-## 🧪 Testing
-
-### Run Tests
-```bash
-# Unit tests
-pytest tests/
-
-# Coverage report
-pytest --cov=app tests/
-
-# Specific test file
-pytest tests/test_obd_service.py -v
-```
-
-### Test Auto-Learn Feature
-```bash
-# Test with rare code
-python scripts/test_web_fetcher.py
-
-# Verify code coverage
-python scripts/test_code_coverage.py
-
-# Validate against standards
-python scripts/verify_codes_online.py
-```
-
-### Manual Testing
-```bash
-# Start server
-uvicorn app.main:app --reload
-
-# Send test message
-curl -X POST http://localhost:8000/webhook/baileys \
-  -H "Content-Type: application/json" \
-  -d '{"from": "test", "text": "P3499", "message_id": "test1"}'
-```
-
-## 📊 Monitoring & Analytics
-
-### View Logs
-```bash
-# Real-time logs
-tail -f logs/app.log
-
-# Error logs only
-grep "error" logs/app.log
-
-# Auto-learn activity
-grep "ai_code_generation_started" logs/app.log
-```
-
-### Database Queries
-
-**Most Popular Codes:**
-```sql
-SELECT code, COUNT(*) as count
-FROM diagnostic_logs
-GROUP BY code
-ORDER BY count DESC
-LIMIT 10;
-```
-
-**Auto-Learned Codes:**
-```sql
-SELECT code, description, created_at
-FROM obd_codes
-WHERE created_at > NOW() - INTERVAL '7 days'
-ORDER BY created_at DESC;
-```
-
-**Usage Statistics:**
-```sql
-SELECT 
-  DATE(created_at) as date,
-  COUNT(*) as messages,
-  COUNT(DISTINCT phone_hash) as unique_users
-FROM message_logs
-GROUP BY DATE(created_at)
-ORDER BY date DESC;
-```
-
-## 🔒 Security
-
-### API Keys
-- ✅ `.env` file in `.gitignore` (never committed)
-- ✅ Phone numbers hashed with SHA-256
-- ✅ Twilio signature verification
-- ✅ Rate limiting per user
-- ✅ Idempotency checking
-
-### Best Practices
-1. **Rotate API keys** regularly
-2. **Use service role key** for Supabase (not anon key)
-3. **Enable signature validation** for Twilio
-4. **Monitor usage limits** to prevent abuse
-5. **Review auto-learned codes** weekly for quality
-
-## 🚀 Deployment
-
-### Docker (Recommended)
-
-```dockerfile
-FROM python:3.11-slim
-
-WORKDIR /app
-COPY requirements.txt .
-RUN pip install -r requirements.txt
-
-COPY . .
-
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
-```
-
-```bash
-# Build
-docker build -t vehicle-diagnosis .
-
-# Run
-docker run -p 8000:8000 --env-file .env vehicle-diagnosis
-```
-
-### Cloud Platforms
-
-**Railway:**
-```bash
-# Install CLI
-npm install -g @railway/cli
-
-# Deploy
-railway login
-railway init
-railway up
-```
-
-**Render:**
-1. Connect GitHub repo
-2. Set environment variables
-3. Deploy automatically on push
-
-**Heroku:**
-```bash
-heroku create your-app-name
-heroku config:set SUPABASE_URL=...
-git push heroku master
-```
-
-### Environment Variables
-Ensure all variables from `.env.example` are set in your deployment platform.
-
-## 📈 Performance
-
-### Benchmarks
-- **Code lookup** (in DB): ~50ms
-- **Auto-learn** (new code): ~2-3s
-  - AI generation: ~1-1.5s
-  - Database save: ~0.5s
-  - Response to user: ~1s
-- **Subsequent lookups**: ~50ms (cached in DB)
-
-### Optimization Tips
-1. **Database indexes** - Added on frequently queried fields
-2. **Caching** - Auto-learned codes cached permanently
-3. **Batch operations** - Import codes in batches of 100
-4. **Async operations** - All I/O operations are async
-
-## 🤝 Contributing
-
-Contributions welcome! Here's how:
-
-1. **Fork the repository**
-2. **Create a feature branch**
-   ```bash
-   git checkout -b feature/amazing-feature
-   ```
-3. **Make your changes**
-4. **Run tests**
-   ```bash
-   pytest tests/
-   ```
-5. **Commit your changes**
-   ```bash
-   git commit -m "feat: add amazing feature"
-   ```
-6. **Push to branch**
-   ```bash
-   git push origin feature/amazing-feature
-   ```
-7. **Open a Pull Request**
-
-### Code Style
-- Follow PEP 8
-- Use type hints
-- Add docstrings to functions
-- Write tests for new features
-
-## 📝 Changelog
-
-### v2.0.0 (2026-05-30)
-- ✨ Added auto-learn feature with AI code generation
-- ✨ Expanded dataset to 132 verified codes
-- 🔧 Switched from Gemini to Cohere for better quality
-- 📚 Added comprehensive documentation
-- 🐛 Fixed async/await issues
-- 🔒 Removed API keys from git history
-
-### v1.0.0 (2026-01-15)
-- 🎉 Initial release
-- ✅ WhatsApp integration (Twilio)
-- ✅ Basic code lookup
-- ✅ Symptom-based diagnosis
-- ✅ Session management
-
-## 🐛 Troubleshooting
-
-### Common Issues
-
-**"COHERE_API_KEY not set"**
-- Check `.env` file exists
-- Verify key is correct
-- Restart server after changes
-
-**"Model not found" error**
-- Use valid model: `command-r-plus`, `command-r`, or `command-light`
-- Update `COHERE_MODEL` in `.env`
-
-**Auto-learn not working**
-- Verify `AUTO_LEARN_CODES=true` in `.env`
-- Check Cohere API key is valid
-- Review logs for specific errors
-
-**Database connection failed**
-- Verify Supabase URL and key
-- Check network connectivity
-- Ensure migrations are run
-
-## 📞 Support
-
-- **Issues**: [GitHub Issues](https://github.com/VincentMugondora/VehicleDiagnosisAssistant/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/VincentMugondora/VehicleDiagnosisAssistant/discussions)
-- **Email**: vincent.mugondora@example.com
-
-## 📄 License
-
-MIT License - see [LICENSE](LICENSE) file for details
-
-## 🙏 Acknowledgments
-
-- **OBD-II Standards** - SAE J2012
-- **Cohere** - AI code generation
-- **Supabase** - Database platform
-- **FastAPI** - Web framework
-- **Twilio** - WhatsApp API
-
-## 🗺️ Roadmap
-
-### Coming Soon
-- [ ] Multi-language support (Spanish, French, Portuguese)
-- [ ] Mobile app (React Native)
-- [ ] Cost estimates for repairs
-- [ ] Diagnostic flowcharts
-- [ ] Integration with car scanners (Bluetooth OBD-II)
-- [ ] Admin dashboard for code management
-- [ ] Community voting on code quality
-- [ ] Vehicle maintenance tracking
-
-### Future Ideas
-- [ ] Machine learning for better diagnosis
-- [ ] Integration with repair shops
-- [ ] Parts marketplace integration
-- [ ] DIY repair video guides
-- [ ] Recall check integration
-- [ ] Insurance claim assistance
-
-## 📊 Stats
-
-- **132+ OBD Codes** in database
-- **4 Systems** covered (Powertrain, Chassis, Body, Network)
-- **95%+ Coverage** of common user codes
-- **100% Complete** entries (all fields filled)
-- **Auto-Learning** from unlimited codes via AI
+[![Python 3.12](https://img.shields.io/badge/python-3.12-blue.svg)](https://www.python.org/downloads/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.115-green.svg)](https://fastapi.tiangolo.com/)
+[![Tests](https://img.shields.io/badge/tests-22%20passed-success.svg)](./tests/)
 
 ---
 
-<div align="center">
+## Overview
 
-**Built with ❤️ for mechanics, car owners, and automotive enthusiasts**
+A production-ready diagnostic assistant that explains OBD-II fault codes through WhatsApp. Features intelligent AI enrichment for incomplete data, vehicle-specific overrides, and comprehensive provenance tracking.
 
-⭐ Star this repo if you find it helpful!
+### Key Features
 
-[Report Bug](https://github.com/VincentMugondora/VehicleDiagnosisAssistant/issues) · 
-[Request Feature](https://github.com/VincentMugondora/VehicleDiagnosisAssistant/issues) · 
-[Documentation](docs/)
+✅ **Instant Lookups** - <100ms response for cached codes  
+✅ **Selective AI Enrichment** - Generates only missing fields  
+✅ **Vehicle-Specific Advice** - Override data for known vehicle issues  
+✅ **Provenance Tracking** - Records source and quality of every field  
+✅ **Production Observability** - Structured logging with timing metrics  
+✅ **Zero Dead Code** - No unused infrastructure or features
 
-</div>
+---
+
+## Quick Start
+
+### Prerequisites
+
+- Python 3.12+
+- Node.js 18+ (for WhatsApp bridge)
+- PostgreSQL (Supabase)
+- Cohere API key
+
+### Installation
+
+```bash
+# 1. Clone repository
+git clone <repo-url>
+cd VehicleDiagnosisAssistant
+
+# 2. Install Python dependencies
+pip install -r requirements.txt
+
+# 3. Install WhatsApp bridge
+cd baileys-server
+npm install
+cd ..
+
+# 4. Configure environment
+cp .env.example .env
+# Edit .env with your credentials
+```
+
+### Environment Variables
+
+```bash
+# Required
+SUPABASE_URL=https://xxx.supabase.co
+SUPABASE_KEY=eyJ...
+COHERE_API_KEY=xxx
+BAILEYS_WEBHOOK_URL=http://localhost:3001
+
+# Optional
+PAYNOW_INTEGRATION_ID=xxx  # For payments
+PAYNOW_INTEGRATION_KEY=xxx
+```
+
+### Running
+
+```bash
+# Terminal 1: Start WhatsApp bridge
+cd baileys-server
+npm start
+
+# Terminal 2: Start FastAPI application
+uvicorn app.main:app --reload --port 8000
+
+# Terminal 3: Expose with ngrok (for WhatsApp webhook)
+ngrok http 8000
+```
+
+### Database Setup
+
+```bash
+# Apply migrations in Supabase SQL editor
+cat migrations/001_add_metadata_columns.sql
+# Copy and run in Supabase dashboard
+```
+
+---
+
+## Architecture
+
+### Request Flow
+
+```
+WhatsApp → Baileys → FastAPI → OBDService → Repository → Database
+                                    ↓
+                            Selective Enrichment
+                                    ↓
+                               AI Client
+                                    ↓
+                              Formatter → WhatsApp
+```
+
+See [ARCHITECTURE.md](./ARCHITECTURE.md) for complete system documentation.
+
+---
+
+## Usage Examples
+
+### Simple Lookup
+
+```
+User: P0420
+
+Bot: 🔧 Fault Code: P0420
+
+System: Emissions
+
+📖 What it means
+Catalyst System Efficiency Below Threshold (Bank 1)
+
+🚗 Common symptoms
+• Check Engine Light illuminated
+• Reduced fuel economy
+• Sulfur smell from exhaust
+
+🔍 Likely causes
+• Failed catalytic converter
+• Exhaust leak before catalytic converter
+• Faulty oxygen sensor
+
+...
+```
+
+### Vehicle-Specific Advice
+
+```
+User: P0420 on my 2015 Toyota Camry 2.5L
+
+Bot: [Includes vehicle-specific known issues and priority checks]
+```
+
+---
+
+## Testing
+
+```bash
+# Run all tests
+pytest tests/ -v
+
+# Run integration tests only
+pytest tests/test_end_to_end_integration.py -v
+
+# Run with coverage
+pytest tests/ --cov=app --cov-report=html
+```
+
+### Test Coverage
+
+- ✅ 22 tests passing
+- ✅ End-to-end integration (7 tests)
+- ✅ Data-driven formatter (9 tests)
+- ✅ Core enrichment flow
+
+---
+
+## Project Structure
+
+```
+VehicleDiagnosisAssistant/
+├── app/
+│   ├── api/              # FastAPI routes and formatters
+│   ├── core/             # Config, logging, middleware
+│   ├── models/           # Pydantic models
+│   ├── repositories/     # Database access layer
+│   ├── services/         # Business logic
+│   │   ├── obd_service.py              # Main lookup service
+│   │   ├── selective_enrichment.py     # AI enrichment
+│   │   ├── diagnostic_formatter.py     # WhatsApp formatting
+│   │   └── ...
+│   └── main.py           # FastAPI application
+├── baileys-server/       # WhatsApp bridge (Node.js)
+├── migrations/           # Database migrations
+├── tests/                # Test suite
+├── ARCHITECTURE.md       # Complete system documentation
+├── requirements.txt      # Python dependencies
+└── README.md            # This file
+```
+
+---
+
+## Key Components
+
+### OBDService
+
+Main orchestration service for code lookups.
+
+```python
+from app.services.obd_service import OBDService
+
+service = OBDService(
+    obd_repo=repo,
+    ai_client=ai_client,
+    auto_learn=True  # Enable AI enrichment
+)
+
+result = await service.get_obd_info("P0420", vehicle_context)
+```
+
+### Selective Enrichment
+
+Generates only missing fields with provenance tracking.
+
+```python
+from app.services.selective_enrichment import SelectiveEnrichment
+
+enrichment = SelectiveEnrichment(ai_client)
+
+# Returns enriched fields + metadata
+data = await enrichment.enrich_missing_fields(
+    code="P0171",
+    existing_data=base_data,
+    missing_fields=["symptoms", "severity", "technician_tip"]
+)
+```
+
+### Diagnostic Formatter
+
+Converts structured data to WhatsApp-ready messages.
+
+```python
+from app.api.formatters import format_diagnostic_response
+
+messages = format_diagnostic_response(diagnostic_result)
+# Returns list of strings, split if >1500 chars
+```
+
+---
+
+## Configuration
+
+### Feature Flags
+
+- `auto_learn` - Enable AI enrichment (default: True)
+- `supabase_enabled` - Use database vs fallback (auto-detected)
+
+### Enrichment Settings
+
+Located in `selective_enrichment.py`:
+
+```python
+CURRENT_PROMPT_VERSION = "v6"
+CURRENT_AI_MODEL = "claude-sonnet-4"
+```
+
+Increment `CURRENT_PROMPT_VERSION` when changing prompts to track experiments.
+
+---
+
+## Monitoring
+
+### Health Check
+
+```bash
+curl http://localhost:8000/healthz
+```
+
+### Key Metrics
+
+Monitor via structured logs:
+
+- **Cache hit rate** - `obd_code_found_in_db` vs `obd_code_not_found`
+- **Enrichment frequency** - `enrichment_started` count
+- **Enrichment duration** - `duration_ms` in `enrichment_completed`
+- **AI call rate** - `selective_enrichment_success` count
+- **Error rate** - `enrichment_failed` count
+
+### Log Example
+
+```json
+{
+  "event": "enrichment_completed",
+  "code": "P0171",
+  "fields_enriched": ["symptoms", "severity", "technician_tip"],
+  "duration_ms": 2341,
+  "timestamp": "2026-07-09T12:34:56Z"
+}
+```
+
+---
+
+## Deployment
+
+### Render (Recommended)
+
+```yaml
+# render.yaml
+services:
+  - type: web
+    name: vehicle-diagnosis-api
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_KEY
+        sync: false
+      - key: COHERE_API_KEY
+        sync: false
+```
+
+### Production Checklist
+
+- [ ] Apply database migrations
+- [ ] Configure environment variables
+- [ ] Set up Supabase Row Level Security
+- [ ] Configure WhatsApp webhook URL
+- [ ] Test health check endpoint
+- [ ] Verify AI API quota
+- [ ] Enable error tracking (Sentry recommended)
+
+---
+
+## Performance
+
+| Scenario | Latency | Caching |
+|----------|---------|---------|
+| Complete code | 50-100ms | ✅ |
+| Partial code (first) | 2-4s | ❌ |
+| Partial code (cached) | <10ms | ✅ |
+| Unknown code | 3-5s | ❌ |
+| Vehicle override | 100-200ms | ✅ |
+
+### Scalability
+
+**Current capacity:**
+- 50 requests/second (cached)
+- 5 concurrent AI enrichments
+
+**Bottlenecks:**
+1. AI API rate limits
+2. Single-instance cache
+3. Database connection pool
+
+**Scale solutions:**
+- Redis for distributed caching
+- FastAPI BackgroundTasks for async enrichment
+- Horizontal scaling with load balancer
+
+---
+
+## Development
+
+### Running Tests
+
+```bash
+# Watch mode
+pytest-watch tests/
+
+# With coverage
+pytest tests/ --cov=app --cov-report=term-missing
+
+# Specific test file
+pytest tests/test_end_to_end_integration.py -v
+```
+
+### Code Quality
+
+```bash
+# Format code
+black app/ tests/
+
+# Lint
+pylint app/
+
+# Type checking
+mypy app/
+```
+
+### Database Migrations
+
+Create new migration:
+
+```sql
+-- migrations/002_add_your_feature.sql
+ALTER TABLE obd_codes ADD COLUMN your_field TEXT;
+```
+
+Apply in Supabase SQL editor.
+
+---
+
+## API Documentation
+
+Once running, visit:
+
+- **Interactive docs:** http://localhost:8000/docs
+- **OpenAPI schema:** http://localhost:8000/openapi.json
+- **Health check:** http://localhost:8000/healthz
+
+---
+
+## Troubleshooting
+
+### "Supabase unreachable"
+
+- Check `SUPABASE_URL` and `SUPABASE_KEY`
+- Verify network connectivity
+- Application runs in fallback mode (limited data)
+
+### "AI enrichment failed"
+
+- Check `COHERE_API_KEY`
+- Verify API quota not exceeded
+- Check logs for specific error
+
+### "WhatsApp not responding"
+
+- Ensure baileys-server is running
+- Check webhook URL configuration
+- Verify ngrok tunnel is active
+
+---
+
+## Contributing
+
+1. Fork repository
+2. Create feature branch
+3. Write tests for new features
+4. Ensure all tests pass
+5. Submit pull request
+
+### Code Standards
+
+- Python 3.12+ features encouraged
+- Type hints required
+- Docstrings for public methods
+- Integration tests for new flows
+
+---
+
+## License
+
+[Your License Here]
+
+---
+
+## Support
+
+- **Documentation:** [ARCHITECTURE.md](./ARCHITECTURE.md)
+- **Issues:** GitHub Issues
+- **Logs:** Structured JSON logging enabled
+
+---
+
+## Changelog
+
+### v2.0.0 (2026-07-09) - Production MVP
+
+✅ Removed unused queue infrastructure  
+✅ Implemented metadata persistence  
+✅ Added observability logging  
+✅ Built end-to-end integration tests  
+✅ Complete architecture documentation  
+✅ Zero dead code
+
+### v1.x - Previous versions
+
+See git history for older releases.

@@ -76,8 +76,26 @@ class AsyncFakeDB:
         return AsyncFakeCollection(self._stores[name])
 
 
+@pytest.fixture
+def mock_baileys_auth():
+    """Mock Baileys API key for testing"""
+    return "test-api-key-12345"
+
+
 @pytest_asyncio.fixture()
-async def test_app(monkeypatch):
+async def test_app(monkeypatch, mock_baileys_auth):
+    # Set Baileys API key for auth - must be set before importing settings
+    monkeypatch.setenv("BAILEYS_API_KEY", mock_baileys_auth)
+
+    # Reload settings to pick up the new environment variable
+    from app.core import config
+    import importlib
+    importlib.reload(config)
+    from app.core.config import settings
+
+    # Verify it was set
+    assert settings.baileys_api_key == mock_baileys_auth, "API key not set correctly"
+
     fake_db = AsyncFakeDB()
 
     # Seed essential codes used in tests

@@ -68,41 +68,70 @@ class AICodeGenerator:
 
         return f"""You are an automotive diagnostic expert with knowledge of OBD-II diagnostic trouble codes.
 
-Generate complete, accurate information for OBD code **{code}**.
-
-**Task:**
-Provide detailed diagnostic information in JSON format. Use your knowledge of automotive systems and OBD-II standards.
+Generate complete, accurate diagnostic information for OBD code **{code}**.
 
 **Return ONLY a valid JSON object with this structure:**
 
 {{
   "code": "{code}",
   "description": "Clear, technical description (30-70 chars)",
-  "symptoms": "What the driver experiences (comma-separated, 3-5 items)",
-  "common_causes": "Most likely causes (comma-separated, 3-5 items, ordered by likelihood)",
-  "generic_fixes": "Diagnostic steps to identify the problem (comma-separated, 3-5 steps)",
+  "symptoms": "What the driver experiences (comma-separated, 4-8 items)",
+  "common_causes": "Most likely causes (comma-separated, 4-6 items, ordered by likelihood)",
+  "generic_fixes": "Diagnostic steps to identify the problem (comma-separated, 5-8 steps)",
   "system": "{expected_system}",
-  "severity": "High|Medium|Low"
+  "severity": "Critical|High|Moderate|Low",
+  "severity_explanation": "Brief explanation of why this severity level (1-2 sentences)",
+  "technician_tip": "One practical diagnostic tip that helps avoid unnecessary part replacement (1-2 sentences)",
+  "pre_replacement_checks": "What to verify before replacing parts (comma-separated, 3-5 items)"
 }}
 
 **Guidelines:**
-1. **Description**: Precise technical meaning of the code
-2. **Symptoms**: What the DRIVER sees/feels (check engine light, rough idle, etc.)
-3. **Causes**: List from most to least common, be specific
-4. **Fixes**: Diagnostic steps, not just "replace X" - include testing and inspection
+
+1. **Description**: Precise technical meaning of the code (30-70 chars)
+
+2. **Symptoms**: What the DRIVER sees/feels
+   - Always include "Check Engine Light illuminated" as first symptom
+   - Add 3-7 more symptoms specific to this code
+   - Be specific: "Engine hesitation during acceleration" not just "poor performance"
+
+3. **Causes**: Root causes, most to least likely
+   - Be specific: "Faulty knock sensor Bank 2" not "sensor failure"
+   - Order by actual likelihood for this specific code
+   - Avoid generic phrases
+
+4. **Generic Fixes**: Diagnostic workflow, not just "replace X"
+   - Start with inspection/testing steps
+   - Include what to measure and verify
+   - End with repair/replacement only after diagnosis
+   - Example: "Test sensor resistance with multimeter" before "Replace sensor if out of spec"
+
 5. **Severity**:
-   - **High**: Safety risk, engine damage potential, flashing check engine light, no-start
-   - **Medium**: Performance/emissions issue, steady check engine light
-   - **Low**: Minor issue, can wait until next service
-6. Use professional but accessible language
-7. Be specific - avoid generic phrases like "component failure"
-8. Focus on practical, actionable information
+   - **Critical**: Safety systems (airbag, ABS, steering, brakes) - immediate attention required
+   - **High**: Engine damage potential (misfire, knock sensor, overheating, oil pressure)
+   - **Moderate**: Performance/emissions issues, drivable but should be fixed soon
+   - **Low**: Minor issues that can wait (EVAP small leak, pending codes)
+
+6. **Severity Explanation**: Why this level?
+   - Explain the risk: "Can lead to engine damage" or "Minor issue, no immediate risk"
+   - Mention driveability: "Vehicle usually drivable" or "May enter limp mode"
+
+7. **Technician Tip**: Practical advice to save time/money
+   - Focus on common mistakes: "Many X codes are caused by Y, not Z"
+   - Highlight what to check first: "Before replacing sensor, check wiring"
+   - Mention known issues: "Common on [vehicle type] due to [reason]"
+
+8. **Pre-replacement Checks**: What to verify BEFORE buying parts
+   - Wiring/connector inspection
+   - Voltage/resistance testing
+   - Live scanner data verification
+   - Related component testing
 
 **Important:**
 - DO NOT include markdown, code blocks, or explanations
 - Return ONLY the JSON object
-- If this is a rare or manufacturer-specific code, provide the best general information available
-- Use standard automotive terminology
+- Use professional but accessible language
+- Be specific and actionable
+- If this is a rare code, provide best available information
 
 Generate the JSON now:"""
 
@@ -136,7 +165,8 @@ Generate the JSON now:"""
             # Validate required fields
             required_fields = [
                 'code', 'description', 'symptoms',
-                'common_causes', 'generic_fixes', 'system', 'severity'
+                'common_causes', 'generic_fixes', 'system', 'severity',
+                'severity_explanation', 'technician_tip', 'pre_replacement_checks'
             ]
 
             for field in required_fields:
@@ -146,7 +176,23 @@ Generate the JSON now:"""
                         code=code,
                         field=field
                     )
-                    return None
+                    # Don't fail completely - just log and continue
+                    # Allow partial data to be saved
+                    if field in ['code', 'description', 'system']:
+                        # Critical fields - must have
+                        return None
+                    else:
+                        # Optional enrichment fields - set defaults
+                        if field == 'severity':
+                            data[field] = 'Moderate'
+                        elif field == 'severity_explanation':
+                            data[field] = 'Should be diagnosed and repaired to maintain vehicle performance.'
+                        elif field == 'technician_tip':
+                            data[field] = 'Always verify diagnosis with live scanner data before replacing parts.'
+                        elif field == 'symptoms':
+                            data[field] = 'Check Engine Light illuminated'
+                        elif field == 'pre_replacement_checks':
+                            data[field] = 'Wiring and connectors inspected, Live scanner data verified'
 
             # Validate system
             valid_systems = ['Powertrain', 'Chassis', 'Body', 'Network']
@@ -166,9 +212,20 @@ Generate the JSON now:"""
                     data['system'] = 'Powertrain'  # Default fallback
 
             # Validate severity
-            if data['severity'] not in ['High', 'Medium', 'Low']:
-                logger.warning("ai_response_invalid_severity", code=code)
-                data['severity'] = 'Medium'  # Default fallback
+            if data['severity'] not in ['Critical', 'High', 'Moderate', 'Low']:
+                logger.warning("ai_response_invalid_severity", code=code, got=data['severity'])
+                # Try to map common variations
+                severity_lower = data['severity'].lower()
+                if severity_lower in ['medium', 'moderate']:
+                    data['severity'] = 'Moderate'
+                elif severity_lower in ['high', 'severe']:
+                    data['severity'] = 'High'
+                elif severity_lower in ['low', 'minor']:
+                    data['severity'] = 'Low'
+                elif severity_lower in ['critical', 'severe', 'urgent']:
+                    data['severity'] = 'Critical'
+                else:
+                    data['severity'] = 'Moderate'  # Default fallback
 
             # Ensure code matches (uppercase)
             data['code'] = code.upper()

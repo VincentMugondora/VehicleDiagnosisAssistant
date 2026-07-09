@@ -1,0 +1,346 @@
+"""
+Tests for diagnostic report formatter.
+
+Ensures:
+1. All diagnostic responses use standardized format
+2. Message splitting works correctly
+3. Symptoms are included when available
+4. Format is consistent across all sources (database, AI, vehicle-specific)
+"""
+
+import pytest
+from app.models.diagnostic import DiagnosticResult
+from app.services.diagnostic_formatter import format_diagnostic_report, DiagnosticReportFormatter
+from app.api.formatters import format_diagnostic_response
+
+
+class TestDiagnosticFormatter:
+    """Test the diagnostic report formatter"""
+
+    def test_basic_format_structure(self):
+        """Test that report contains all required sections"""
+        result = DiagnosticResult(
+            code="P0420",
+            description="Catalyst System Efficiency Below Threshold",
+            causes=["Degraded catalytic converter", "Faulty O2 sensor"],
+            checks=["Check O2 sensors", "Test catalyst efficiency"],
+            confidence=0.85,
+            source="local_db",
+            system="Emissions",
+            symptoms=["Check Engine Light", "Poor performance"]
+        )
+
+        report = format_diagnostic_report(result)
+
+        # Verify all required sections are present
+        assert "🔧 *Fault Code: P0420*" in report
+        assert "*System:* Emissions" in report
+        assert "📖 *What it means*" in report
+        assert "🚗 *Common symptoms*" in report
+        assert "🔍 *Likely causes*" in report
+        assert "🛠️ *Recommended diagnostic steps*" in report
+        assert "⚠️ *Severity*" in report
+        assert "❌ *Do NOT replace parts until*" in report
+        assert "💡 *Technician Tip*" in report
+        assert "Always confirm the diagnosis" in report
+
+    def test_symptoms_from_database(self):
+        """Test that database symptoms are used when available"""
+        result = DiagnosticResult(
+            code="P0300",
+            description="Random/Multiple Cylinder Misfire Detected",
+            causes=["Bad spark plugs", "Faulty coil"],
+            checks=["Check spark plugs", "Test coils"],
+            confidence=0.85,
+            source="local_db",
+            system="Powertrain",
+            symptoms=["Rough idle", "Engine hesitation", "Loss of power"]
+        )
+
+        report = format_diagnostic_report(result)
+
+        # Verify database symptoms are used
+        assert "• Rough idle" in report
+        assert "• Engine hesitation" in report
+        assert "• Loss of power" in report
+
+    def test_symptoms_generated_when_missing(self):
+        """Test that symptoms are generated when not in database"""
+        result = DiagnosticResult(
+            code="P0171",
+            description="System Too Lean (Bank 1)",
+            causes=["Vacuum leak", "Faulty MAF sensor"],
+            checks=["Check for vacuum leaks", "Test MAF sensor"],
+            confidence=0.85,
+            source="local_db",
+            system="Fuel System",
+            symptoms=None  # No symptoms provided
+        )
+
+        report = format_diagnostic_report(result)
+
+        # Verify symptoms were generated
+        assert "🚗 *Common symptoms*" in report
+        assert "Check Engine Light" in report
+        # Should generate symptoms based on "lean" in description
+        assert any(word in report for word in ["idle", "acceleration", "fuel", "hesitation"])
+
+    def test_severity_levels(self):
+        """Test that severity is correctly determined"""
+        # Test high severity (misfire)
+        result_high = DiagnosticResult(
+            code="P0301",
+            description="Cylinder 1 Misfire Detected",
+            causes=["Bad spark plug"],
+            checks=["Check spark plug"],
+            confidence=0.85,
+            source="local_db",
+            system="Powertrain",
+            symptoms=None
+        )
+        report_high = format_diagnostic_report(result_high)
+        assert "*High*" in report_high
+        assert "engine damage" in report_high.lower()
+
+        # Test low severity (EVAP)
+        result_low = DiagnosticResult(
+            code="P0442",
+            description="EVAP System Leak Detected (small leak)",
+            causes=["Loose gas cap"],
+            checks=["Check gas cap"],
+            confidence=0.85,
+            source="local_db",
+            system="Emissions",
+            symptoms=None
+        )
+        report_low = format_diagnostic_report(result_low)
+        assert "*Low*" in report_low
+        assert "minor issue" in report_low.lower()
+
+    def test_technician_tips(self):
+        """Test that relevant technician tips are generated"""
+        # Test knock sensor tip
+        result_knock = DiagnosticResult(
+            code="P0332",
+            description="Knock Sensor 2 Circuit Low Input",
+            causes=["Faulty knock sensor"],
+            checks=["Test sensor"],
+            confidence=0.85,
+            source="local_db",
+            system="Powertrain",
+            symptoms=None
+        )
+        report_knock = format_diagnostic_report(result_knock)
+        assert "wiring" in report_knock.lower()
+        assert "connector" in report_knock.lower()
+
+        # Test O2 sensor tip
+        result_o2 = DiagnosticResult(
+            code="P0131",
+            description="O2 Sensor Circuit Low Voltage (Bank 1 Sensor 1)",
+            causes=["Faulty O2 sensor"],
+            checks=["Test sensor"],
+            confidence=0.85,
+            source="local_db",
+            system="Fuel System",
+            symptoms=None
+        )
+        report_o2 = format_diagnostic_report(result_o2)
+        assert "exhaust leak" in report_o2.lower()
+
+    def test_message_splitting(self):
+        """Test that long reports are split correctly"""
+        # Create a result with many causes and checks
+        result = DiagnosticResult(
+            code="P0300",
+            description="Random/Multiple Cylinder Misfire Detected",
+            causes=[
+                "Bad spark plugs or coils",
+                "Fuel injector issues",
+                "Low compression in cylinders",
+                "Vacuum leaks affecting air/fuel mixture",
+                "Clogged fuel filter or weak fuel pump",
+                "Contaminated or old fuel",
+                "Faulty ignition module",
+                "Worn distributor components"
+            ],
+            checks=[
+                "Scan for specific cylinder misfire codes",
+                "Check spark plugs and coils",
+                "Test fuel injectors",
+                "Perform compression test",
+                "Inspect for vacuum leaks",
+                "Test fuel pressure",
+                "Check fuel quality",
+                "Inspect ignition system components"
+            ],
+            confidence=0.85,
+            source="local_db",
+            system="Powertrain",
+            symptoms=[
+                "Rough idle",
+                "Engine hesitation",
+                "Loss of power",
+                "Increased fuel consumption",
+                "Engine vibration",
+                "Check Engine Light flashing"
+            ]
+        )
+
+        # Format with message splitting
+        messages = format_diagnostic_response(result)
+
+        # Verify splitting works
+        assert isinstance(messages, list)
+        assert len(messages) >= 1
+
+        # Verify each message is under or near 1500 chars
+        for i, msg in enumerate(messages):
+            assert len(msg) <= 1600, f"Message {i+1} too long: {len(msg)} chars"
+
+        # Verify content is preserved
+        full_text = "\n\n".join(messages)
+        assert "P0300" in full_text
+        assert "Random/Multiple Cylinder Misfire" in full_text
+
+    def test_ai_generated_format(self):
+        """Test that AI-generated codes use same format"""
+        result = DiagnosticResult(
+            code="P3499",
+            description="Cylinder Deactivation System Bank 2",
+            causes=["Faulty solenoid", "Low oil pressure"],
+            checks=["Check oil level", "Test solenoid"],
+            confidence=0.75,
+            source="ai_learned",
+            system="Powertrain",
+            symptoms=["Check Engine Light", "Rough idle"]
+        )
+
+        report = format_diagnostic_report(result)
+
+        # Verify same format as database codes
+        assert "🔧 *Fault Code: P3499*" in report
+        assert "*System:* Powertrain" in report
+        assert "📖 *What it means*" in report
+        assert "🚗 *Common symptoms*" in report
+        assert "💡 *Technician Tip*" in report
+
+    def test_vehicle_override_format(self):
+        """Test that vehicle-specific overrides use same format"""
+        result = DiagnosticResult(
+            code="P0420",
+            description="Catalyst System Efficiency Below Threshold",
+            causes=[
+                "Known issue with 2015 Camry V6 catalytic converter",
+                "TSB available for this code"
+            ],
+            checks=[
+                "Check TSB for recall information",
+                "Inspect catalytic converter"
+            ],
+            confidence=0.98,
+            source="vehicle_override",
+            system="Emissions",
+            symptoms=["Check Engine Light", "Reduced performance"]
+        )
+
+        report = format_diagnostic_report(result)
+
+        # Verify same format
+        assert "🔧 *Fault Code: P0420*" in report
+        assert "vehicle-specific" not in report.lower() or "2015 Camry" in report
+
+    def test_unknown_code_format(self):
+        """Test that unknown codes still follow format"""
+        result = DiagnosticResult(
+            code="P9999",
+            description="Code P9999 is not in our database yet.",
+            causes=["This code may be vehicle-specific"],
+            checks=["Search online for this code"],
+            confidence=0.10,
+            source="unknown",
+            system=None,
+            symptoms=None
+        )
+
+        report = format_diagnostic_report(result)
+
+        # Verify format is maintained even for unknown codes
+        assert "🔧 *Fault Code: P9999*" in report
+        assert "*System:* Unknown System" in report
+        assert "📖 *What it means*" in report
+
+    def test_no_emojis_in_whatsapp_formatting(self):
+        """Test that WhatsApp formatting uses only supported markdown"""
+        result = DiagnosticResult(
+            code="P0420",
+            description="Test description",
+            causes=["Cause 1"],
+            checks=["Check 1"],
+            confidence=0.85,
+            source="local_db",
+            system="Test",
+            symptoms=["Symptom 1"]
+        )
+
+        report = format_diagnostic_report(result)
+
+        # Verify markdown formatting (not code blocks)
+        assert "*Fault Code:" in report
+        assert "*System:*" in report
+        assert not report.startswith("```")
+        assert not report.endswith("```")
+
+    def test_pre_replacement_checks(self):
+        """Test that pre-replacement checks are contextual"""
+        # Sensor code
+        result_sensor = DiagnosticResult(
+            code="P0130",
+            description="O2 Sensor Circuit Malfunction (Bank 1 Sensor 1)",
+            causes=["Faulty sensor"],
+            checks=["Test sensor"],
+            confidence=0.85,
+            source="local_db",
+            system="Fuel System",
+            symptoms=None
+        )
+        report_sensor = format_diagnostic_report(result_sensor)
+        assert "scanner data" in report_sensor.lower()
+        assert "connector" in report_sensor.lower()
+
+        # Circuit code
+        result_circuit = DiagnosticResult(
+            code="P0600",
+            description="Serial Communication Link Malfunction",
+            causes=["Wiring issue"],
+            checks=["Check wiring"],
+            confidence=0.85,
+            source="local_db",
+            system="Network",
+            symptoms=None
+        )
+        report_circuit = format_diagnostic_report(result_circuit)
+        assert "wiring" in report_circuit.lower()
+        assert "continuity" in report_circuit.lower() or "voltage" in report_circuit.lower()
+
+    def test_formatter_consistency(self):
+        """Test that formatter produces consistent output for same input"""
+        result = DiagnosticResult(
+            code="P0420",
+            description="Test",
+            causes=["Cause"],
+            checks=["Check"],
+            confidence=0.85,
+            source="local_db",
+            system="Test",
+            symptoms=["Symptom"]
+        )
+
+        report1 = format_diagnostic_report(result)
+        report2 = format_diagnostic_report(result)
+
+        assert report1 == report2, "Formatter should produce consistent output"
+
+
+if __name__ == "__main__":
+    pytest.main([__file__, "-v"])
