@@ -88,7 +88,7 @@ class SelectiveEnrichment:
                         generated_at=now,
                         ai_model=CURRENT_AI_MODEL,
                         prompt_version=CURRENT_PROMPT_VERSION
-                    ).model_dump()
+                    ).model_dump(mode='json')
 
             logger.info(
                 "selective_enrichment_success",

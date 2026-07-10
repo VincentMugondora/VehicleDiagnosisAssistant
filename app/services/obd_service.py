@@ -367,16 +367,31 @@ class OBDService:
             metadata_fields = {}
 
             # Map internal field names to database column names
+            # NOTE: technician_tip and pre_replacement_checks have NO data columns,
+            # only metadata columns where the actual value is stored
             field_map = {
                 "symptoms": "symptoms",
                 "common_causes": "common_causes",
                 "generic_fixes": "generic_fixes",
                 "severity": "severity",
-                "severity_explanation": "severity_explanation",
-                "technician_tip": "technician_tip",
-                "pre_replacement_checks": "pre_replacement_checks"
+                "severity_explanation": "severity_explanation"
+                # technician_tip and pre_replacement_checks are stored in metadata only
             }
 
+            # Map metadata field names (internal -> database)
+            metadata_field_map = {
+                "symptoms_meta": "symptoms_meta",
+                "common_causes_meta": "common_causes_meta",
+                "generic_fixes_meta": "diagnostic_steps_meta",  # Database uses different name!
+                "severity_explanation_meta": "severity_explanation_meta",
+                "technician_tip_meta": "technician_tip_meta",
+                "pre_replacement_checks_meta": "pre_replacement_checks_meta"
+            }
+
+            # Fields that are stored IN the metadata (no separate data column)
+            metadata_only_fields = {"technician_tip", "pre_replacement_checks"}
+
+            # Process data fields (those with data columns)
             for internal_field, db_field in field_map.items():
                 if internal_field in generated_fields:
                     value = generated_fields[internal_field]
@@ -389,9 +404,23 @@ class OBDService:
                 # Copy metadata if present
                 meta_key = f"{internal_field}_meta"
                 if meta_key in generated_fields:
-                    # Map to database metadata column name
-                    db_meta_key = f"{db_field}_meta"
+                    # Use metadata field map for correct column names
+                    db_meta_key = metadata_field_map.get(meta_key, meta_key)
                     metadata_fields[db_meta_key] = generated_fields[meta_key]
+
+            # Process metadata-only fields (no data column, value stored in metadata.value)
+            for field in metadata_only_fields:
+                if field in generated_fields:
+                    meta_key = f"{field}_meta"
+                    db_meta_key = metadata_field_map.get(meta_key, meta_key)
+                    # Store the actual value in the metadata's "value" key
+                    metadata_value = generated_fields.get(meta_key, {})
+                    if isinstance(metadata_value, dict):
+                        metadata_value["value"] = generated_fields[field]
+                    else:
+                        # If metadata doesn't exist, create it with just the value
+                        metadata_value = {"value": generated_fields[field]}
+                    metadata_fields[db_meta_key] = metadata_value
 
             # Update database with enriched fields and metadata
             try:

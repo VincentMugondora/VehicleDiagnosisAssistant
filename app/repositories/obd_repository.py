@@ -181,8 +181,7 @@ class OBDRepository:
         updates = {
             "code": code.upper(),
             **enriched_fields,
-            **metadata_fields,
-            "last_enriched": "now()"  # PostgreSQL function
+            **metadata_fields
         }
 
         # Determine enrichment status based on completeness
