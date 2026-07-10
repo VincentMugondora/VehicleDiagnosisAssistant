@@ -1,0 +1,3217 @@
+{
+  "timestamp": "2026-07-10T13:12:43.874557",
+  "total_codes": 1000,
+  "analysis": {
+    "no_change": 13,
+    "high_confidence": 457,
+    "medium_confidence": 8,
+    "low_confidence": 522
+  },
+  "applied": {
+    "count": 457,
+    "errors": 0,
+    "changes": [
+      {
+        "code": "P2042",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P2043",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Sensor circuit issue - electrical/sensor problem"
+      },
+      {
+        "code": "P2044",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P2045",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P2046",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P2047",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P2048",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P2049",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P204A",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Sensor circuit issue, not actual component failure"
+      },
+      {
+        "code": "P204B",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Sensor circuit issue, not actual component failure"
+      },
+      {
+        "code": "P204C",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Sensor circuit issue, not actual component failure"
+      },
+      {
+        "code": "P204D",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Sensor circuit issue, not actual component failure"
+      },
+      {
+        "code": "P204E",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Sensor circuit issue, not actual component failure"
+      },
+      {
+        "code": "P0130",
+        "old_severity": "High",
+        "new_severity": "Moderate",
+        "confidence": 0.92,
+        "reasoning": "Affects fuel trim and emissions, not immediate damage"
+      },
+      {
+        "code": "P0131",
+        "old_severity": "High",
+        "new_severity": "Moderate",
+        "confidence": 0.92,
+        "reasoning": "Affects fuel trim and emissions, not immediate damage"
+      },
+      {
+        "code": "P0132",
+        "old_severity": "High",
+        "new_severity": "Moderate",
+        "confidence": 0.92,
+        "reasoning": "Affects fuel trim and emissions, not immediate damage"
+      },
+      {
+        "code": "P204F",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P2050",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P0133",
+        "old_severity": "High",
+        "new_severity": "Moderate",
+        "confidence": 0.92,
+        "reasoning": "Affects fuel trim and emissions, not immediate damage"
+      },
+      {
+        "code": "P0134",
+        "old_severity": "High",
+        "new_severity": "Moderate",
+        "confidence": 0.92,
+        "reasoning": "Affects fuel trim and emissions, not immediate damage"
+      },
+      {
+        "code": "P0135",
+        "old_severity": "High",
+        "new_severity": "Moderate",
+        "confidence": 0.92,
+        "reasoning": "Affects fuel trim and emissions, not immediate damage"
+      },
+      {
+        "code": "P0136",
+        "old_severity": "High",
+        "new_severity": "Moderate",
+        "confidence": 0.92,
+        "reasoning": "Affects fuel trim and emissions, not immediate damage"
+      },
+      {
+        "code": "P0137",
+        "old_severity": "High",
+        "new_severity": "Moderate",
+        "confidence": 0.92,
+        "reasoning": "Affects fuel trim and emissions, not immediate damage"
+      },
+      {
+        "code": "P0138",
+        "old_severity": "High",
+        "new_severity": "Moderate",
+        "confidence": 0.92,
+        "reasoning": "Affects fuel trim and emissions, not immediate damage"
+      },
+      {
+        "code": "P0140",
+        "old_severity": "High",
+        "new_severity": "Moderate",
+        "confidence": 0.92,
+        "reasoning": "Affects fuel trim and emissions, not immediate damage"
+      },
+      {
+        "code": "P0141",
+        "old_severity": "High",
+        "new_severity": "Moderate",
+        "confidence": 0.92,
+        "reasoning": "Affects fuel trim and emissions, not immediate damage"
+      },
+      {
+        "code": "P2051",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P2052",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P2053",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P2054",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P2055",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P2056",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P2057",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P2058",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P2059",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P205A",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P205B",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Sensor circuit issue - electrical/sensor problem"
+      },
+      {
+        "code": "P205C",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P205D",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P205E",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P205F",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P2060",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P2061",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P2062",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P2063",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P2064",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P2065",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P2066",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P2067",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P2068",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P2069",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P206A",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Sensor circuit issue, not actual component failure"
+      },
+      {
+        "code": "P206B",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Sensor circuit issue, not actual component failure"
+      },
+      {
+        "code": "P206C",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Sensor circuit issue, not actual component failure"
+      },
+      {
+        "code": "P206D",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Sensor circuit issue, not actual component failure"
+      },
+      {
+        "code": "P206E",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P206F",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P2070",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P2071",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P2072",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P2075",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P2076",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Sensor circuit issue - electrical/sensor problem"
+      },
+      {
+        "code": "P2077",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P2078",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P2079",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P207A",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P207B",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Sensor circuit issue - electrical/sensor problem"
+      },
+      {
+        "code": "P207C",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P207D",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P207E",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P207F",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P2080",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Sensor circuit issue, not actual component failure"
+      },
+      {
+        "code": "P2081",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Sensor circuit issue, not actual component failure"
+      },
+      {
+        "code": "P2082",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Sensor circuit issue, not actual component failure"
+      },
+      {
+        "code": "P0128",
+        "old_severity": "High",
+        "new_severity": "Moderate",
+        "confidence": 1.0,
+        "reasoning": "Thermostat issue affects warmup time"
+      },
+      {
+        "code": "P0440",
+        "old_severity": "High",
+        "new_severity": "Moderate",
+        "confidence": 0.92,
+        "reasoning": "Emissions system, rarely affects drivability"
+      },
+      {
+        "code": "P0441",
+        "old_severity": "High",
+        "new_severity": "Moderate",
+        "confidence": 0.92,
+        "reasoning": "Emissions system, rarely affects drivability"
+      },
+      {
+        "code": "P0443",
+        "old_severity": "High",
+        "new_severity": "Moderate",
+        "confidence": 0.92,
+        "reasoning": "Emissions system, rarely affects drivability"
+      },
+      {
+        "code": "P0446",
+        "old_severity": "High",
+        "new_severity": "Moderate",
+        "confidence": 0.92,
+        "reasoning": "Emissions system, rarely affects drivability"
+      },
+      {
+        "code": "P0455",
+        "old_severity": "High",
+        "new_severity": "Moderate",
+        "confidence": 1.0,
+        "reasoning": "Large EVAP leak may affect drivability"
+      },
+      {
+        "code": "P0456",
+        "old_severity": "High",
+        "new_severity": "Moderate",
+        "confidence": 0.92,
+        "reasoning": "Emissions system, rarely affects drivability"
+      },
+      {
+        "code": "P2083",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Sensor circuit issue, not actual component failure"
+      },
+      {
+        "code": "P2084",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Sensor circuit issue, not actual component failure"
+      },
+      {
+        "code": "P2085",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Sensor circuit issue, not actual component failure"
+      },
+      {
+        "code": "P2086",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Sensor circuit issue, not actual component failure"
+      },
+      {
+        "code": "P2087",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Sensor circuit issue, not actual component failure"
+      },
+      {
+        "code": "P2088",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P2089",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P208A",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P208B",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P208C",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P208D",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P208E",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P208F",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P2090",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P2091",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P2092",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P2093",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P2094",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P2095",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P2096",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Indicates lean/rich condition needing diagnosis"
+      },
+      {
+        "code": "P2097",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Indicates lean/rich condition needing diagnosis"
+      },
+      {
+        "code": "P2098",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Indicates lean/rich condition needing diagnosis"
+      },
+      {
+        "code": "P2099",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Indicates lean/rich condition needing diagnosis"
+      },
+      {
+        "code": "P209A",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P209B",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Sensor circuit issue - electrical/sensor problem"
+      },
+      {
+        "code": "P209C",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P209D",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P209E",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P209F",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P20A0",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P20A1",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P20A2",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P20A3",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P20A4",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P20A5",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P210A",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P210B",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Sensor circuit issue - electrical/sensor problem"
+      },
+      {
+        "code": "P210C",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P210D",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P210E",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P210F",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P2110",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P2111",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P2112",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P2113",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P2114",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P2115",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P2116",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P2117",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P2118",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P2119",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P211A",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P211B",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P211C",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P211D",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P211E",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P211F",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P2120",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P2121",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Sensor circuit issue - electrical/sensor problem"
+      },
+      {
+        "code": "P2122",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P2123",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P2124",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P2125",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P2126",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Sensor circuit issue - electrical/sensor problem"
+      },
+      {
+        "code": "P2127",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P2128",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P2129",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P212A",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P212B",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Sensor circuit issue - electrical/sensor problem"
+      },
+      {
+        "code": "P212C",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P20A6",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P20A7",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P20A8",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P20A9",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P20AA",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P20AB",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P20AC",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Sensor circuit issue, not actual component failure"
+      },
+      {
+        "code": "P20AD",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Sensor circuit issue, not actual component failure"
+      },
+      {
+        "code": "P20AE",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Sensor circuit issue, not actual component failure"
+      },
+      {
+        "code": "P20AF",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Sensor circuit issue, not actual component failure"
+      },
+      {
+        "code": "P20B0",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Sensor circuit issue, not actual component failure"
+      },
+      {
+        "code": "P20B1",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P20B2",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P20B3",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P20B4",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P20B5",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P20B6",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P20B7",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P20B8",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P20B9",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P20BA",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P20BB",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P20BC",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P20BD",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P20BE",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P20BF",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P20C0",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P20C1",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P20C2",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P20C3",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "U0073",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "U0100",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "U0101",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "U0122",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P20C4",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P0442",
+        "old_severity": "High",
+        "new_severity": "Moderate",
+        "confidence": 0.92,
+        "reasoning": "Emissions system, rarely affects drivability"
+      },
+      {
+        "code": "P20C5",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P20C6",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P20C7",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P20C8",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P20C9",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P20CA",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P20CB",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P20CC",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P20CD",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P20CE",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P20CF",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P20D0",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P20D1",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P20D2",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P20D3",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P20D4",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P20D5",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P20D6",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P20D7",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P20D8",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P20D9",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P20DA",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P20DB",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P20DC",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P20DD",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Sensor circuit issue, not actual component failure"
+      },
+      {
+        "code": "P20DE",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Sensor circuit issue, not actual component failure"
+      },
+      {
+        "code": "P20DF",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Sensor circuit issue, not actual component failure"
+      },
+      {
+        "code": "P20E0",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Sensor circuit issue, not actual component failure"
+      },
+      {
+        "code": "P20E1",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Sensor circuit issue, not actual component failure"
+      },
+      {
+        "code": "P20E2",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P20E3",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P20E4",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P20E5",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P20E6",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P20E7",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P20E8",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P20E9",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P20EA",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P20EB",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P20EC",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P20ED",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P20EE",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Emissions issue, catalyst already damaged"
+      },
+      {
+        "code": "P20EF",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Emissions issue, catalyst already damaged"
+      },
+      {
+        "code": "P20F0",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P20F1",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P20F2",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Emissions issue, catalyst already damaged"
+      },
+      {
+        "code": "P20F3",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Emissions issue, catalyst already damaged"
+      },
+      {
+        "code": "P20F4",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C0001",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C0002",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C0003",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C0004",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C0010",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C0011",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C0012",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C0014",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C0015",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C0016",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C0018",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C0019",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C001A",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C001C",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C001D",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C001E",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C0023",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C0025",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Sensor circuit issue, not actual component failure"
+      },
+      {
+        "code": "C0030",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C0031",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C0032",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C0033",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C0034",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C0036",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C0037",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C0038",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C0039",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C003A",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C003B",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C003C",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C003D",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C003E",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C003F",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C0042",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Sensor circuit issue, not actual component failure"
+      },
+      {
+        "code": "C0043",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Sensor circuit issue, not actual component failure"
+      },
+      {
+        "code": "C0061",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C0062",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C0063",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C0064",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C0065",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C0069",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C006A",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C006B",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C009F",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C00A0",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C00A1",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C00A2",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C00A3",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C00A4",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C00A5",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C00A6",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C00A7",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C00A8",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C0500",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C0501",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C0502",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C0503",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C0504",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C0505",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C0506",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C0507",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C0508",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C0509",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C050A",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C050B",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C050C",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C050D",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C050E",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C050F",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C0510",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C0511",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C0512",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C0513",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C0514",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C0515",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C0516",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C0517",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C0518",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C0519",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C051A",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C051B",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C051C",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C051D",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C006C",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C0071",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C0073",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C0074",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C0076",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C0077",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C0078",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C0083",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C0084",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C0085",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C0086",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C0089",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C008A",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C0090",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C0091",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C0092",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C0093",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C0094",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C0095",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C0096",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C0097",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C0098",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C0099",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C009A",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C009B",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C009C",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C009D",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C009E",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C055F",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C0561",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C056F",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Sensor circuit issue, not actual component failure"
+      },
+      {
+        "code": "C0570",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Sensor circuit issue, not actual component failure"
+      },
+      {
+        "code": "C057D",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Sensor circuit issue, not actual component failure"
+      },
+      {
+        "code": "C0587",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Sensor circuit issue, not actual component failure"
+      },
+      {
+        "code": "C051E",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C051F",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C0520",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C0521",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C0522",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C0523",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C0524",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C0525",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C0530",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C0531",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C0532",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C0533",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C0534",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C0535",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C0536",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C0537",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C0538",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C0539",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C053C",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C0545",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C0546",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C0547",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C0548",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C0549",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C054A",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C054B",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C054C",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C054D",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C054E",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C054F",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C0550",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C0551",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Sensor circuit issue, not actual component failure"
+      },
+      {
+        "code": "C0552",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C0553",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Sensor circuit issue, not actual component failure"
+      },
+      {
+        "code": "C0554",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Sensor circuit issue, not actual component failure"
+      },
+      {
+        "code": "C0555",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C0556",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C0557",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C0558",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P20F5",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P20F6",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P20F7",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P20F8",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P20F9",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P20FA",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P20FB",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P20FC",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P20FD",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P20FE",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P20FF",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P2100",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P2101",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Sensor circuit issue - electrical/sensor problem"
+      },
+      {
+        "code": "P2102",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P2103",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P2104",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P2105",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "P2106",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C0588",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Sensor circuit issue, not actual component failure"
+      },
+      {
+        "code": "C0589",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Sensor circuit issue, not actual component failure"
+      },
+      {
+        "code": "C058A",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Sensor circuit issue, not actual component failure"
+      },
+      {
+        "code": "C058B",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Sensor circuit issue, not actual component failure"
+      },
+      {
+        "code": "C058C",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Sensor circuit issue, not actual component failure"
+      },
+      {
+        "code": "C058D",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Sensor circuit issue, not actual component failure"
+      },
+      {
+        "code": "C058E",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Sensor circuit issue, not actual component failure"
+      },
+      {
+        "code": "C058F",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C0596",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Sensor circuit issue, not actual component failure"
+      },
+      {
+        "code": "C05A3",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C05A4",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C05AF",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Sensor circuit issue, not actual component failure"
+      },
+      {
+        "code": "C05D2",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C05D3",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C05D8",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C05D9",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C05DA",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C05DB",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C05DC",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C05DD",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C05DE",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C05DF",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C05E0",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Sensor circuit issue, not actual component failure"
+      },
+      {
+        "code": "C05E1",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Sensor circuit issue, not actual component failure"
+      },
+      {
+        "code": "C05E2",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Sensor circuit issue, not actual component failure"
+      },
+      {
+        "code": "C05E3",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Sensor circuit issue, not actual component failure"
+      },
+      {
+        "code": "C05E4",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Sensor circuit issue, not actual component failure"
+      },
+      {
+        "code": "C05E5",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C05E6",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C05E7",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C05E8",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C05E9",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C05EA",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C05EB",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C05EC",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C05ED",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C05EE",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C05EF",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C05F0",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Sensor circuit issue, not actual component failure"
+      },
+      {
+        "code": "C05F1",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Sensor circuit issue, not actual component failure"
+      },
+      {
+        "code": "C05F2",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Sensor circuit issue, not actual component failure"
+      },
+      {
+        "code": "C05F3",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Sensor circuit issue, not actual component failure"
+      },
+      {
+        "code": "C05F4",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Sensor circuit issue, not actual component failure"
+      },
+      {
+        "code": "C05F5",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C05F6",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C05F7",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C05F8",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      },
+      {
+        "code": "C05F9",
+        "old_severity": "Medium",
+        "new_severity": "Moderate",
+        "confidence": 0.95,
+        "reasoning": "Standard diagnostic code - diagnose to determine urgency"
+      }
+    ]
+  },
+  "pending_review": 8,
+  "left_unchanged": 522
+}
