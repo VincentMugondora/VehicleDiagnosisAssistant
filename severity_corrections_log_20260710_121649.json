@@ -1,0 +1,17 @@
+{
+  "timestamp": "2026-07-10T12:16:49.643765",
+  "total_codes": 1000,
+  "analysis": {
+    "no_change": 13,
+    "high_confidence": 457,
+    "medium_confidence": 8,
+    "low_confidence": 522
+  },
+  "applied": {
+    "count": 0,
+    "errors": 457,
+    "changes": []
+  },
+  "pending_review": 8,
+  "left_unchanged": 522
+}
