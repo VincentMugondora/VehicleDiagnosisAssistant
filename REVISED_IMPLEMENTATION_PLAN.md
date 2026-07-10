@@ -112,7 +112,9 @@ explanation = get_severity_explanation(severity, reasoning)
 - Turbo/boost codes
 - Advanced emissions
 
-**Total:** 157 priority codes (covers ~98% of real-world requests)
+**Total:** 157 priority codes
+
+**Coverage Estimate:** ~90-98% of requests (planning assumption based on industry diagnostic frequency patterns, NOT measured against actual usage data. Real coverage TBD after deployment analytics)
 
 ---
 

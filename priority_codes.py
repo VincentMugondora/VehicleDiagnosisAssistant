@@ -244,6 +244,10 @@ if __name__ == "__main__":
     print(f"Tier 3 (Lower Priority):   {len(TIER_3_PRIORITY)} codes")
     print(f"Total Priority Codes:      {len(get_all_priority_codes())} codes")
     print()
+    print("NOTE: Coverage estimates (90-98% of requests) are planning assumptions")
+    print("based on industry diagnostic patterns, NOT measured usage data.")
+    print("Actual coverage TBD after deployment analytics.")
+    print()
     print("Tier 1 Sample (first 10):")
     for code in TIER_1_PRIORITY[:10]:
         print(f"  {code}")
