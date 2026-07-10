@@ -1,0 +1,1840 @@
+{
+  "summary": {
+    "total_codes": 1000,
+    "complete": 0,
+    "incomplete": 1000,
+    "incomplete_percentage": 100.0
+  },
+  "field_completion": {
+    "description": {
+      "count": 1000,
+      "percentage": 100.0
+    },
+    "system": {
+      "count": 1000,
+      "percentage": 100.0
+    },
+    "common_causes": {
+      "count": 7,
+      "percentage": 0.7000000000000001
+    },
+    "generic_fixes": {
+      "count": 7,
+      "percentage": 0.7000000000000001
+    },
+    "symptoms": {
+      "count": 7,
+      "percentage": 0.7000000000000001
+    },
+    "severity": {
+      "count": 1000,
+      "percentage": 100.0
+    },
+    "severity_explanation": {
+      "count": 0,
+      "percentage": 0.0
+    },
+    "technician_tip": {
+      "count": 0,
+      "percentage": 0.0
+    },
+    "pre_replacement_checks": {
+      "count": 0,
+      "percentage": 0.0
+    }
+  },
+  "completeness_distribution": {
+    "complete": 0,
+    "mostly_complete": 0,
+    "partial": 1000,
+    "minimal": 0,
+    "empty": 0
+  },
+  "priority_incomplete": [
+    {
+      "code": "P0301",
+      "score": 33,
+      "description": "Cylinder 1 Misfire Detected",
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P0302",
+      "score": 33,
+      "description": "Cylinder 2 Misfire Detected",
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P0303",
+      "score": 33,
+      "description": "Cylinder 3 Misfire Detected",
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P0304",
+      "score": 33,
+      "description": "Cylinder 4 Misfire Detected",
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P0420",
+      "score": 33,
+      "description": "Catalyst System Efficiency Below Threshold Bank 1",
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P0430",
+      "score": 33,
+      "description": "Catalyst System Efficiency Below Threshold Bank 2",
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P0171",
+      "score": 33,
+      "description": "System Too Lean Bank 1",
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P0174",
+      "score": 33,
+      "description": "System Too Lean Bank 2",
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P0440",
+      "score": 33,
+      "description": "EVAP System",
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P0442",
+      "score": 33,
+      "description": "EVAP System Leak Detected (small leak)",
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P0455",
+      "score": 33,
+      "description": "EVAP System Leak Detected - Large Leak",
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P0456",
+      "score": 33,
+      "description": "EVAP System Leak Detected (very small leak)",
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P0128",
+      "score": 33,
+      "description": "Coolant Thermostat (Coolant Temperature Below Thermostat Regulating Temperature)",
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P0401",
+      "score": 33,
+      "description": "EGR A Flow Insufficient Detected",
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P0506",
+      "score": 33,
+      "description": "Idle Control System RPM - Lower Than Expected",
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P0507",
+      "score": 33,
+      "description": "Idle Control System RPM - Higher Than Expected",
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P0010",
+      "score": 33,
+      "description": "A Camshaft Position Actuator A Control Circuit/Open Bank 1",
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P0011",
+      "score": 33,
+      "description": "A Camshaft Position - Timing Over-Advanced or System Performance Bank 1",
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    }
+  ],
+  "severity_corrections": [
+    {
+      "code": "P2042",
+      "description": "Reductant Temperature Sensor A Circuit",
+      "current": "Medium",
+      "recommended": "Moderate",
+      "reason": "Standard diagnostic code"
+    },
+    {
+      "code": "P2043",
+      "description": "Reductant Temperature Sensor A Circuit Range/Performance",
+      "current": "Medium",
+      "recommended": "Moderate",
+      "reason": "Standard diagnostic code"
+    },
+    {
+      "code": "P2044",
+      "description": "Reductant Temperature Sensor A Circuit Low",
+      "current": "Medium",
+      "recommended": "Moderate",
+      "reason": "Standard diagnostic code"
+    },
+    {
+      "code": "P2045",
+      "description": "Reductant Temperature Sensor A Circuit High",
+      "current": "Medium",
+      "recommended": "Moderate",
+      "reason": "Standard diagnostic code"
+    },
+    {
+      "code": "P2046",
+      "description": "Reductant Temperature Sensor A Circuit Intermittent",
+      "current": "Medium",
+      "recommended": "Moderate",
+      "reason": "Standard diagnostic code"
+    },
+    {
+      "code": "P2047",
+      "description": "Reductant Injection Valve Circuit/Open Bank 1 Unit 1",
+      "current": "Medium",
+      "recommended": "Moderate",
+      "reason": "Standard diagnostic code"
+    },
+    {
+      "code": "P2048",
+      "description": "Reductant Injection Valve Circuit Low Bank 1 Unit 1",
+      "current": "Medium",
+      "recommended": "Moderate",
+      "reason": "Standard diagnostic code"
+    },
+    {
+      "code": "P2049",
+      "description": "Reductant Injection Valve Circuit High Bank 1 Unit 1",
+      "current": "Medium",
+      "recommended": "Moderate",
+      "reason": "Standard diagnostic code"
+    },
+    {
+      "code": "P204A",
+      "description": "Reductant Pressure Sensor Circuit",
+      "current": "Medium",
+      "recommended": "Moderate",
+      "reason": "Emissions/monitoring system (non-critical)"
+    },
+    {
+      "code": "P204B",
+      "description": "Reductant Pressure Sensor Circuit Range/Performance",
+      "current": "Medium",
+      "recommended": "Moderate",
+      "reason": "Emissions/monitoring system (non-critical)"
+    },
+    {
+      "code": "P204C",
+      "description": "Reductant Pressure Sensor Circuit Low",
+      "current": "Medium",
+      "recommended": "Moderate",
+      "reason": "Emissions/monitoring system (non-critical)"
+    },
+    {
+      "code": "P204D",
+      "description": "Reductant Pressure Sensor Circuit High",
+      "current": "Medium",
+      "recommended": "Moderate",
+      "reason": "Emissions/monitoring system (non-critical)"
+    },
+    {
+      "code": "P204E",
+      "description": "Reductant Pressure Sensor Circuit Intermittent/Erratic",
+      "current": "Medium",
+      "recommended": "Moderate",
+      "reason": "Emissions/monitoring system (non-critical)"
+    },
+    {
+      "code": "P0130",
+      "description": "O2 Sensor Circuit Bank 1 Sensor 1",
+      "current": "High",
+      "recommended": "Moderate",
+      "reason": "Emissions/monitoring system (non-critical)"
+    },
+    {
+      "code": "P0131",
+      "description": "O2 Sensor Circuit Low Voltage Bank 1 Sensor 1",
+      "current": "High",
+      "recommended": "Moderate",
+      "reason": "Emissions/monitoring system (non-critical)"
+    },
+    {
+      "code": "P0132",
+      "description": "O2 Sensor Circuit High Voltage Bank 1 Sensor 1",
+      "current": "High",
+      "recommended": "Moderate",
+      "reason": "Emissions/monitoring system (non-critical)"
+    },
+    {
+      "code": "P204F",
+      "description": "Reductant System Performance Bank 1",
+      "current": "Medium",
+      "recommended": "Moderate",
+      "reason": "Standard diagnostic code"
+    },
+    {
+      "code": "P2050",
+      "description": "Reductant Injection Valve Circuit/Open Bank 2 Unit 1",
+      "current": "Medium",
+      "recommended": "Moderate",
+      "reason": "Standard diagnostic code"
+    },
+    {
+      "code": "P0100",
+      "description": "Mass or Volume Air Flow Sensor A Circuit",
+      "current": "High",
+      "recommended": "Moderate",
+      "reason": "Standard diagnostic code"
+    },
+    {
+      "code": "P0101",
+      "description": "Mass or Volume Air Flow Sensor A Circuit Range/Performance",
+      "current": "High",
+      "recommended": "Moderate",
+      "reason": "Standard diagnostic code"
+    },
+    {
+      "code": "P0102",
+      "description": "Mass or Volume Air Flow Sensor A Circuit Low",
+      "current": "High",
+      "recommended": "Moderate",
+      "reason": "Standard diagnostic code"
+    },
+    {
+      "code": "P0133",
+      "description": "O2 Sensor Circuit Slow Response Bank 1 Sensor 1",
+      "current": "High",
+      "recommended": "Moderate",
+      "reason": "Emissions/monitoring system (non-critical)"
+    },
+    {
+      "code": "P0134",
+      "description": "O2 Sensor Circuit No Activity Detected Bank 1 Sensor 1",
+      "current": "High",
+      "recommended": "Moderate",
+      "reason": "Emissions/monitoring system (non-critical)"
+    },
+    {
+      "code": "P0135",
+      "description": "O2 Sensor Heater Circuit Bank 1 Sensor 1",
+      "current": "High",
+      "recommended": "Moderate",
+      "reason": "Standard diagnostic code"
+    },
+    {
+      "code": "P0136",
+      "description": "O2 Sensor Circuit Bank 1 Sensor 2",
+      "current": "High",
+      "recommended": "Moderate",
+      "reason": "Emissions/monitoring system (non-critical)"
+    },
+    {
+      "code": "P0137",
+      "description": "O2 Sensor Circuit Low Voltage Bank 1 Sensor 2",
+      "current": "High",
+      "recommended": "Moderate",
+      "reason": "Emissions/monitoring system (non-critical)"
+    },
+    {
+      "code": "P0138",
+      "description": "O2 Sensor Circuit High Voltage Bank 1 Sensor 2",
+      "current": "High",
+      "recommended": "Moderate",
+      "reason": "Emissions/monitoring system (non-critical)"
+    },
+    {
+      "code": "P0140",
+      "description": "O2 Sensor Circuit No Activity Detected Bank 1 Sensor 2",
+      "current": "High",
+      "recommended": "Moderate",
+      "reason": "Emissions/monitoring system (non-critical)"
+    },
+    {
+      "code": "P0141",
+      "description": "O2 Sensor Heater Circuit Bank 1 Sensor 2",
+      "current": "High",
+      "recommended": "Moderate",
+      "reason": "Standard diagnostic code"
+    },
+    {
+      "code": "P0170",
+      "description": "Fuel Trim Bank 1",
+      "current": "High",
+      "recommended": "Moderate",
+      "reason": "Standard diagnostic code"
+    },
+    {
+      "code": "P0171",
+      "description": "System Too Lean Bank 1",
+      "current": "High",
+      "recommended": "Moderate",
+      "reason": "Standard diagnostic code"
+    },
+    {
+      "code": "P0172",
+      "description": "System Too Rich Bank 1",
+      "current": "High",
+      "recommended": "Moderate",
+      "reason": "Standard diagnostic code"
+    },
+    {
+      "code": "P0174",
+      "description": "System Too Lean Bank 2",
+      "current": "High",
+      "recommended": "Moderate",
+      "reason": "Standard diagnostic code"
+    },
+    {
+      "code": "P0175",
+      "description": "System Too Rich Bank 2",
+      "current": "High",
+      "recommended": "Moderate",
+      "reason": "Standard diagnostic code"
+    },
+    {
+      "code": "P0430",
+      "description": "Catalyst System Efficiency Below Threshold Bank 2",
+      "current": "High",
+      "recommended": "Moderate",
+      "reason": "Standard diagnostic code"
+    },
+    {
+      "code": "P2051",
+      "description": "Reductant Injection Valve Circuit Low Bank 2 Unit 1",
+      "current": "Medium",
+      "recommended": "Moderate",
+      "reason": "Standard diagnostic code"
+    },
+    {
+      "code": "P2052",
+      "description": "Reductant Injection Valve Circuit High Bank 2 Unit 1",
+      "current": "Medium",
+      "recommended": "Moderate",
+      "reason": "Standard diagnostic code"
+    },
+    {
+      "code": "P2053",
+      "description": "Reductant Injection Valve Circuit/Open Bank 1 Unit 2",
+      "current": "Medium",
+      "recommended": "Moderate",
+      "reason": "Standard diagnostic code"
+    },
+    {
+      "code": "P2054",
+      "description": "Reductant Injection Valve Circuit Low Bank 1 Unit 2",
+      "current": "Medium",
+      "recommended": "Moderate",
+      "reason": "Standard diagnostic code"
+    },
+    {
+      "code": "P2055",
+      "description": "Reductant Injection Valve Circuit High Bank 1 Unit 2",
+      "current": "Medium",
+      "recommended": "Moderate",
+      "reason": "Standard diagnostic code"
+    },
+    {
+      "code": "P2056",
+      "description": "Reductant Injection Valve Circuit/Open Bank 2 Unit 2",
+      "current": "Medium",
+      "recommended": "Moderate",
+      "reason": "Standard diagnostic code"
+    },
+    {
+      "code": "P2057",
+      "description": "Reductant Injection Valve Circuit Low Bank 2 Unit 2",
+      "current": "Medium",
+      "recommended": "Moderate",
+      "reason": "Standard diagnostic code"
+    },
+    {
+      "code": "P2058",
+      "description": "Reductant Injection Valve Circuit High Bank 2 Unit 2",
+      "current": "Medium",
+      "recommended": "Moderate",
+      "reason": "Standard diagnostic code"
+    },
+    {
+      "code": "P2059",
+      "description": "Reductant Injection Air Pump Control Circuit/Open",
+      "current": "Medium",
+      "recommended": "Moderate",
+      "reason": "Standard diagnostic code"
+    },
+    {
+      "code": "P205A",
+      "description": "Reductant Tank Temperature Sensor A Circuit",
+      "current": "Medium",
+      "recommended": "Moderate",
+      "reason": "Standard diagnostic code"
+    },
+    {
+      "code": "P205B",
+      "description": "Reductant Tank Temperature Sensor A Circuit Range/Performance",
+      "current": "Medium",
+      "recommended": "Moderate",
+      "reason": "Standard diagnostic code"
+    },
+    {
+      "code": "P205C",
+      "description": "Reductant Tank Temperature Sensor A Circuit Low",
+      "current": "Medium",
+      "recommended": "Moderate",
+      "reason": "Standard diagnostic code"
+    },
+    {
+      "code": "P205D",
+      "description": "Reductant Tank Temperature Sensor A Circuit High",
+      "current": "Medium",
+      "recommended": "Moderate",
+      "reason": "Standard diagnostic code"
+    },
+    {
+      "code": "P205E",
+      "description": "Reductant Tank Temperature Sensor A Circuit Intermittent/Erratic",
+      "current": "Medium",
+      "recommended": "Moderate",
+      "reason": "Standard diagnostic code"
+    },
+    {
+      "code": "P205F",
+      "description": "Reductant System Performance Bank 2",
+      "current": "Medium",
+      "recommended": "Moderate",
+      "reason": "Standard diagnostic code"
+    }
+  ],
+  "incomplete_codes": [
+    {
+      "code": "P2042",
+      "score": 33,
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P2043",
+      "score": 33,
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P2044",
+      "score": 33,
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P2045",
+      "score": 33,
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P2046",
+      "score": 33,
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P2047",
+      "score": 33,
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P2048",
+      "score": 33,
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P2049",
+      "score": 33,
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P204A",
+      "score": 33,
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P204B",
+      "score": 33,
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P204C",
+      "score": 33,
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P204D",
+      "score": 33,
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P204E",
+      "score": 33,
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P0130",
+      "score": 33,
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P0131",
+      "score": 33,
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P0132",
+      "score": 33,
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P204F",
+      "score": 33,
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P2050",
+      "score": 33,
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P0100",
+      "score": 33,
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P0101",
+      "score": 33,
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P0102",
+      "score": 33,
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P0133",
+      "score": 33,
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P0134",
+      "score": 33,
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P0135",
+      "score": 33,
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P0136",
+      "score": 33,
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P0137",
+      "score": 33,
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P0138",
+      "score": 33,
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P0140",
+      "score": 33,
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P0141",
+      "score": 33,
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P0170",
+      "score": 33,
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P0171",
+      "score": 33,
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P0172",
+      "score": 33,
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P0174",
+      "score": 33,
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P0175",
+      "score": 33,
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P0430",
+      "score": 33,
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P2051",
+      "score": 33,
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P2052",
+      "score": 33,
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P2053",
+      "score": 33,
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P2054",
+      "score": 33,
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P2055",
+      "score": 33,
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P2056",
+      "score": 33,
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P2057",
+      "score": 33,
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P2058",
+      "score": 33,
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P2059",
+      "score": 33,
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P205A",
+      "score": 33,
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P205B",
+      "score": 33,
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P205C",
+      "score": 33,
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P205D",
+      "score": 33,
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P205E",
+      "score": 33,
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P205F",
+      "score": 33,
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P2060",
+      "score": 33,
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P2061",
+      "score": 33,
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P2062",
+      "score": 33,
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P2063",
+      "score": 33,
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P2064",
+      "score": 33,
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P2065",
+      "score": 33,
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P2066",
+      "score": 33,
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P2067",
+      "score": 33,
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P2068",
+      "score": 33,
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P2069",
+      "score": 33,
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P206A",
+      "score": 33,
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P206B",
+      "score": 33,
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P206C",
+      "score": 33,
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P206D",
+      "score": 33,
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P206E",
+      "score": 33,
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P206F",
+      "score": 33,
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P2070",
+      "score": 33,
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P2071",
+      "score": 33,
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P2072",
+      "score": 33,
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P2073",
+      "score": 33,
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P2074",
+      "score": 33,
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P2075",
+      "score": 33,
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P2076",
+      "score": 33,
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P2077",
+      "score": 33,
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P2078",
+      "score": 33,
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "C0265",
+      "score": 66,
+      "missing": [
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P2079",
+      "score": 33,
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P207A",
+      "score": 33,
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P207B",
+      "score": 33,
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P207C",
+      "score": 33,
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P207D",
+      "score": 33,
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P207E",
+      "score": 33,
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P207F",
+      "score": 33,
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P2080",
+      "score": 33,
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P2081",
+      "score": 33,
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P2082",
+      "score": 33,
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P0301",
+      "score": 33,
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P0302",
+      "score": 33,
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P0303",
+      "score": 33,
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P0304",
+      "score": 33,
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P0305",
+      "score": 33,
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P0128",
+      "score": 33,
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P0200",
+      "score": 33,
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P0201",
+      "score": 33,
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P0202",
+      "score": 33,
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P0203",
+      "score": 33,
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P0204",
+      "score": 33,
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P0205",
+      "score": 33,
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P0206",
+      "score": 33,
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    },
+    {
+      "code": "P0207",
+      "score": 33,
+      "missing": [
+        "symptoms",
+        "common_causes",
+        "generic_fixes",
+        "severity_explanation",
+        "technician_tip",
+        "pre_replacement_checks"
+      ]
+    }
+  ]
+}
