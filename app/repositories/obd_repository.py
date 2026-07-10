@@ -1,6 +1,7 @@
 from functools import lru_cache
 from supabase import Client
 from app.core.config import settings
+from app.core.logging import logger
 from app.repositories.fallback_obd_data import get_fallback_code
 
 # Global cache for OBD code lookups (reduces 3.5s query to <1ms)
