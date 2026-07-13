@@ -24,6 +24,7 @@ class EnrichmentStatus(str, Enum):
     NOT_ENRICHED = "not_enriched"  # Only basic fields (code, description)
     PARTIAL = "partial"  # Some enrichment fields present
     AI_GENERATED = "ai_generated"  # Fully enriched by AI
+    AI_ENRICHED = "ai_enriched"  # AI-enhanced version of existing data (alias for ai_generated)
     REVIEWED = "reviewed"  # AI-generated + human review
     OEM_VERIFIED = "oem_verified"  # Verified against OEM documentation
 
