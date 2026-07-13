@@ -225,6 +225,19 @@ Be specific, practical, and accurate. Focus on real-world diagnostic scenarios."
             True if successful, False otherwise
         """
         try:
+            # Normalize diy_difficulty to valid constraint values
+            valid_difficulties = ["Easy", "Moderate", "Advanced", "Professional Required"]
+            if "diy_difficulty" in enriched_data:
+                raw = enriched_data["diy_difficulty"]
+                normalized = None
+                for valid in valid_difficulties:
+                    if valid.lower() in raw.lower():
+                        normalized = valid
+                        break
+                if not normalized:
+                    normalized = "Moderate"
+                enriched_data["diy_difficulty"] = normalized
+
             # Convert cause_likelihoods to JSON string for JSONB column
             if "cause_likelihoods" in enriched_data and isinstance(enriched_data["cause_likelihoods"], list):
                 enriched_data["cause_likelihoods"] = json.dumps(enriched_data["cause_likelihoods"])
