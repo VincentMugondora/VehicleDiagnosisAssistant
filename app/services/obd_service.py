@@ -202,6 +202,16 @@ class OBDService:
                 # Build enrichment metadata for vehicle override case
                 enrichment_meta = self._build_enrichment_metadata(base)
 
+                # Extract Migration 003 fields (same as non-override case)
+                typical_repair_time = base.get("typical_repair_time")
+                typical_cost_range = base.get("typical_cost_range")
+                diy_difficulty = base.get("diy_difficulty")
+                related_codes = base.get("related_codes", [])
+                common_misdiagnoses = base.get("common_misdiagnoses")
+                freeze_frame_data = base.get("freeze_frame_data_to_check", [])
+                cause_likelihoods = base.get("cause_likelihoods")
+                emissions_impact = base.get("emissions_impact")
+
                 return DiagnosticResult(
                     code=code.upper(),
                     description=base.get("description", ""),
@@ -215,7 +225,16 @@ class OBDService:
                     severity_explanation=base_severity_explanation,
                     technician_tip=base_technician_tip,
                     pre_replacement_checks=base_pre_replacement_checks or None,
-                    enrichment_meta=enrichment_meta
+                    enrichment_meta=enrichment_meta,
+                    # Migration 003 fields
+                    typical_repair_time=typical_repair_time,
+                    typical_cost_range=typical_cost_range,
+                    diy_difficulty=diy_difficulty,
+                    related_codes=related_codes if related_codes else None,
+                    common_misdiagnoses=common_misdiagnoses,
+                    freeze_frame_data_to_check=freeze_frame_data if freeze_frame_data else None,
+                    cause_likelihoods=cause_likelihoods,
+                    emissions_impact=emissions_impact
                 )
 
         # Return base code without override
@@ -224,6 +243,16 @@ class OBDService:
 
         # Build enrichment metadata from database
         enrichment_meta = self._build_enrichment_metadata(base)
+
+        # Extract Migration 003 fields
+        typical_repair_time = base.get("typical_repair_time")
+        typical_cost_range = base.get("typical_cost_range")
+        diy_difficulty = base.get("diy_difficulty")
+        related_codes = base.get("related_codes", [])  # Array from database
+        common_misdiagnoses = base.get("common_misdiagnoses")
+        freeze_frame_data = base.get("freeze_frame_data_to_check", [])  # Array
+        cause_likelihoods = base.get("cause_likelihoods")  # JSONB string
+        emissions_impact = base.get("emissions_impact")
 
         return DiagnosticResult(
             code=code.upper(),
@@ -238,7 +267,16 @@ class OBDService:
             severity_explanation=base_severity_explanation,
             technician_tip=base_technician_tip,
             pre_replacement_checks=base_pre_replacement_checks or None,
-            enrichment_meta=enrichment_meta
+            enrichment_meta=enrichment_meta,
+            # Migration 003 fields
+            typical_repair_time=typical_repair_time,
+            typical_cost_range=typical_cost_range,
+            diy_difficulty=diy_difficulty,
+            related_codes=related_codes if related_codes else None,
+            common_misdiagnoses=common_misdiagnoses,
+            freeze_frame_data_to_check=freeze_frame_data if freeze_frame_data else None,
+            cause_likelihoods=cause_likelihoods,
+            emissions_impact=emissions_impact
         )
 
     async def _fetch_and_learn(self, code: str) -> Optional[DiagnosticResult]:

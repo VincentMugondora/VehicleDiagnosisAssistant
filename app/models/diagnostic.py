@@ -46,6 +46,16 @@ class DiagnosticResult(BaseModel):
     # Enrichment metadata (tracks provenance and quality)
     enrichment_meta: Optional[EnrichmentMetadata] = None
 
+    # NEW: Migration 003 fields
+    typical_repair_time: str | None = None  # "1-3 hours", "30 minutes"
+    typical_cost_range: str | None = None  # "$200-$2,500"
+    diy_difficulty: str | None = None  # "Easy" | "Moderate" | "Advanced" | "Professional Required"
+    related_codes: list[str] | None = None  # ["P0430", "P0171", "P0174"]
+    common_misdiagnoses: str | None = None  # What NOT to do
+    freeze_frame_data_to_check: list[str] | None = None  # Scanner data to review
+    cause_likelihoods: str | None = None  # JSON string: [{"cause": "...", "likelihood": 60}]
+    emissions_impact: str | None = None  # "Will Fail" | "May Fail" | "No Impact"
+
 
 class SymptomDiagnosisResult(BaseModel):
     """Result of symptom-based diagnosis"""

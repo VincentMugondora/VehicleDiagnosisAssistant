@@ -45,9 +45,9 @@ class DiagnosticReportFormatter:
         if self.result.symptoms:
             sections.append(self._format_symptoms())
 
-        # Likely causes (from database/AI)
+        # Likely causes (from database/AI) - with likelihoods if available
         if self.result.causes:
-            sections.append(self._format_causes())
+            sections.append(self._format_causes_with_likelihood())
 
         # Recommended diagnostic steps (from database/AI)
         if self.result.checks:
@@ -64,6 +64,23 @@ class DiagnosticReportFormatter:
         # Technician tip (from database/AI)
         if self.result.technician_tip:
             sections.append(self._format_technician_tip())
+
+        # Cost, time, and DIY difficulty (NEW)
+        cost_time = self._format_cost_time_info()
+        if cost_time:
+            sections.append(cost_time)
+
+        # Related codes (NEW)
+        if self.result.related_codes:
+            sections.append(self._format_related_codes())
+
+        # Common misdiagnoses warning (NEW)
+        if self.result.common_misdiagnoses:
+            sections.append(self._format_common_misdiagnoses())
+
+        # Freeze frame data guidance (NEW)
+        if self.result.freeze_frame_data_to_check:
+            sections.append(self._format_freeze_frame_guidance())
 
         # Footer disclaimer
         sections.append(self._format_footer())
@@ -101,6 +118,29 @@ class DiagnosticReportFormatter:
         return f"""🔍 *Likely causes*
 
 {causes_list}"""
+
+    def _format_causes_with_likelihood(self) -> str:
+        """Format causes with likelihood percentages if available"""
+        import json
+
+        # Try to parse cause_likelihoods if available
+        if self.result.cause_likelihoods:
+            try:
+                likelihoods = json.loads(self.result.cause_likelihoods)
+                if isinstance(likelihoods, list) and likelihoods:
+                    # Format with percentages
+                    causes_list = "\n".join(
+                        f"{i+1}. ⭐ {item['cause']} ({item['likelihood']}%)"
+                        for i, item in enumerate(likelihoods[:6])
+                    )
+                    return f"""🔍 *Most Common Causes* (in order of likelihood)
+
+{causes_list}"""
+            except (json.JSONDecodeError, KeyError, TypeError):
+                pass  # Fall back to basic format
+
+        # Fall back to basic causes format
+        return self._format_causes()
 
     def _format_diagnostic_steps(self) -> str:
         """Format recommended diagnostic steps section (from database/AI)"""
@@ -164,6 +204,48 @@ class DiagnosticReportFormatter:
         }
 
         return fallbacks.get(severity, fallbacks["Moderate"])
+
+    def _format_cost_time_info(self) -> str | None:
+        """Format cost and time information (Migration 003)"""
+        if not (self.result.typical_cost_range or self.result.typical_repair_time or self.result.diy_difficulty):
+            return None
+
+        lines = []
+
+        if self.result.typical_repair_time:
+            lines.append(f"⏱️ *Typical Repair Time:* {self.result.typical_repair_time}")
+
+        if self.result.typical_cost_range:
+            lines.append(f"💰 *Typical Cost Range:* {self.result.typical_cost_range}")
+
+        if self.result.diy_difficulty:
+            lines.append(f"🔧 *DIY Difficulty:* {self.result.diy_difficulty}")
+
+        return "\n".join(lines)
+
+    def _format_related_codes(self) -> str:
+        """Format related codes section (Migration 003)"""
+        codes_list = "\n".join(f"• {code}" for code in self.result.related_codes[:5])
+
+        return f"""🔗 *Related Codes to Check*
+
+{codes_list}"""
+
+    def _format_common_misdiagnoses(self) -> str:
+        """Format misdiagnosis warning (Migration 003)"""
+        return f"""⚠️ *Common Misdiagnosis*
+
+{self.result.common_misdiagnoses}"""
+
+    def _format_freeze_frame_guidance(self) -> str:
+        """Format freeze frame data guidance (Migration 003)"""
+        data_list = "\n".join(
+            f"• {data}" for data in self.result.freeze_frame_data_to_check[:6]
+        )
+
+        return f"""📊 *Data to Review* (if you have a scanner)
+
+{data_list}"""
 
 
 def format_diagnostic_report(result: DiagnosticResult) -> str:
