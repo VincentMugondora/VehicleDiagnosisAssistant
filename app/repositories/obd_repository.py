@@ -185,8 +185,8 @@ class OBDRepository:
         }
 
         # Determine enrichment status based on completeness
-        # For now, mark as ai_generated if we're enriching
-        updates["enrichment_status"] = "ai_generated"
+        # Mark as ai_enriched (valid enum value)
+        updates["enrichment_status"] = "ai_enriched"
 
         try:
             result = self.client.table("obd_codes")\
