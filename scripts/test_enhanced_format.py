@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 """
 Test Enhanced OBD Code Response Format (Migration 003)
 
@@ -6,7 +7,11 @@ This script tests the new response format with all Migration 003 fields.
 """
 
 import sys
+import codecs
 from pathlib import Path
+
+# Force UTF-8 encoding for output
+sys.stdout = codecs.getwriter('utf-8')(sys.stdout.buffer, 'replace')
 
 # Add parent directory to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
