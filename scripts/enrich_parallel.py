@@ -165,8 +165,10 @@ class ParallelEnrichment:
         return enriched_data
 
     async def enrich_single_code(self, code_record: dict) -> bool:
-        """Enrich a single code with semaphore-controlled concurrency."""
+        """Enrich a single code with semaphore-controlled concurrency and rate limiting."""
         async with self.semaphore:
+            # Rate limit: wait between calls to avoid hitting trial key limits
+            await asyncio.sleep(2)
             code = code_record.get("code")
             description = code_record.get("description", "")
             existing_causes = code_record.get("common_causes", "") or ""
