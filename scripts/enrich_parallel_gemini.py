@@ -88,7 +88,10 @@ class GeminiParallelEnrichment:
 
         # Gemini setup
         self.genai_client = genai.Client(api_key=settings.gemini_api_key)
-        self.model_name = settings.gemini_model
+        model = settings.gemini_model
+        if model.startswith("models/"):
+            model = model[len("models/"):]
+        self.model_name = model
 
     async def generate_with_ai(self, prompt: str, max_retries: int = 3) -> Optional[str]:
         """Call Gemini AI with retry logic."""

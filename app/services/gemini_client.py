@@ -11,7 +11,10 @@ class GeminiClient:
         if not settings.gemini_api_key:
             raise ValueError("GEMINI_API_KEY not set in environment")
         self.client = genai.Client(api_key=settings.gemini_api_key)
-        self.model = settings.gemini_model
+        model = settings.gemini_model
+        if model.startswith("models/"):
+            model = model[len("models/"):]
+        self.model = model
 
     async def generate(
         self,
