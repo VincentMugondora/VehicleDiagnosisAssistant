@@ -33,7 +33,8 @@ from typing import Optional
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-import google.generativeai as genai
+from google import genai
+from google.genai import types
 from supabase import create_client, Client
 from app.core.config import settings
 
@@ -86,8 +87,8 @@ class GeminiParallelEnrichment:
         self.lock = asyncio.Lock()
 
         # Gemini setup
-        genai.configure(api_key=settings.gemini_api_key)
-        self.model = genai.GenerativeModel(settings.gemini_model)
+        self.genai_client = genai.Client(api_key=settings.gemini_api_key)
+        self.model_name = settings.gemini_model
 
     async def generate_with_ai(self, prompt: str, max_retries: int = 3) -> Optional[str]:
         """Call Gemini AI with retry logic."""
@@ -96,9 +97,10 @@ class GeminiParallelEnrichment:
                 loop = asyncio.get_event_loop()
                 response = await loop.run_in_executor(
                     None,
-                    lambda: self.model.generate_content(
-                        prompt,
-                        generation_config=genai.types.GenerationConfig(
+                    lambda: self.genai_client.models.generate_content(
+                        model=self.model_name,
+                        contents=prompt,
+                        config=types.GenerateContentConfig(
                             temperature=0.3,
                             max_output_tokens=2000,
                         )

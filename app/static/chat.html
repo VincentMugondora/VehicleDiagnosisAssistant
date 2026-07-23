@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OBD-II Diagnostic Assistant</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background: #1e293b;
+            border-bottom: 1px solid #334155;
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header-icon {
+            width: 40px;
+            height: 40px;
+            background: #3b82f6;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .header-text h1 {
+            font-size: 18px;
+            font-weight: 600;
+            color: #f1f5f9;
+        }
+
+        .header-text p {
+            font-size: 12px;
+            color: #94a3b8;
+        }
+
+        .chat-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .message {
+            max-width: 85%;
+            padding: 12px 16px;
+            border-radius: 12px;
+            line-height: 1.5;
+            font-size: 14px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .message-user {
+            align-self: flex-end;
+            background: #3b82f6;
+            color: #fff;
+            border-bottom-right-radius: 4px;
+        }
+
+        .message-bot {
+            align-self: flex-start;
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-bottom-left-radius: 4px;
+        }
+
+        .message-bot .msg-header {
+            font-weight: 600;
+            color: #60a5fa;
+            margin-bottom: 8px;
+            font-size: 13px;
+        }
+
+        .message-bot .msg-section {
+            margin-bottom: 10px;
+        }
+
+        .message-bot .msg-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .message-bot .msg-section-title {
+            font-weight: 600;
+            color: #93c5fd;
+            font-size: 13px;
+            margin-bottom: 4px;
+        }
+
+        .message-bot .msg-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .message-bot .msg-list li {
+            padding: 2px 0;
+            padding-left: 16px;
+            position: relative;
+            color: #cbd5e1;
+        }
+
+        .message-bot .msg-list li::before {
+            content: "\2022";
+            position: absolute;
+            left: 4px;
+            color: #64748b;
+        }
+
+        .message-bot .severity-critical { color: #ef4444; }
+        .message-bot .severity-high { color: #f97316; }
+        .message-bot .severity-moderate { color: #eab308; }
+        .message-bot .severity-low { color: #22c55e; }
+
+        .typing-indicator {
+            align-self: flex-start;
+            padding: 12px 16px;
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 12px;
+            display: none;
+        }
+
+        .typing-indicator.active { display: flex; gap: 4px; align-items: center; }
+
+        .typing-indicator span {
+            width: 8px;
+            height: 8px;
+            background: #64748b;
+            border-radius: 50%;
+            animation: typing 1.4s infinite;
+        }
+
+        .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+        .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes typing {
+            0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+            30% { transform: translateY(-4px); opacity: 1; }
+        }
+
+        .input-area {
+            background: #1e293b;
+            border-top: 1px solid #334155;
+            padding: 16px 24px;
+        }
+
+        .input-wrapper {
+            display: flex;
+            gap: 12px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .input-wrapper input {
+            flex: 1;
+            padding: 12px 16px;
+            border-radius: 10px;
+            border: 1px solid #475569;
+            background: #0f172a;
+            color: #e2e8f0;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .input-wrapper input:focus {
+            border-color: #3b82f6;
+        }
+
+        .input-wrapper input::placeholder {
+            color: #64748b;
+        }
+
+        .input-wrapper button {
+            padding: 12px 24px;
+            border-radius: 10px;
+            border: none;
+            background: #3b82f6;
+            color: #fff;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .input-wrapper button:hover { background: #2563eb; }
+        .input-wrapper button:disabled { background: #475569; cursor: not-allowed; }
+
+        .examples {
+            margin-top: 8px;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .examples button {
+            padding: 6px 12px;
+            border-radius: 6px;
+            border: 1px solid #475569;
+            background: transparent;
+            color: #94a3b8;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .examples button:hover {
+            border-color: #3b82f6;
+            color: #60a5fa;
+        }
+
+        .welcome {
+            text-align: center;
+            padding: 60px 24px;
+            color: #94a3b8;
+        }
+
+        .welcome h2 {
+            font-size: 24px;
+            color: #f1f5f9;
+            margin-bottom: 8px;
+        }
+
+        .welcome p { margin-bottom: 4px; }
+
+        .welcome .hint {
+            margin-top: 16px;
+            font-size: 13px;
+            color: #64748b;
+        }
+
+        @media (max-width: 600px) {
+            .message { max-width: 95%; }
+            .header { padding: 12px 16px; }
+            .chat-container { padding: 16px; }
+            .input-area { padding: 12px 16px; }
+            .examples { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-icon">&#128295;</div>
+        <div class="header-text">
+            <h1>OBD-II Diagnostic Assistant</h1>
+            <p>Send a code, describe symptoms, or ask followup questions</p>
+        </div>
+    </div>
+
+    <div class="chat-container" id="chat">
+        <div class="welcome" id="welcome">
+            <h2>Vehicle Diagnostic Chat</h2>
+            <p>Send an OBD-II code like <strong>P0171</strong></p>
+            <p>Optional: add symptoms and vehicle info</p>
+            <p class="hint">Example: "P0420 Toyota Camry 2018 2.5L rough idle"</p>
+        </div>
+        <div class="typing-indicator" id="typing">
+            <span></span><span></span><span></span>
+        </div>
+    </div>
+
+    <div class="input-area">
+        <div class="input-wrapper">
+            <input type="text" id="input" placeholder="Type an OBD code, symptoms, or question..." autocomplete="off">
+            <button id="send" onclick="sendMessage()">Send</button>
+        </div>
+        <div class="examples">
+            <button onclick="useExample('P0171')">P0171</button>
+            <button onclick="useExample('P0420 Toyota Camry 2018')">P0420 Camry 2018</button>
+            <button onclick="useExample('P0300 car shaking at idle')">P0300 shaking</button>
+            <button onclick="useExample('car stalling and rough idle')">stalling + rough idle</button>
+        </div>
+    </div>
+
+    <script>
+        let sessionId = null;
+        const chat = document.getElementById('chat');
+        const input = document.getElementById('input');
+        const typing = document.getElementById('typing');
+        const welcome = document.getElementById('welcome');
+        const sendBtn = document.getElementById('send');
+
+        input.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+
+        function useExample(text) {
+            input.value = text;
+            input.focus();
+        }
+
+        function addMessage(text, isUser) {
+            if (welcome) welcome.style.display = 'none';
+
+            const div = document.createElement('div');
+            div.classList.add('message', isUser ? 'message-user' : 'message-bot');
+
+            if (isUser) {
+                div.textContent = text;
+            } else {
+                div.innerHTML = formatBotMessage(text);
+            }
+
+            chat.insertBefore(div, typing);
+            chat.scrollTop = chat.scrollHeight;
+        }
+
+        function formatBotMessage(text) {
+            let html = text;
+
+            // Bold: *text* -> <strong>text</strong>
+            html = html.replace(/\*([^*]+)\*/g, '<strong>$1</strong>');
+
+            // Emoji section headers
+            html = html.replace(/^([\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}])\s*<strong>(.+?)<\/strong>/gmu,
+                '<div class="msg-section"><div class="msg-section-title">$1 $2</div>');
+
+            // Numbered items
+            html = html.replace(/^(\d+)\.\s+(.+)$/gm, '<li>$1. $2</li>');
+
+            // Bullet items
+            html = html.replace(/^[•\-]\s+(.+)$/gm, '<li>$1</li>');
+
+            // Wrap consecutive <li> in <ul class="msg-list">
+            html = html.replace(/((?:<li>.*<\/li>\n?)+)/g, '<ul class="msg-list">$1</ul>');
+
+            // Blockquote / disclaimer
+            html = html.replace(/^>\s*_(.+)_$/gm, '<div style="font-size:12px;color:#64748b;font-style:italic;margin-top:8px;">$1</div>');
+
+            // Clean up excess newlines
+            html = html.replace(/\n{3,}/g, '\n\n');
+            html = html.replace(/\n/g, '<br>');
+
+            return html;
+        }
+
+        async function sendMessage() {
+            const text = input.value.trim();
+            if (!text) return;
+
+            input.value = '';
+            sendBtn.disabled = true;
+            addMessage(text, true);
+
+            typing.classList.add('active');
+            chat.scrollTop = chat.scrollHeight;
+
+            try {
+                const body = { message: text };
+                if (sessionId) body.session_id = sessionId;
+
+                const res = await fetch('/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body)
+                });
+
+                const data = await res.json();
+                sessionId = data.session_id;
+                addMessage(data.reply, false);
+            } catch (err) {
+                addMessage('Connection error. Please try again.', false);
+            } finally {
+                typing.classList.remove('active');
+                sendBtn.disabled = false;
+                input.focus();
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,13 +1,13 @@
 from pathlib import Path
 from fastapi import FastAPI, Request, status
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 from app.core.config import settings
 from app.core.logging import setup_logging, logger
 from app.core.middleware import RequestContextMiddleware
 from app.middleware.size_limit import RequestSizeLimitMiddleware
 from app.db.client import get_supabase_client
-from app.api.routes import webhook, payments
+from app.api.routes import webhook, payments, chat
 
 # Setup structured logging
 setup_logging()
@@ -31,6 +31,7 @@ app.add_middleware(RequestContextMiddleware)
 # Register routes
 app.include_router(webhook.router)
 app.include_router(payments.router)
+app.include_router(chat.router)
 
 
 # Global exception handler to catch and log all errors
@@ -123,9 +124,5 @@ async def health():
 
 @app.get("/")
 async def root():
-    """Root endpoint"""
-    return {
-        "service": "Vehicle Diagnosis Assistant",
-        "version": "2.0.0",
-        "docs": "/docs"
-    }
+    """Serve the chat UI"""
+    return FileResponse(str(static_path / "chat.html"))
