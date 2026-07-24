@@ -1,79 +1,12 @@
 import os
-import asyncio
-import types
 import pytest
 import pytest_asyncio
-from typing import Any, Dict
+from unittest.mock import patch, MagicMock
 
-# Ensure DB init is skipped in tests
-os.environ.setdefault("SKIP_INIT_DB", "true")
+os.environ.setdefault("SUPABASE_URL", "https://test.supabase.co")
+os.environ.setdefault("SUPABASE_SERVICE_KEY", "test-key")
 
 from app.main import app  # noqa: E402
-from app.db.mongo import get_db  # noqa: E402
-
-
-class AsyncFakeCollection:
-    def __init__(self, backing: list):
-        self._backing = backing
-
-    async def find_one(self, query: Dict[str, Any]):
-        for doc in reversed(self._backing):
-            ok = True
-            for k, v in query.items():
-                if doc.get(k) != v:
-                    ok = False
-                    break
-            if ok:
-                return dict(doc)
-        return None
-
-    async def insert_one(self, doc: Dict[str, Any]):
-        self._backing.append(dict(doc))
-        return types.SimpleNamespace(inserted_id=len(self._backing))
-
-    async def update_one(self, query: Dict[str, Any], update: Dict[str, Any], upsert: bool = False):
-        # Minimal support for tests; not needed currently
-        if "$set" in update:
-            setvals = update["$set"]
-        else:
-            setvals = update
-        for idx, doc in enumerate(self._backing):
-            if all(doc.get(k) == v for k, v in query.items()):
-                new_doc = dict(doc)
-                new_doc.update(setvals)
-                self._backing[idx] = new_doc
-                return types.SimpleNamespace(matched_count=1, modified_count=1)
-        if upsert:
-            new_doc = dict(query)
-            new_doc.update(setvals)
-            self._backing.append(new_doc)
-            return types.SimpleNamespace(upserted_id=len(self._backing))
-        return types.SimpleNamespace(matched_count=0, modified_count=0)
-
-    async def count_documents(self, query: Dict[str, Any]):
-        cnt = 0
-        for doc in self._backing:
-            if all((k in doc and (not isinstance(v, dict) or "$gte" not in v or doc[k] >= v["$gte"])) if k in doc else False for k, v in query.items()):
-                cnt += 1
-        return cnt
-
-    async def create_index(self, *args, **kwargs):
-        return "ok"
-
-
-class AsyncFakeDB:
-    def __init__(self):
-        self._stores = {
-            "obd_codes": [],
-            "vehicle_overrides": [],
-            "message_logs": [],
-            "diagnostic_logs": [],
-        }
-
-    def __getitem__(self, name: str) -> AsyncFakeCollection:
-        if name not in self._stores:
-            self._stores[name] = []
-        return AsyncFakeCollection(self._stores[name])
 
 
 @pytest.fixture
@@ -84,48 +17,65 @@ def mock_baileys_auth():
 
 @pytest_asyncio.fixture()
 async def test_app(monkeypatch, mock_baileys_auth):
-    # Set Baileys API key for auth - must be set before importing settings
     monkeypatch.setenv("BAILEYS_API_KEY", mock_baileys_auth)
 
-    # Reload settings to pick up the new environment variable
     from app.core import config
     import importlib
     importlib.reload(config)
-    from app.core.config import settings
 
-    # Verify it was set
-    assert settings.baileys_api_key == mock_baileys_auth, "API key not set correctly"
+    # Mock Supabase client to return in-memory data
+    fake_client = MagicMock()
 
-    fake_db = AsyncFakeDB()
+    # Seed OBD codes as Supabase-style responses
+    obd_codes = {
+        "P0705": {
+            "code": "P0705",
+            "description": "Transmission range sensor circuit malfunction",
+            "symptoms": None,
+            "common_causes": ["Faulty range sensor", "Misadjusted neutral safety switch", "Wiring damage near gearbox"],
+            "generic_fixes": ["Inspect range sensor", "Check wiring continuity", "Verify gear selector alignment"],
+            "system": "Transmission",
+            "severity": "Moderate",
+        },
+        "P0401": {
+            "code": "P0401",
+            "description": "Insufficient exhaust gas recirculation flow",
+            "symptoms": None,
+            "common_causes": ["Clogged EGR valve", "Blocked EGR passages", "Faulty EGR sensor"],
+            "generic_fixes": ["Clean EGR valve", "Inspect vacuum supply", "Check EGR position sensor"],
+            "system": "Emissions",
+            "severity": "Moderate",
+        },
+        "P0301": {
+            "code": "P0301",
+            "description": "Cylinder 1 misfire detected",
+            "symptoms": None,
+            "common_causes": ["Ignition coil failure", "Spark plug failure", "Injector malfunction", "Vacuum leak"],
+            "generic_fixes": ["Swap ignition coil", "Inspect spark plug", "Check injector pulse"],
+            "system": "Ignition",
+            "severity": "High",
+        },
+    }
 
-    # Seed essential codes used in tests
-    await fake_db["obd_codes"].insert_one({
-        "code": "P0705",
-        "description": "Transmission range sensor circuit malfunction",
-        "symptoms": "",
-        "common_causes": "Faulty range sensor, Misadjusted neutral safety switch, Wiring damage near gearbox",
-        "generic_fixes": "Inspect range sensor, Check wiring continuity, Verify gear selector alignment",
-    })
-    await fake_db["obd_codes"].insert_one({
-        "code": "P0401",
-        "description": "Insufficient exhaust gas recirculation flow",
-        "symptoms": "",
-        "common_causes": "Clogged EGR valve, Blocked EGR passages, Faulty EGR sensor",
-        "generic_fixes": "Clean EGR valve, Inspect vacuum supply, Check EGR position sensor",
-    })
-    await fake_db["obd_codes"].insert_one({
-        "code": "P0301",
-        "description": "Cylinder 1 misfire detected",
-        "symptoms": "",
-        "common_causes": "Ignition coil failure, Spark plug failure, Injector malfunction, Vacuum leak",
-        "generic_fixes": "Swap ignition coil, Inspect spark plug, Check injector pulse",
-    })
+    def mock_table(name):
+        table = MagicMock()
+        select = MagicMock()
+        table.select.return_value = select
 
-    async def _override_get_db():
-        yield fake_db
+        def mock_eq(field, value):
+            eq_result = MagicMock()
+            if name == "obd_codes" and field == "code" and value in obd_codes:
+                eq_result.execute.return_value = MagicMock(data=[obd_codes[value]])
+            else:
+                eq_result.execute.return_value = MagicMock(data=[])
+            eq_result.eq = mock_eq
+            return eq_result
 
-    app.dependency_overrides[get_db] = _override_get_db
-    try:
+        select.eq = mock_eq
+        table.upsert.return_value = MagicMock(execute=MagicMock(return_value=MagicMock(data=[])))
+        return table
+
+    fake_client.table = mock_table
+
+    with patch("app.db.client.get_supabase_client", return_value=fake_client):
         yield app
-    finally:
-        app.dependency_overrides.clear()
