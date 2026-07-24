@@ -2,7 +2,7 @@
 Repository for payment-related database operations.
 """
 from typing import Optional, List
-from datetime import datetime, timedelta
+from datetime import UTC, datetime, timedelta
 from supabase import Client
 from app.core.logging import logger
 
@@ -87,7 +87,7 @@ class PaymentRepository:
             "paynow_reference": paynow_reference,
             "poll_url": poll_url,
             "paynow_response": paynow_response,
-            "updated_at": datetime.utcnow().isoformat()
+            "updated_at": datetime.now(UTC).isoformat()
         }
 
         response = self.client.table("transactions").update(update_data).eq(
@@ -118,14 +118,14 @@ class PaymentRepository:
         """
         update_data = {
             "status": status,
-            "updated_at": datetime.utcnow().isoformat()
+            "updated_at": datetime.now(UTC).isoformat()
         }
 
         if paynow_reference:
             update_data["paynow_reference"] = paynow_reference
 
         if status == "paid":
-            update_data["paid_at"] = datetime.utcnow().isoformat()
+            update_data["paid_at"] = datetime.now(UTC).isoformat()
 
         response = self.client.table("transactions").update(update_data).eq(
             "order_reference", order_reference
@@ -160,7 +160,7 @@ class PaymentRepository:
             List of pending transactions
         """
         # Only get transactions from last hour (older ones are likely expired)
-        one_hour_ago = (datetime.utcnow() - timedelta(hours=1)).isoformat()
+        one_hour_ago = (datetime.now(UTC) - timedelta(hours=1)).isoformat()
 
         response = self.client.table("transactions").select("*").eq(
             "status", "pending"
@@ -198,7 +198,7 @@ class PaymentRepository:
         # Deactivate any existing subscriptions for this user
         self.client.table("subscriptions").update({
             "is_active": False,
-            "updated_at": datetime.utcnow().isoformat()
+            "updated_at": datetime.now(UTC).isoformat()
         }).eq("phone_hash", phone_hash).eq("is_active", True).execute()
 
         # Create new subscription
@@ -241,7 +241,7 @@ class PaymentRepository:
         ).eq(
             "is_active", True
         ).gt(
-            "end_date", datetime.utcnow().isoformat()
+            "end_date", datetime.now(UTC).isoformat()
         ).execute()
 
         return response.data[0] if response.data else None
@@ -261,7 +261,7 @@ class PaymentRepository:
             Number of diagnostics used this week
         """
         # Calculate current week boundaries (Monday to Sunday)
-        now = datetime.utcnow()
+        now = datetime.now(UTC)
         week_start = now - timedelta(days=now.weekday())
         week_start = week_start.replace(hour=0, minute=0, second=0, microsecond=0)
 
@@ -287,7 +287,7 @@ class PaymentRepository:
             New usage count
         """
         # Calculate current week boundaries
-        now = datetime.utcnow()
+        now = datetime.now(UTC)
         week_start = now - timedelta(days=now.weekday())
         week_start = week_start.replace(hour=0, minute=0, second=0, microsecond=0)
         week_end = week_start + timedelta(days=7)
@@ -304,7 +304,7 @@ class PaymentRepository:
             new_count = existing.data[0]["diagnostics_count"] + 1
             self.client.table("user_usage").update({
                 "diagnostics_count": new_count,
-                "updated_at": datetime.utcnow().isoformat()
+                "updated_at": datetime.now(UTC).isoformat()
             }).eq(
                 "phone_hash", phone_hash
             ).eq(

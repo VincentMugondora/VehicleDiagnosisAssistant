@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import UTC, datetime, timedelta
 from supabase import Client
 from app.core.config import settings
 from app.db.retry_utils import with_retry, with_retry_default_none
@@ -25,7 +25,7 @@ class MessageLogRepository:
         if not settings.supabase_enabled or self.client is None:
             return 0  # No rate limiting in fallback mode
 
-        window_start = (datetime.utcnow() - timedelta(days=days)).isoformat()
+        window_start = (datetime.now(UTC) - timedelta(days=days)).isoformat()
 
         result = with_retry_default_none(
             lambda: self.client.table("message_logs")

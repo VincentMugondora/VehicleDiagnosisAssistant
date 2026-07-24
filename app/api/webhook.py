@@ -4,7 +4,7 @@ import base64
 import hashlib
 import re
 from typing import Dict, Any, Optional
-from datetime import datetime, timedelta
+from datetime import UTC, datetime, timedelta
 
 import httpx
 from fastapi import APIRouter, Request, Response, status, Depends
@@ -151,7 +151,7 @@ async def _check_usage_limit(db, phone_number: str) -> Optional[str]:
     if limit <= 0:
         return None
     window_days = _get_int_env("USAGE_LIMIT_WINDOW_DAYS", 30)
-    window_start = datetime.utcnow() - timedelta(days=window_days)
+    window_start = datetime.now(UTC) - timedelta(days=window_days)
     count = await db["message_logs"].count_documents({
         "phone_number": phone_number,
         "created_at": {"$gte": window_start},
@@ -180,7 +180,7 @@ async def process_incoming_message(raw_text: str, from_number: str, db) -> str:
             "request_text": raw_text,
             "response_text": limit_msg,
             "code": None,
-            "created_at": datetime.utcnow(),
+            "created_at": datetime.now(UTC),
         })
         return limit_msg
 
@@ -209,7 +209,7 @@ async def process_incoming_message(raw_text: str, from_number: str, db) -> str:
             "request_text": raw_text,
             "response_text": reply,
             "code": None,
-            "created_at": datetime.utcnow(),
+            "created_at": datetime.now(UTC),
         })
         return reply
 
@@ -232,7 +232,7 @@ async def process_incoming_message(raw_text: str, from_number: str, db) -> str:
         "request_text": raw_text,
         "response_text": reply,
         "code": code,
-        "created_at": datetime.utcnow(),
+        "created_at": datetime.now(UTC),
     })
 
     # Diagnostics audit log (never reused)
@@ -248,7 +248,7 @@ async def process_incoming_message(raw_text: str, from_number: str, db) -> str:
             "vehicle": vehicle_str,
             "source": base_info.get("source"),
             "confidence": base_info.get("confidence"),
-            "created_at": datetime.utcnow(),
+            "created_at": datetime.now(UTC),
         })
     except Exception:
         pass

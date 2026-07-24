@@ -4,7 +4,7 @@ Payment command handlers with state machine integration.
 Commands: SUBSCRIBE, RENEW, CANCEL, STATUS, HELP
 """
 from typing import Optional, Tuple
-from datetime import datetime
+from datetime import UTC, datetime
 from app.services.user_state_machine import (
     UserStateMachine,
     UserState,
@@ -461,6 +461,6 @@ class PaymentCommandHandler:
         if not state.transaction_created_at:
             return 0
 
-        elapsed = datetime.utcnow() - state.transaction_created_at
+        elapsed = datetime.now(UTC) - state.transaction_created_at
         remaining = 15 - int(elapsed.total_seconds() / 60)
         return max(0, remaining)

@@ -1,4 +1,4 @@
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 import socket
 
 
@@ -82,8 +82,7 @@ class Settings(BaseSettings):
     free_diagnostics_limit: int = 5  # Free diagnostics per week
     free_diagnostics_window_days: int = 7  # Weekly window
 
-    class Config:
-        env_file = ".env"
+    model_config = SettingsConfigDict(env_file=".env")
 
 
 settings = Settings()

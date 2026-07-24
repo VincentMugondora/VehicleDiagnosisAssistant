@@ -6,7 +6,7 @@ to deliver the same diagnosis quality as the WhatsApp bot.
 """
 
 import uuid
-from datetime import datetime
+from datetime import UTC, datetime
 from fastapi import APIRouter
 from pydantic import BaseModel
 
@@ -61,7 +61,7 @@ async def chat(req: ChatRequest):
 
     session = session_repo.get_by_phone_hash(session_id)
     if not session:
-        session = SessionState(phone_hash=session_id, last_active=datetime.utcnow())
+        session = SessionState(phone_hash=session_id, last_active=datetime.now(UTC))
 
     request_id = str(uuid.uuid4())
 

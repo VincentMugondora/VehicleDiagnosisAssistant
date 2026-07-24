@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import UTC, datetime, timedelta
 from app.repositories.session_repository import SessionRepository
 from app.repositories.message_log_repository import MessageLogRepository
 from app.models.session import SessionState
@@ -60,12 +60,12 @@ class SessionManager:
             logger.info("session_created", phone_hash=phone_hash)
             return SessionState(
                 phone_hash=phone_hash,
-                last_active=datetime.utcnow()
+                last_active=datetime.now(UTC)
             )
 
         # Check TTL
         ttl_delta = timedelta(seconds=settings.session_ttl_seconds)
-        if datetime.utcnow() - session.last_active > ttl_delta:
+        if datetime.now(UTC) - session.last_active > ttl_delta:
             logger.info(
                 "session_expired",
                 phone_hash=phone_hash,
@@ -74,7 +74,7 @@ class SessionManager:
             # Expired, create new
             return SessionState(
                 phone_hash=phone_hash,
-                last_active=datetime.utcnow()
+                last_active=datetime.now(UTC)
             )
 
         logger.info(
@@ -91,7 +91,7 @@ class SessionManager:
         Args:
             session: SessionState to save
         """
-        session.last_active = datetime.utcnow()
+        session.last_active = datetime.now(UTC)
         self.session_repo.upsert_session(session)
         logger.info(
             "session_saved",

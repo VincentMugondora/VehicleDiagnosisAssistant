@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import UTC, datetime
 from supabase import Client
 from app.models.session import SessionState
 from app.core.config import settings
@@ -55,6 +55,6 @@ class SessionRepository:
             .upsert({
                 "phone_hash": session.phone_hash,
                 "state": session_dict,
-                "last_active": datetime.utcnow().isoformat()
+                "last_active": datetime.now(UTC).isoformat()
             }, on_conflict="phone_hash")\
             .execute()

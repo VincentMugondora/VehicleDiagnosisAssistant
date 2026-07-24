@@ -6,7 +6,7 @@ Reduces hallucination and token usage by providing existing context.
 """
 
 from typing import Dict, Any, Optional, List
-from datetime import datetime
+from datetime import UTC, datetime
 from app.services.ai_client import AIClient
 from app.core.logging import logger
 from app.models.enrichment import FieldMetadata, DataSource
@@ -76,7 +76,7 @@ class SelectiveEnrichment:
                 return {}
 
             # Add metadata to each generated field
-            now = datetime.utcnow()
+            now = datetime.now(UTC)
             result = {}
 
             for field in missing_fields:

@@ -1,7 +1,7 @@
 """
 Payment-related Pydantic models for Paynow integration.
 """
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 from datetime import datetime
 from typing import Optional
 from decimal import Decimal
@@ -67,6 +67,8 @@ class PaymentStatusResponse(BaseModel):
 
 class Transaction(BaseModel):
     """Transaction record (matches database schema)"""
+    model_config = ConfigDict(from_attributes=True)
+
     id: str
     phone_hash: str
     amount: Decimal
@@ -86,12 +88,11 @@ class Transaction(BaseModel):
     updated_at: datetime
     paid_at: Optional[datetime] = None
 
-    class Config:
-        from_attributes = True
-
 
 class Subscription(BaseModel):
     """Subscription record (matches database schema)"""
+    model_config = ConfigDict(from_attributes=True)
+
     id: str
     phone_hash: str
     subscription_type: str
@@ -105,12 +106,11 @@ class Subscription(BaseModel):
     created_at: datetime
     updated_at: datetime
 
-    class Config:
-        from_attributes = True
-
 
 class UserUsage(BaseModel):
     """User usage tracking (matches database schema)"""
+    model_config = ConfigDict(from_attributes=True)
+
     id: str
     phone_hash: str
     diagnostics_count: int
@@ -119,9 +119,6 @@ class UserUsage(BaseModel):
     was_subscribed: bool
     created_at: datetime
     updated_at: datetime
-
-    class Config:
-        from_attributes = True
 
 
 class UsageCheckResponse(BaseModel):

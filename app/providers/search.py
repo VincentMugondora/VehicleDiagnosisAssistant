@@ -3,7 +3,7 @@ import re
 import json
 from typing import List, Dict, Optional
 from urllib.parse import urlparse
-from datetime import datetime
+from datetime import UTC, datetime
 
 import httpx
 
@@ -508,7 +508,7 @@ async def get_external_obd(db, code: str, vehicle: Dict[str, Optional[str]]) -> 
                         "causes": clean.get("causes", []),
                         "checks": clean.get("checks", []),
                         "sources": [r.get("url") for r in results],
-                        "fetched_at": datetime.utcnow(),
+                        "fetched_at": datetime.now(UTC),
                     }
                 },
                 upsert=True,
@@ -548,7 +548,7 @@ async def get_external_obd(db, code: str, vehicle: Dict[str, Optional[str]]) -> 
                     "causes": clean.get("causes", []) or [],
                     "checks": clean.get("checks", []) or [],
                     "sources": [r.get("url") for r in results],
-                    "created_at": datetime.utcnow(),
+                    "created_at": datetime.now(UTC),
                 }
                 await db["obd_summaries"].update_one(
                     {"code": code.upper(), **v_norm},

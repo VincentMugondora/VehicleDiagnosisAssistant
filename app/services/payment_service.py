@@ -4,7 +4,7 @@ Payment service for Paynow integration.
 Handles payment initiation, status polling, and subscription management.
 """
 import uuid
-from datetime import datetime, timedelta
+from datetime import UTC, datetime, timedelta
 from typing import Optional
 from paynow import Paynow
 from app.repositories.payment_repository import PaymentRepository
@@ -45,7 +45,7 @@ class PaymentService:
 
     def _generate_order_reference(self, phone_hash: str) -> str:
         """Generate unique order reference"""
-        timestamp = datetime.utcnow().strftime("%Y%m%d%H%M%S")
+        timestamp = datetime.now(UTC).strftime("%Y%m%d%H%M%S")
         unique_id = str(uuid.uuid4())[:8]
         return f"SUB-{timestamp}-{unique_id}"
 
@@ -336,7 +336,7 @@ class PaymentService:
 
         try:
             # Calculate subscription dates
-            start_date = datetime.utcnow()
+            start_date = datetime.now(UTC)
             end_date = start_date + timedelta(days=30)  # Monthly subscription
 
             # Update transaction status

@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import UTC, datetime
 from app.services.obd_service import OBDService, validate_obd_code
 from app.services.vin_decoder import validate_vin, decode_vin
 from app.services.diagnose import diagnose
@@ -197,7 +197,7 @@ class MessageRouter:
                     session.last_diagnosis = LastDiagnosis(
                         code=result.code,
                         description=result.description,
-                        timestamp=datetime.utcnow(),
+                        timestamp=datetime.now(UTC),
                         vehicle_context=vehicle_str
                     )
                     logger.info("last_diagnosis_stored", code=result.code)
