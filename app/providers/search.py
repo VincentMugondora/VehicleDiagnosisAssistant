@@ -7,12 +7,8 @@ from datetime import UTC, datetime
 
 import httpx
 
-try:
-    from google import genai as genai_new  # type: ignore
-except Exception:
-    genai_new = None  # Gemini optional
-
-from app.ai.gemini import get_client, get_mode
+from app.core.config import settings
+from app.core.logging import logger
 
 
 def _get_env_bool(name: str, default: bool = False) -> bool:
@@ -349,17 +345,17 @@ async def _web_search_for_code(code: str, vehicle: Dict[str, Optional[str]]) -> 
 
 
 def _summarize_with_gemini(code: str, results: List[Dict[str, str]], vehicle: Dict[str, Optional[str]]) -> Optional[Dict[str, object]]:
-    client = get_client()
-    mode = get_mode()
-    if mode != "new" or client is None:
+    if not settings.gemini_api_key:
         return None
-    model_name = os.getenv("GEMINI_MODEL", "gemini-1.5-flash")
-    # Build a compact prompt with citations
+
+    from google import genai
+    from google.genai import types
+
     sources_text = "\n\n".join([
         f"Source: {r['url']}\nTitle: {r.get('title','')}\nSnippet: {r.get('snippet','')}" for r in results
     ])
     make = (vehicle.get("make") or "").strip()
-    model = (vehicle.get("model") or "").strip()
+    model_name = (vehicle.get("model") or "").strip()
     year = (vehicle.get("year") or "").strip()
     engine = (vehicle.get("engine") or "").strip()
     prompt = (
@@ -368,18 +364,22 @@ def _summarize_with_gemini(code: str, results: List[Dict[str, str]], vehicle: Di
         "Do NOT invent causes or checks. If unclear, say 'generic'.\n"
         "Return STRICT JSON with keys: description (string), causes (array of 3-6 short strings), checks (array of 3-6 short strings).\n"
         f"Code: {code}\n\n"
-        f"Vehicle: {make} {model} {year} {engine}\n\n"
+        f"Vehicle: {make} {model_name} {year} {engine}\n\n"
         f"SOURCES:\n{sources_text}\n\n"
         "Return only JSON."
     )
     try:
-        try:
-            print("[gemini] generate start")
-        except Exception:
-            pass
-        resp = client.models.generate_content(model=model_name, contents=[prompt])  # type: ignore
+        client = genai.Client(api_key=settings.gemini_api_key)
+        gemini_model = settings.gemini_model
+        if gemini_model.startswith("models/"):
+            gemini_model = gemini_model[len("models/"):]
+
+        resp = client.models.generate_content(
+            model=gemini_model,
+            contents=[prompt],
+            config=types.GenerateContentConfig(temperature=0.2, max_output_tokens=500),
+        )
         txt = (resp.text or "").strip()
-        # robust JSON extraction
         start = txt.find("{")
         end = txt.rfind("}")
         raw = txt[start:end+1] if start != -1 and end != -1 and end > start else txt
@@ -389,16 +389,9 @@ def _summarize_with_gemini(code: str, results: List[Dict[str, str]], vehicle: Di
         checks = [str(x).strip() for x in data.get("checks", []) if str(x).strip()]
         if not (desc and causes and checks):
             return None
-        try:
-            print("[gemini] generate ok, parsed=true")
-        except Exception:
-            pass
         return {"description": desc, "causes": causes[:6], "checks": checks[:6]}
     except Exception as e:
-        try:
-            print(f"[gemini] generate/parse failed: {type(e).__name__}")
-        except Exception:
-            pass
+        logger.warning("gemini_summarize_failed", error=str(e))
         return None
 
 
