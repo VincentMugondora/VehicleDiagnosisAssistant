@@ -173,7 +173,7 @@ async def rollback_severity_corrections(
         try:
             client.table('enrichment_audit_log').insert({
                 'code': item['code'],
-                'timestamp': datetime.utcnow().isoformat(),
+                'timestamp': datetime.now(UTC).isoformat(),
                 'action': 'severity_rollback',
                 'actor': 'rollback_script',
                 'previous_state': item['current_severity'],
