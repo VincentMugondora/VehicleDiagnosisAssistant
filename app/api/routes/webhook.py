@@ -476,6 +476,11 @@ async def baileys_webhook(
     from_number = payload.get_sender()
     logger.info("sender_extracted", from_number=from_number)
 
+    # Ignore non-user senders (newsletters, status broadcasts, groups)
+    if from_number and ("@newsletter" in from_number or "@broadcast" in from_number):
+        logger.debug("ignoring_non_user_sender", from_number=from_number)
+        return {"ok": True, "status": "ignored"}
+
     raw_text = payload.get_text().strip()
     logger.info("text_extracted", text=raw_text)
 
