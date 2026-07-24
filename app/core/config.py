@@ -74,8 +74,8 @@ class Settings(BaseSettings):
     # Paynow payments (client credentials)
     paynow_integration_id: str | None = None
     paynow_integration_key: str | None = None
-    paynow_return_url: str = "https://your-domain.com/payments/return"
-    paynow_result_url: str = "https://your-domain.com/webhook/paynow"
+    paynow_return_url: str = ""
+    paynow_result_url: str = ""
 
     # Payment config
     subscription_price: float = 2.0  # Monthly subscription price in USD

@@ -6,6 +6,7 @@ from app.core.config import settings
 from app.core.logging import setup_logging, logger
 from app.core.middleware import RequestContextMiddleware
 from app.middleware.size_limit import RequestSizeLimitMiddleware
+from app.middleware.rate_limit import RateLimitMiddleware
 from app.db.client import get_supabase_client
 from app.api.routes import webhook, payments, chat
 
@@ -26,6 +27,7 @@ if static_path.exists():
 
 # Register middleware (order matters: first added = outermost = runs first)
 app.add_middleware(RequestSizeLimitMiddleware)
+app.add_middleware(RateLimitMiddleware)
 app.add_middleware(RequestContextMiddleware)
 
 # Register routes
