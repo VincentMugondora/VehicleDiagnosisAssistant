@@ -111,6 +111,14 @@ async def chat(req: ChatRequest, message_router: MessageRouter = Depends(get_cha
 
     else:
         error_msg = result.get("error", "Unable to process your message.")
+        if session.last_diagnosis and "Send an OBD-II code" in error_msg:
+            last = session.last_diagnosis
+            reply = (
+                f"I can see your last diagnosis was {last.code} ({last.description}). "
+                f"The AI followup service is temporarily unavailable. "
+                f"Please try rephrasing your question or send another OBD code."
+            )
+            return ChatResponse(session_id=session_id, reply=reply, type="followup")
         return ChatResponse(
             session_id=session_id,
             reply=error_msg,
