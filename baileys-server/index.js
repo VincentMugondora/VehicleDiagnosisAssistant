@@ -1,6 +1,7 @@
 require('dotenv').config()
 const { default: makeWASocket, useMultiFileAuthState, DisconnectReason } = require('@whiskeysockets/baileys')
 const qrcode = require('qrcode-terminal')
+const QRCode = require('qrcode')
 const express = require('express')
 const axios = require('axios')
 const helmet = require('helmet')
@@ -12,6 +13,7 @@ const pino = require('pino')
 const app = express()
 let sock = null
 let server = null
+let latestQR = null
 
 // Metrics tracking
 const metrics = {
@@ -282,17 +284,17 @@ async function connectToWhatsApp() {
             const { connection, lastDisconnect, qr } = update
 
             if (qr) {
-                logger.info('QR code received - displaying in terminal')
+                latestQR = qr
+                logger.info('QR code received - view at http://localhost:' + CONFIG.PORT + '/qr')
                 console.log('\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━')
                 console.log('📱 SCAN THIS QR CODE WITH WHATSAPP')
+                console.log(`🌐 Or open: http://localhost:${CONFIG.PORT}/qr`)
                 console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n')
 
-                // Generate QR code in terminal (printQRInTerminal also does this, but double display for visibility)
                 try {
                     qrcode.generate(qr, { small: true })
                 } catch (qrError) {
                     logger.error({ error: qrError.message }, 'Failed to generate QR code')
-                    console.log('QR Code Data:', qr)
                 }
 
                 console.log('\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━')
@@ -324,6 +326,7 @@ async function connectToWhatsApp() {
                     metrics.connectionStatus = 'logged_out'
                 }
             } else if (connection === 'open') {
+                latestQR = null
                 logger.info('WhatsApp connected successfully')
                 metrics.connectionStatus = 'connected'
                 resetReconnectAttempt()
@@ -435,6 +438,71 @@ async function connectToWhatsApp() {
         setTimeout(() => connectToWhatsApp(), delay)
     }
 }
+
+// QR code web page
+app.get('/qr', async (req, res) => {
+    if (metrics.connectionStatus === 'connected') {
+        return res.send(`
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>WhatsApp Connected</title>
+<style>body{font-family:system-ui;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0;background:#0a0a0a;color:#fff;text-align:center}
+.card{background:#1a1a1a;border-radius:16px;padding:48px;box-shadow:0 4px 24px rgba(0,0,0,.5)}
+h1{color:#25D366;margin-bottom:8px}p{color:#aaa;font-size:18px}</style></head>
+<body><div class="card"><h1>&#10004; WhatsApp Connected</h1><p>Bot is online and receiving messages.</p></div></body></html>`)
+    }
+
+    if (!latestQR) {
+        return res.send(`
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>Waiting for QR</title>
+<meta http-equiv="refresh" content="3">
+<style>body{font-family:system-ui;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0;background:#0a0a0a;color:#fff;text-align:center}
+.card{background:#1a1a1a;border-radius:16px;padding:48px;box-shadow:0 4px 24px rgba(0,0,0,.5)}
+h1{margin-bottom:8px}p{color:#aaa;font-size:18px}.spinner{animation:spin 1s linear infinite;font-size:48px;margin-bottom:16px}
+@keyframes spin{to{transform:rotate(360deg)}}</style></head>
+<body><div class="card"><div class="spinner">&#9696;</div><h1>Waiting for QR Code...</h1><p>Page will refresh automatically.</p></div></body></html>`)
+    }
+
+    try {
+        const qrDataUrl = await QRCode.toDataURL(latestQR, { width: 400, margin: 2 })
+        res.send(`
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>Scan QR Code</title>
+<meta http-equiv="refresh" content="30">
+<style>body{font-family:system-ui;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0;background:#0a0a0a;color:#fff;text-align:center}
+.card{background:#1a1a1a;border-radius:16px;padding:48px;box-shadow:0 4px 24px rgba(0,0,0,.5)}
+h1{margin-bottom:8px}p{color:#aaa;font-size:16px;margin-top:8px}
+img{border-radius:12px;margin:24px 0}
+.steps{text-align:left;color:#ccc;margin-top:24px;line-height:2}</style></head>
+<body><div class="card">
+<h1>&#128241; Scan to Connect WhatsApp</h1>
+<img src="${qrDataUrl}" alt="QR Code" width="400" height="400">
+<p>QR refreshes automatically. Page reloads every 30s.</p>
+<div class="steps">
+<strong>Steps:</strong><br>
+1. Open WhatsApp on your phone<br>
+2. Go to Settings &rarr; Linked Devices<br>
+3. Tap "Link a Device"<br>
+4. Scan this QR code
+</div></div></body></html>`)
+    } catch (err) {
+        res.status(500).send('Failed to generate QR code')
+    }
+})
+
+// QR code as raw image (for embedding)
+app.get('/qr.png', async (req, res) => {
+    if (!latestQR) {
+        return res.status(204).end()
+    }
+    try {
+        const buffer = await QRCode.toBuffer(latestQR, { width: 400, margin: 2 })
+        res.set('Content-Type', 'image/png')
+        res.send(buffer)
+    } catch (err) {
+        res.status(500).send('Failed to generate QR')
+    }
+})
 
 // API endpoint to send messages
 app.post('/send', authenticateApiKey, validateSendMessage, async (req, res) => {
