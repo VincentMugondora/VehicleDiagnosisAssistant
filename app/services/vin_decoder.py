@@ -14,13 +14,13 @@ _VIN_PATTERN = re.compile(r"^[A-HJ-NPR-Z0-9]{17}$", re.IGNORECASE)
 _NHTSA_URL = "https://vpic.nhtsa.dot.gov/api/vehicles/decodevin/{vin}?format=json"
 _TIMEOUT = httpx.Timeout(5.0, connect=3.0)
 
-_FIELDS_OF_INTEREST = {
-    "Make",
-    "Model",
-    "ModelYear",
-    "EngineConfiguration",
-    "DisplacementL",
-    "FuelTypePrimary",
+_FIELD_MAP = {
+    "Make": "make",
+    "Model": "model",
+    "Model Year": "year",
+    "Engine Configuration": "engine_config",
+    "Displacement (L)": "displacement",
+    "Fuel Type - Primary": "fuel_type",
 }
 
 
@@ -98,18 +98,18 @@ def _parse_nhtsa_response(data: dict) -> VinDecodeResult:
     for item in results:
         var = item.get("Variable")
         val = item.get("Value")
-        if var in _FIELDS_OF_INTEREST and val and val.strip():
-            fields[var] = val.strip()
+        if var in _FIELD_MAP and val and val.strip():
+            fields[_FIELD_MAP[var]] = val.strip()
         if var == "Error Code" and val and val.strip() != "0":
             has_error = True
 
     return VinDecodeResult(
-        make=fields.get("Make"),
-        model=fields.get("Model"),
-        year=fields.get("ModelYear"),
-        engine_config=fields.get("EngineConfiguration"),
-        displacement=fields.get("DisplacementL"),
-        fuel_type=fields.get("FuelTypePrimary"),
+        make=fields.get("make"),
+        model=fields.get("model"),
+        year=fields.get("year"),
+        engine_config=fields.get("engine_config"),
+        displacement=fields.get("displacement"),
+        fuel_type=fields.get("fuel_type"),
         partial=has_error,
     )
 

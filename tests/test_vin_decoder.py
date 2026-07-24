@@ -51,10 +51,10 @@ class TestNhtsaResponseParsing:
             "Results": [
                 {"Variable": "Make", "Value": "HONDA"},
                 {"Variable": "Model", "Value": "Civic"},
-                {"Variable": "ModelYear", "Value": "2021"},
-                {"Variable": "EngineConfiguration", "Value": "In-Line"},
-                {"Variable": "DisplacementL", "Value": "1.5"},
-                {"Variable": "FuelTypePrimary", "Value": "Gasoline"},
+                {"Variable": "Model Year", "Value": "2021"},
+                {"Variable": "Engine Configuration", "Value": "In-Line"},
+                {"Variable": "Displacement (L)", "Value": "1.5"},
+                {"Variable": "Fuel Type - Primary", "Value": "Gasoline"},
                 {"Variable": "Error Code", "Value": "0"},
             ]
         }
@@ -73,10 +73,10 @@ class TestNhtsaResponseParsing:
             "Results": [
                 {"Variable": "Make", "Value": "TOYOTA"},
                 {"Variable": "Model", "Value": ""},
-                {"Variable": "ModelYear", "Value": "2018"},
-                {"Variable": "EngineConfiguration", "Value": ""},
-                {"Variable": "DisplacementL", "Value": ""},
-                {"Variable": "FuelTypePrimary", "Value": ""},
+                {"Variable": "Model Year", "Value": "2018"},
+                {"Variable": "Engine Configuration", "Value": ""},
+                {"Variable": "Displacement (L)", "Value": ""},
+                {"Variable": "Fuel Type - Primary", "Value": ""},
                 {"Variable": "Error Code", "Value": "1 - Check Digit (9th position) does not calculate properly"},
             ]
         }
@@ -126,10 +126,10 @@ class TestDecodeVin:
             "Results": [
                 {"Variable": "Make", "Value": "HONDA"},
                 {"Variable": "Model", "Value": "Accord"},
-                {"Variable": "ModelYear", "Value": "2020"},
-                {"Variable": "EngineConfiguration", "Value": "In-Line"},
-                {"Variable": "DisplacementL", "Value": "1.5"},
-                {"Variable": "FuelTypePrimary", "Value": "Gasoline"},
+                {"Variable": "Model Year", "Value": "2020"},
+                {"Variable": "Engine Configuration", "Value": "In-Line"},
+                {"Variable": "Displacement (L)", "Value": "1.5"},
+                {"Variable": "Fuel Type - Primary", "Value": "Gasoline"},
                 {"Variable": "Error Code", "Value": "0"},
             ]
         }
