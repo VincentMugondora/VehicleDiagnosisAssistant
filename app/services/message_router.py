@@ -1,5 +1,6 @@
 from datetime import datetime
 from app.services.obd_service import OBDService, validate_obd_code
+from app.services.vin_decoder import validate_vin, decode_vin
 from app.services.diagnose import diagnose
 from app.services.normalize import normalize_symptoms
 from app.utils.obd_parser import parse_message
@@ -33,6 +34,57 @@ class MessageRouter:
                     error=str(e)
                 )
 
+    async def _try_vin_decode(
+        self,
+        raw_text: str,
+        vehicle: VehicleContext,
+        session: SessionState | None
+    ) -> VehicleContext | None:
+        """
+        If raw_text contains a 17-char VIN-shaped token, decode it and
+        return an updated VehicleContext. Returns None if no VIN found
+        or decode is not useful.
+        """
+        tokens = raw_text.strip().split()
+        vin_token = None
+        for t in tokens:
+            cleaned = t.strip(".,;:!?\"'")
+            if len(cleaned) == 17 and validate_vin(cleaned):
+                vin_token = cleaned
+                break
+
+        if not vin_token:
+            return None
+
+        decoded = await decode_vin(vin_token)
+        if not decoded or not decoded.is_useful():
+            logger.info("vin_decode_not_useful", vin=vin_token)
+            return None
+
+        logger.info(
+            "vin_decoded_vehicle_context",
+            vin=vin_token,
+            make=decoded.make,
+            model=decoded.model,
+            year=decoded.year,
+        )
+
+        # Store decoded vehicle on session for future messages
+        if session:
+            session.vehicle = VehicleContext(
+                make=decoded.make,
+                model=decoded.model,
+                year=decoded.year,
+                engine=decoded.engine_summary,
+            )
+
+        return VehicleContext(
+            make=decoded.make,
+            model=decoded.model,
+            year=decoded.year,
+            engine=decoded.engine_summary,
+        )
+
     async def route_message(
         self,
         raw_text: str,
@@ -61,6 +113,11 @@ class MessageRouter:
             year=parsed.get("year"),
             engine=parsed.get("engine")
         )
+
+        # Check for VIN in the message and use it to fill vehicle context
+        vin_result = await self._try_vin_decode(raw_text, vehicle, session)
+        if vin_result:
+            vehicle = vin_result
 
         logger.info(
             "message_parsed",
