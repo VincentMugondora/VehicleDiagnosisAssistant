@@ -17,6 +17,7 @@ from app.services.obd_service import OBDService
 from app.services.ai_client import AIClient
 from app.repositories.obd_repository import OBDRepository
 from app.repositories.session_repository import SessionRepository
+from app.repositories.message_log_repository import MessageLogRepository
 from app.db.client import get_supabase_client
 from app.core.config import settings
 from app.core.logging import logger
@@ -40,6 +41,7 @@ def get_chat_dependencies():
     client = get_supabase_client()
     obd_repo = OBDRepository(client)
     session_repo = SessionRepository(client)
+    message_repo = MessageLogRepository(client)
 
     ai_client = None
     try:
@@ -51,12 +53,12 @@ def get_chat_dependencies():
     router_instance = MessageRouter(obd_service)
     if ai_client and not router_instance.ai_client:
         router_instance.ai_client = ai_client
-    return router_instance, session_repo
+    return router_instance, session_repo, message_repo
 
 
 @router.post("", response_model=ChatResponse)
 async def chat(req: ChatRequest):
-    message_router, session_repo = get_chat_dependencies()
+    message_router, session_repo, message_repo = get_chat_dependencies()
     session_id = req.session_id or str(uuid.uuid4())
 
     session = session_repo.get_by_phone_hash(session_id)
@@ -77,7 +79,7 @@ async def chat(req: ChatRequest):
     if isinstance(result, DiagnosticResult):
         from app.services.diagnostic_formatter import format_diagnostic_report
         reply = format_diagnostic_report(result)
-        return ChatResponse(
+        response = ChatResponse(
             session_id=session_id,
             reply=reply,
             code=result.code,
@@ -99,14 +101,14 @@ async def chat(req: ChatRequest):
             for c in result.recommended_checks[:6]:
                 lines.append(f"- {c}")
         reply = "\n".join(lines)
-        return ChatResponse(
+        response = ChatResponse(
             session_id=session_id,
             reply=reply,
             type="symptom"
         )
 
     elif isinstance(result, dict) and "reply" in result:
-        return ChatResponse(
+        response = ChatResponse(
             session_id=session_id,
             reply=result["reply"],
             type="followup"
@@ -121,9 +123,22 @@ async def chat(req: ChatRequest):
                 f"The AI followup service is temporarily unavailable. "
                 f"Please try rephrasing your question or send another OBD code."
             )
-            return ChatResponse(session_id=session_id, reply=reply, type="followup")
-        return ChatResponse(
-            session_id=session_id,
-            reply=error_msg,
-            type="error"
-        )
+            response = ChatResponse(session_id=session_id, reply=reply, type="followup")
+        else:
+            response = ChatResponse(
+                session_id=session_id,
+                reply=error_msg,
+                type="error"
+            )
+
+    message_repo.insert_audit(
+        message_id=request_id,
+        phone_hash=session_id,
+        request_id=request_id,
+        session_id=session_id,
+        request_text=req.message,
+        response_text=response.reply,
+        code=response.code,
+    )
+
+    return response
