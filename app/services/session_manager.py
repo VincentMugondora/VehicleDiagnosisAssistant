@@ -63,9 +63,12 @@ class SessionManager:
                 last_active=datetime.now(UTC)
             )
 
-        # Check TTL
+        # Check TTL — ensure last_active is tz-aware for comparison
         ttl_delta = timedelta(seconds=settings.session_ttl_seconds)
-        if datetime.now(UTC) - session.last_active > ttl_delta:
+        last_active = session.last_active
+        if last_active.tzinfo is None:
+            last_active = last_active.replace(tzinfo=UTC)
+        if datetime.now(UTC) - last_active > ttl_delta:
             logger.info(
                 "session_expired",
                 phone_hash=phone_hash,
