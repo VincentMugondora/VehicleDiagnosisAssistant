@@ -34,6 +34,14 @@ class MessageRouter:
                     error=str(e)
                 )
 
+    def _find_vin_token(self, raw_text: str) -> str | None:
+        """Extract a VIN-shaped token from the message text."""
+        for t in raw_text.strip().split():
+            cleaned = t.strip(".,;:!?\"'")
+            if len(cleaned) == 17 and validate_vin(cleaned):
+                return cleaned
+        return None
+
     async def _try_vin_decode(
         self,
         raw_text: str,
@@ -45,14 +53,7 @@ class MessageRouter:
         return an updated VehicleContext. Returns None if no VIN found
         or decode is not useful.
         """
-        tokens = raw_text.strip().split()
-        vin_token = None
-        for t in tokens:
-            cleaned = t.strip(".,;:!?\"'")
-            if len(cleaned) == 17 and validate_vin(cleaned):
-                vin_token = cleaned
-                break
-
+        vin_token = self._find_vin_token(raw_text)
         if not vin_token:
             return None
 
@@ -124,6 +125,31 @@ class MessageRouter:
             code=code,
             vehicle_detected=bool(vehicle.make)
         )
+
+        # Route 0: VIN-only message (no code, no symptoms) — acknowledge vehicle
+        vin_token = self._find_vin_token(raw_text)
+        if vin_token and not code:
+            if vin_result:
+                vehicle_str = " ".join(filter(None, [
+                    vehicle.make, vehicle.model, vehicle.year
+                ]))
+                engine_str = f" ({vehicle.engine})" if vehicle.engine else ""
+                return {
+                    "reply": (
+                        f"Vehicle identified: {vehicle_str}{engine_str}. "
+                        f"Now send an OBD-II fault code (e.g. P0420) and "
+                        f"I'll diagnose it for your specific vehicle."
+                    )
+                }
+            else:
+                return {
+                    "reply": (
+                        "I received your VIN but couldn't identify the vehicle "
+                        "(this is common for imports not sold in the US market). "
+                        "Please tell me your vehicle make, model, and year instead "
+                        "(e.g. Toyota Hilux 2015 2.5L)."
+                    )
+                }
 
         # Route 1: Code-based diagnosis
         if code and validate_obd_code(code):
