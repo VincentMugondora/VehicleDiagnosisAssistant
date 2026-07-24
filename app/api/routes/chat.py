@@ -7,7 +7,7 @@ to deliver the same diagnosis quality as the WhatsApp bot.
 
 import uuid
 from datetime import UTC, datetime
-from fastapi import APIRouter
+from fastapi import APIRouter, File, Form, UploadFile
 from pydantic import BaseModel
 
 from app.models.diagnostic import DiagnosticResult, SymptomDiagnosisResult
@@ -142,3 +142,63 @@ async def chat(req: ChatRequest):
     )
 
     return response
+
+
+_ALLOWED_IMAGE_TYPES = {"image/jpeg", "image/png", "image/webp", "image/heic"}
+_MAX_IMAGE_SIZE = 10 * 1024 * 1024  # 10 MB
+
+
+@router.post("/image", response_model=ChatResponse)
+async def chat_image(
+    image: UploadFile = File(...),
+    message: str = Form(default=""),
+    session_id: str = Form(default=""),
+):
+    """Analyze an uploaded vehicle photo for visible issues."""
+    from app.services.gemini_client import GeminiClient
+
+    session_id = session_id or str(uuid.uuid4())
+
+    if image.content_type not in _ALLOWED_IMAGE_TYPES:
+        return ChatResponse(
+            session_id=session_id,
+            reply=f"Unsupported image type. Please upload JPEG, PNG, or WebP.",
+            type="error",
+        )
+
+    image_bytes = await image.read()
+    if len(image_bytes) > _MAX_IMAGE_SIZE:
+        return ChatResponse(
+            session_id=session_id,
+            reply="Image too large. Please upload an image under 10 MB.",
+            type="error",
+        )
+
+    try:
+        gemini = GeminiClient()
+    except Exception:
+        return ChatResponse(
+            session_id=session_id,
+            reply="Image analysis is currently unavailable (AI service not configured).",
+            type="error",
+        )
+
+    try:
+        analysis = await gemini.analyze_image(
+            image_bytes=image_bytes,
+            mime_type=image.content_type,
+            user_context=message,
+        )
+    except Exception as e:
+        logger.error("image_analysis_failed", error=str(e))
+        return ChatResponse(
+            session_id=session_id,
+            reply="Unable to analyze the image. Please try again or describe the issue in text.",
+            type="error",
+        )
+
+    return ChatResponse(
+        session_id=session_id,
+        reply=analysis,
+        type="followup",
+    )
