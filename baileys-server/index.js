@@ -439,8 +439,8 @@ async function connectToWhatsApp() {
     }
 }
 
-// QR code web page
-app.get('/qr', async (req, res) => {
+// QR code web page (no auth required, CSP relaxed for inline styles + data URI)
+app.get('/qr', helmet({ contentSecurityPolicy: { directives: { defaultSrc: ["'self'"], styleSrc: ["'self'", "'unsafe-inline'"], imgSrc: ["'self'", "data:"] } } }), async (req, res) => {
     if (metrics.connectionStatus === 'connected') {
         return res.send(`
 <!DOCTYPE html>
