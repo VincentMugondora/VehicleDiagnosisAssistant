@@ -11,11 +11,6 @@ def get_twilio_client() -> httpx.AsyncClient:
     """
     Get or create a persistent Twilio HTTP client with connection pooling.
 
-    Benefits:
-    - Reuses TCP connections (faster)
-    - Handles connection drops gracefully
-    - Automatic retries on transient errors
-
     Returns:
         Configured httpx.AsyncClient instance
     """
@@ -65,3 +60,14 @@ def get_baileys_client() -> httpx.AsyncClient:
 
     logger.info("baileys_http_client_created")
     return client
+
+
+async def close_all_clients():
+    """Close all cached HTTP clients on shutdown."""
+    for getter in (get_twilio_client, get_baileys_client):
+        if getter.cache_info().currsize > 0:
+            client = getter()
+            await client.aclose()
+    get_twilio_client.cache_clear()
+    get_baileys_client.cache_clear()
+    logger.info("all_http_clients_closed")
