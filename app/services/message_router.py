@@ -10,6 +10,36 @@ from app.core.config import settings
 from app.core.logging import logger
 
 
+_GREETING_PATTERNS = {
+    "hi", "hello", "hey", "howdy", "hie", "good morning", "good afternoon",
+    "good evening", "sup", "yo", "whats up", "what's up", "greetings",
+    "hola", "morning", "evening", "afternoon",
+}
+
+_GREETING_RESPONSE = (
+    "Hey there! I'm your vehicle diagnostics assistant. Here's what I can do:\n\n"
+    "1. *Send an OBD-II code* (e.g. P0420) — I'll explain what's wrong, "
+    "likely causes, and recommended checks.\n"
+    "2. *Describe symptoms* (e.g. \"car shaking at idle\") — I'll suggest "
+    "probable fault codes and systems to inspect.\n"
+    "3. *Send a VIN* (17 characters) — I'll identify your vehicle for "
+    "more accurate diagnostics.\n\n"
+    "You can also include your vehicle info for tailored results "
+    "(e.g. \"P0171 Toyota Camry 2015 2.5L\").\n\n"
+    "How can I help?"
+)
+
+
+def _is_greeting(text: str) -> bool:
+    cleaned = text.strip().lower().rstrip("!?.,")
+    if cleaned in _GREETING_PATTERNS:
+        return True
+    words = cleaned.split()
+    if len(words) <= 3 and words[0] in _GREETING_PATTERNS:
+        return True
+    return False
+
+
 class MessageRouter:
     """
     Routes incoming messages to appropriate diagnosis flow.
@@ -104,6 +134,11 @@ class MessageRouter:
         Returns:
             DiagnosticResult, SymptomDiagnosisResult, or error dict
         """
+        # Route 0: Greetings / conversational openers
+        if _is_greeting(raw_text):
+            logger.info("routing_to_greeting")
+            return {"reply": _GREETING_RESPONSE}
+
         # Parse message to extract code and vehicle
         parsed = parse_message(raw_text)
         code = parsed.get("code")
