@@ -12,7 +12,7 @@ Features:
 
 import asyncio
 import json
-from datetime import datetime
+from datetime import UTC, datetime
 from supabase import create_client
 from app.core.config import settings
 from app.services.ai_client import AIClient
@@ -284,7 +284,7 @@ class EnrichmentTool:
                 "severity": severity,
                 "severity_explanation": severity_explanation,
                 "enrichment_status": EnrichmentStatus.AI_ENRICHED,
-                "last_enriched": datetime.utcnow().isoformat()
+                "last_enriched": datetime.now(UTC).isoformat()
             }
 
             # Save to database

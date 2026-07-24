@@ -420,7 +420,7 @@ async def twilio_webhook(
         message_id=payload.MessageSid,
         phone_hash=phone_hash,
         request_id=request.state.request_id,
-        session_id=None,  # TODO: get session ID from session
+        session_id=phone_hash,
         request_text=payload.Body,
         response_text=reply,
         code=code

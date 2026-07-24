@@ -5,7 +5,7 @@ Logs all database changes as structured events with complete context.
 Supports rollback, debugging, and compliance auditing.
 """
 
-from datetime import datetime
+from datetime import UTC, datetime
 from typing import Optional
 import json
 
@@ -47,7 +47,7 @@ def create_severity_update_event(
         'rule': rule,
         'reasoning': reasoning,
         'actor': actor,
-        'timestamp': datetime.utcnow().isoformat(),
+        'timestamp': datetime.now(UTC).isoformat(),
         'metadata': {
             'previous_explanation': previous_explanation,
             'new_explanation': new_explanation
@@ -91,7 +91,7 @@ def create_enrichment_event(
         'previous_status': previous_status,
         'new_status': new_status,
         'actor': actor,
-        'timestamp': datetime.utcnow().isoformat()
+        'timestamp': datetime.now(UTC).isoformat()
     }
 
 
@@ -126,7 +126,7 @@ def create_review_event(
         'reviewer': reviewer,
         'review_notes': review_notes,
         'actor': reviewer,
-        'timestamp': datetime.utcnow().isoformat()
+        'timestamp': datetime.now(UTC).isoformat()
     }
 
 
@@ -153,7 +153,7 @@ def create_publication_event(
         'new_status': 'published',
         'publisher': publisher,
         'actor': publisher,
-        'timestamp': datetime.utcnow().isoformat()
+        'timestamp': datetime.now(UTC).isoformat()
     }
 
 
@@ -181,7 +181,7 @@ def create_unpublish_event(
         'reason': reason,
         'requester': requester,
         'actor': requester,
-        'timestamp': datetime.utcnow().isoformat()
+        'timestamp': datetime.now(UTC).isoformat()
     }
 
 

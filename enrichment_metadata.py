@@ -17,7 +17,7 @@ This enables:
 """
 
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import UTC, datetime
 from typing import Optional, Literal
 import hashlib
 import json
@@ -47,7 +47,7 @@ class EvidenceSource:
     confidence: float  # 0.0 to 1.0
     model: Optional[str] = None  # For AI: "claude-sonnet-4.5", "cohere-command-r-plus"
     reference: Optional[str] = None  # For OEM: TSB number, manual reference
-    date: str = field(default_factory=lambda: datetime.utcnow().isoformat())
+    date: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
     notes: Optional[str] = None
 
 
@@ -228,7 +228,7 @@ def create_field_provenance(
         evidence=evidence,
         prompt_version=prompt_version,
         prompt_hash=prompt_hash,
-        generated_at=datetime.utcnow().isoformat()
+        generated_at=datetime.now(UTC).isoformat()
     )
 
 
@@ -249,7 +249,7 @@ def mark_reviewed(
         Updated provenance
     """
     provenance.reviewed_by = reviewer
-    provenance.reviewed_at = datetime.utcnow().isoformat()
+    provenance.reviewed_at = datetime.now(UTC).isoformat()
     provenance.review_notes = notes
     return provenance
 
@@ -267,7 +267,7 @@ def mark_published(provenance: FieldProvenance) -> FieldProvenance:
     if not provenance.reviewed_by:
         raise ValueError("Cannot publish unreviewed content")
 
-    provenance.published_at = datetime.utcnow().isoformat()
+    provenance.published_at = datetime.now(UTC).isoformat()
     return provenance
 
 

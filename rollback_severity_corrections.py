@@ -12,7 +12,7 @@ Supports:
 import asyncio
 from supabase import create_client
 from app.core.config import settings
-from datetime import datetime
+from datetime import UTC, datetime
 import json
 
 

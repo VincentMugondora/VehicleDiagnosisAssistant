@@ -229,26 +229,17 @@ async def _search_brave(query: str) -> List[Dict[str, str]]:
 async def _search_serpapi(query: str) -> List[Dict[str, str]]:
     key = os.getenv("SERPAPI_KEY", "").strip()
     if not key:
-        try:
-            print("[external] serpapi key missing")
-        except Exception:
-            pass
+        logger.debug("serpapi_key_missing")
         return []
     params = {"engine": "google", "q": query, "api_key": key, "num": 6}
     async with httpx.AsyncClient(timeout=15.0) as client:
         r = await client.get("https://serpapi.com/search.json", params=params)
         if r.status_code != 200:
-            try:
-                print(f"[external] serpapi status={r.status_code}")
-            except Exception:
-                pass
+            logger.warning("serpapi_error", status=r.status_code)
             return []
         data = r.json()
         if data.get("error"):
-            try:
-                print(f"[external] serpapi error={data.get('error')}")
-            except Exception:
-                pass
+            logger.warning("serpapi_error", error=data.get("error"))
             return []
         items = []
         for it in data.get("organic_results", []) or []:
@@ -278,10 +269,7 @@ async def _web_search_for_code(code: str, vehicle: Dict[str, Optional[str]]) -> 
 
     provider = os.getenv("SEARCH_PROVIDER", "brave").strip().lower()
     for idx, q in enumerate(queries, start=1):
-        try:
-            print(f"[external] search_attempt={idx} q='{q[:120]}'")
-        except Exception:
-            pass
+        logger.debug("web_search_attempt", attempt=idx, query=q[:120])
         if provider == "serpapi":
             results = await _search_serpapi(q)
         else:
@@ -305,10 +293,7 @@ async def _web_search_for_code(code: str, vehicle: Dict[str, Optional[str]]) -> 
             return filtered
         # For the last attempt (without site filters), allow untrusted fallback if enabled
         if idx == len(queries) and _get_env_bool("ALLOW_UNTRUSTED_FALLBACK", False):
-            try:
-                print("[external] untrusted_fallback=true")
-            except Exception:
-                pass
+            logger.info("untrusted_fallback_used")
             return results[:3]
 
     # As a final trusted-only fallback, query each trusted domain separately and aggregate
@@ -317,10 +302,7 @@ async def _web_search_for_code(code: str, vehicle: Dict[str, Optional[str]]) -> 
         if len(agg) >= 3:
             break
         q = f"{base_terms} {v_terms} site:{d}".strip() if v_terms else f"{base_terms} site:{d}".strip()
-        try:
-            print(f"[external] per_domain_try domain={d} q='{q[:120]}'")
-        except Exception:
-            pass
+        logger.debug("per_domain_search", domain=d, query=q[:120])
         if provider == "serpapi":
             res = await _search_serpapi(q)
         else:
@@ -337,10 +319,7 @@ async def _web_search_for_code(code: str, vehicle: Dict[str, Optional[str]]) -> 
     if agg:
         return agg[:3]
 
-    try:
-        print("[external] filtered_results=0 (no suitable results)")
-    except Exception:
-        pass
+    logger.info("web_search_no_results", code=code)
     return []
 
 
@@ -395,74 +374,67 @@ def _summarize_with_gemini(code: str, results: List[Dict[str, str]], vehicle: Di
         return None
 
 
-async def get_external_obd(db, code: str, vehicle: Dict[str, Optional[str]]) -> Optional[Dict[str, object]]:
+async def get_external_obd(code: str, vehicle: Dict[str, Optional[str]]) -> Optional[Dict[str, object]]:
     internet = _get_env_bool("INTERNET_FALLBACK_ENABLED", False)
-    try:
-        print(f"[external] code={code} internet={internet} provider={os.getenv('SEARCH_PROVIDER', 'brave')}")
-    except Exception:
-        pass
+    logger.debug("external_obd_lookup", code=code, internet=internet, provider=os.getenv("SEARCH_PROVIDER", "brave"))
     if not internet:
         return None
 
-    # 1) Cache check (per code + vehicle)
     v_norm = {
         "make": (vehicle.get("make") or "").strip().lower(),
         "model": (vehicle.get("model") or "").strip().lower(),
         "year": (vehicle.get("year") or "").strip().lower(),
         "engine": (vehicle.get("engine") or "").strip().lower(),
     }
-    cached = await db["external_obd_cache"].find_one({"code": code.upper(), **v_norm})
-    if cached:
-        try:
-            print("[external] cache_hit=true")
-        except Exception:
-            pass
-        return {
-            "description": cached.get("description", ""),
-            "causes": cached.get("causes", []) or [],
-            "checks": cached.get("checks", []) or [],
-            "sources": cached.get("sources", []) or [],
-            "from_ai": True,
-        }
+
+    # 1) Cache check via Supabase
+    try:
+        from app.db.client import get_supabase_client
+        sb = get_supabase_client()
+        cache_resp = (
+            sb.table("external_obd_cache")
+            .select("*")
+            .eq("code", code.upper())
+            .eq("make", v_norm["make"])
+            .eq("model", v_norm["model"])
+            .eq("year", v_norm["year"])
+            .execute()
+        )
+        if cache_resp.data:
+            cached = cache_resp.data[0]
+            logger.debug("external_cache_hit", code=code)
+            return {
+                "description": cached.get("description", ""),
+                "causes": cached.get("causes", []) or [],
+                "checks": cached.get("checks", []) or [],
+                "sources": cached.get("sources", []) or [],
+                "from_ai": True,
+            }
+    except Exception as e:
+        logger.debug("external_cache_check_failed", error=str(e))
 
     # 2) Search
     results = await _web_search_for_code(code, vehicle)
     if not results:
-        try:
-            print("[external] search_results=0")
-        except Exception:
-            pass
+        logger.debug("external_search_empty", code=code)
         return None
-    try:
-        print(f"[external] search_results={len(results)}")
-    except Exception:
-        pass
+    logger.debug("external_search_results", code=code, count=len(results))
 
     # 3) Summarize (prefer Gemini if enabled)
     summary: Optional[Dict[str, object]] = None
     summary_from_ai = False
     ai_gemini = _get_env_bool("AI_ENRICH_ENABLED", False) and os.getenv("AI_PROVIDER", "").strip().lower() == "gemini"
-    try:
-        print(f"[external] ai_gemini={ai_gemini}")
-    except Exception:
-        pass
     if ai_gemini:
         summary = _summarize_with_gemini(code, results, vehicle)
         if summary is not None:
             summary_from_ai = True
 
-    # basic fallback if no AI: use snippets to craft minimal output
+    # Basic fallback if no AI: use snippets to craft minimal output
     if summary is None:
-        try:
-            print("[external] using_heuristic_fallback=true")
-        except Exception:
-            pass
-        # heuristic extraction from snippets
+        logger.debug("external_heuristic_fallback", code=code)
         desc = f"OBD-II code {code}"
         text = "\n".join([r.get("snippet", "") for r in results])
-        # naive split for causes/checks candidates
         tokens = [t.strip() for t in re.split(r",|;|\n|•|\-|—|:\s*", text) if t.strip()]
-        # remove noisy/QA phrases
         bad_subs = [
             "what is the meaning", "asked", "stack overflow", "stackexchange",
             "reddit", "quora", "how do i fix", "may ", "nov ", "dec ", "jan ", "feb ", "mar ", "apr "
@@ -475,7 +447,6 @@ async def get_external_obd(db, code: str, vehicle: Dict[str, Optional[str]]) -> 
                 continue
             if len(t) > 120:
                 continue
-            # simple dedupe
             if tl in seen_lc:
                 continue
             seen_lc.add(tl)
@@ -488,71 +459,25 @@ async def get_external_obd(db, code: str, vehicle: Dict[str, Optional[str]]) -> 
     clean = _sanitize_summary(code, summary)
     clean["from_ai"] = bool(summary_from_ai)
 
-    # 4) Persist only if AI summary
+    # 4) Persist to Supabase cache if AI summary
     if summary_from_ai:
         try:
-            await db["external_obd_cache"].update_one(
-                {"code": code.upper(), **v_norm},
-                {
-                    "$set": {
-                        "code": code.upper(),
-                        **v_norm,
-                        "description": clean.get("description", ""),
-                        "causes": clean.get("causes", []),
-                        "checks": clean.get("checks", []),
-                        "sources": [r.get("url") for r in results],
-                        "fetched_at": datetime.now(UTC),
-                    }
-                },
-                upsert=True,
-            )
-            try:
-                print("[external] cache_write=ok")
-            except Exception:
-                pass
-        except Exception:
-            pass
-    else:
-        try:
-            print("[external] skip_persist_heuristic=true")
-        except Exception:
-            pass
-    # Do not promote external summaries into the authoritative primary KB
-    try:
-        if os.getenv("EXTERNAL_PROMOTE_TO_PRIMARY", "false").strip().lower() == "true":
-            print("[external] skip_promote_to_primary=true")
-    except Exception:
-        pass
-
-    # Optionally save a per-vehicle summary document
-    if summary_from_ai:
-        try:
-            if os.getenv("EXTERNAL_SAVE_PER_VEHICLE", "false").strip().lower() == "true":
-                v_norm = {
-                    "make": (vehicle.get("make") or "").strip().lower(),
-                    "model": (vehicle.get("model") or "").strip().lower(),
-                    "year": (vehicle.get("year") or "").strip().lower(),
-                    "engine": (vehicle.get("engine") or "").strip().lower(),
-                }
-                doc = {
-                    "code": code.upper(),
-                    **v_norm,
-                    "description": clean.get("description", "") or "",
-                    "causes": clean.get("causes", []) or [],
-                    "checks": clean.get("checks", []) or [],
-                    "sources": [r.get("url") for r in results],
-                    "created_at": datetime.now(UTC),
-                }
-                await db["obd_summaries"].update_one(
-                    {"code": code.upper(), **v_norm},
-                    {"$set": doc},
-                    upsert=True,
-                )
-                try:
-                    print("[external] saved_per_vehicle=ok")
-                except Exception:
-                    pass
-        except Exception:
-            pass
+            from app.db.client import get_supabase_client
+            sb = get_supabase_client()
+            sb.table("external_obd_cache").upsert({
+                "code": code.upper(),
+                "make": v_norm["make"],
+                "model": v_norm["model"],
+                "year": v_norm["year"],
+                "engine": v_norm["engine"],
+                "description": clean.get("description", ""),
+                "causes": clean.get("causes", []),
+                "checks": clean.get("checks", []),
+                "sources": [r.get("url") for r in results],
+                "fetched_at": datetime.now(UTC).isoformat(),
+            }).execute()
+            logger.debug("external_cache_written", code=code)
+        except Exception as e:
+            logger.debug("external_cache_write_failed", error=str(e))
 
     return clean
