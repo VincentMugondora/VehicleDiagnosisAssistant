@@ -700,6 +700,25 @@ process.on('uncaughtException', (error) => {
     gracefulShutdown('uncaughtException')
 })
 
+// Keep FastAPI backend alive (Render free tier spins down after 15min)
+let keepAliveInterval = null
+
+function startKeepAlive() {
+    const backendBase = CONFIG.BACKEND_URL.replace(/\/webhook\/baileys\/?$/, '')
+    const healthUrl = backendBase + '/healthz'
+
+    keepAliveInterval = setInterval(async () => {
+        try {
+            await axios.get(healthUrl, { timeout: 10000 })
+            logger.debug({ url: healthUrl }, 'keep_alive_ping_ok')
+        } catch (err) {
+            logger.debug({ url: healthUrl, error: err.message }, 'keep_alive_ping_failed')
+        }
+    }, 10 * 60 * 1000) // every 10 minutes
+
+    logger.info({ url: healthUrl, interval: '10m' }, 'Keep-alive started for FastAPI backend')
+}
+
 // Start server
 async function start() {
     try {
@@ -715,6 +734,7 @@ async function start() {
             console.log(`🔒 Security: Enabled`)
             console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━')
 
+            startKeepAlive()
             connectToWhatsApp()
         })
     } catch (error) {
