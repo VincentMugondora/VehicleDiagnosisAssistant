@@ -45,6 +45,7 @@ class Settings(BaseSettings):
     log_level: str = "INFO"
     session_ttl_seconds: int = 1800
     max_conversation_turns: int = 10
+    cors_origins: list[str] = ["*"]
 
     # Reply formatting
     reply_max_causes: int = 5

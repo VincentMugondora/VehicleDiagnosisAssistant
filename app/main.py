@@ -1,6 +1,7 @@
 from contextlib import asynccontextmanager
 from pathlib import Path
 from fastapi import FastAPI, Request, status
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 from app.core.config import settings
@@ -83,6 +84,14 @@ app = FastAPI(
 if static_path.exists():
     app.mount("/static", StaticFiles(directory=str(static_path)), name="static")
     logger.info("static_files_mounted", path=str(static_path))
+
+# CORS (allow frontends on other origins to call the API)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=settings.cors_origins,
+    allow_methods=["GET", "POST"],
+    allow_headers=["*"],
+)
 
 # Register middleware (order matters: first added = outermost = runs first)
 app.add_middleware(RequestSizeLimitMiddleware)
