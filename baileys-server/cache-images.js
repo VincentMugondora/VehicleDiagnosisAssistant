@@ -24,7 +24,7 @@ const dotenvPath = path.join(__dirname, '..', '.env')
 require('dotenv').config({ path: dotenvPath })
 
 const CACHE_DIR = path.join(__dirname, 'cached-images')
-const BASE_URL = process.env.BAILEYS_BASE_URL || 'http://localhost:3000'
+const BASE_URL = process.env.BAILEYS_BASE_URL || 'https://vehiclediagnosisassistant-baileys.onrender.com'
 
 // Validate environment
 if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_KEY) {
