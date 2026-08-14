@@ -732,6 +732,8 @@ async function start() {
             console.log(`📡 Server: http://localhost:${CONFIG.PORT}`)
             console.log(`🔗 Backend: ${CONFIG.BACKEND_URL}`)
             console.log(`🔒 Security: Enabled`)
+            console.log(`⏱️  Started: ${new Date().toISOString()}`)
+            console.log(`⚠️  Render free tier: 750h/month shared across all services`)
             console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━')
 
             startKeepAlive()

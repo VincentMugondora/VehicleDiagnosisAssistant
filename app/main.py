@@ -22,10 +22,13 @@ static_path = Path(__file__).parent / "static"
 async def lifespan(app: FastAPI):
     """Startup and shutdown lifecycle."""
     # --- Startup ---
+    from datetime import datetime, timezone
     logger.info(
         "app_starting",
         env=settings.app_env,
-        supabase_url=settings.supabase_url
+        supabase_url=settings.supabase_url,
+        started_at=datetime.now(timezone.utc).isoformat(),
+        note="Render free tier: 750h/month shared across all services"
     )
 
     from app.core.config import check_supabase_connectivity
