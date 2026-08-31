@@ -385,6 +385,7 @@ class PaymentRepository:
         Returns:
             List of pending transaction dicts
         """
+        self._require_client()
         response = (
             self.client.table("transactions")
             .select("*")
@@ -407,6 +408,7 @@ class PaymentRepository:
         Returns:
             Expired subscription dict or None
         """
+        self._require_client()
         response = (
             self.client.table("subscriptions")
             .select("*")
