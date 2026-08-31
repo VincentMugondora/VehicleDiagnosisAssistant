@@ -153,6 +153,7 @@ class PaymentRepository:
 
     def get_transaction_by_order_reference(self, order_reference: str) -> Optional[dict]:
         """Get transaction by our order reference"""
+        self._require_client()
         response = self.client.table("transactions").select("*").eq(
             "order_reference", order_reference
         ).execute()
