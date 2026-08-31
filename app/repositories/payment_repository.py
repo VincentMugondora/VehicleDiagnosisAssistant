@@ -207,6 +207,7 @@ class PaymentRepository:
         Returns:
             Created subscription
         """
+        self._require_client()
         # Deactivate any existing subscriptions for this user
         self.client.table("subscriptions").update({
             "is_active": False,
