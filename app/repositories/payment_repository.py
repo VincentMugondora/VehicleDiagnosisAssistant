@@ -431,6 +431,7 @@ class PaymentRepository:
         Returns:
             Most recent subscription dict or None
         """
+        self._require_client()
         response = (
             self.client.table("subscriptions")
             .select("*")
