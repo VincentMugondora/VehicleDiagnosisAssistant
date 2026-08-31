@@ -125,6 +125,7 @@ class PaymentRepository:
         Returns:
             Updated transaction
         """
+        self._require_client()
         update_data = {
             "status": status,
             "updated_at": datetime.now(UTC).isoformat()
