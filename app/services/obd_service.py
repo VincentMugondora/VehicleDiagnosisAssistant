@@ -11,6 +11,15 @@ from app.services.selective_enrichment import SelectiveEnrichment
 _OBD_REGEX = re.compile(r"^[PBCU][0-9]{4}$", re.IGNORECASE)
 
 
+def _to_list(value, sep=",") -> list[str]:
+    """Convert a field that may be a list or a comma-separated string."""
+    if isinstance(value, list):
+        return [str(item).strip() for item in value if str(item).strip()]
+    if not value:
+        return []
+    return [item.strip() for item in re.split(sep, value) if item.strip()]
+
+
 def validate_obd_code(code: str) -> bool:
     """
     Validate OBD-II code format.
