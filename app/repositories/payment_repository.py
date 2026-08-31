@@ -16,8 +16,10 @@ class PaymentRepository:
     def _require_client(self):
         if self.client is None:
             raise RuntimeError(
-                "PaymentRepository requires a database connection but Supabase client is None. "
-                "Check that SUPABASE_URL and SUPABASE_SERVICE_KEY are set and Supabase is reachable."
+                "PaymentRepository requires a database connection "
+                "but Supabase client is None. Check that "
+                "SUPABASE_URL and SUPABASE_SERVICE_KEY are set "
+                "and Supabase is reachable."
             )
 
     def create_transaction(
