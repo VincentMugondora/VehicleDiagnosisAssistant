@@ -114,30 +114,21 @@ class OBDService:
                 symptoms=None  # No symptoms for unknown codes
             )
 
-        # Parse all fields from database
-        base_causes = [
-            c.strip()
-            for c in (base.get("common_causes") or "").split(",")
-            if c.strip()
-        ]
-        base_checks = [
-            c.strip()
-            for c in re.split(r"[,\n;]+", base.get("generic_fixes") or "")
-            if c.strip()
-        ]
-        base_symptoms = [
-            s.strip()
-            for s in (base.get("symptoms") or "").split(",")
-            if s.strip()
-        ]
-        base_severity = base.get("severity")  # e.g., "High", "Moderate", "Low"
+        # Parse all fields from database (or fallback data which uses lists)
+        base_causes = (
+            _to_list(base.get("common_causes"))
+            or _to_list(base.get("causes"))
+        )
+        base_checks = _to_list(
+            base.get("generic_fixes"), sep=r"[,\n;]+"
+        )
+        base_symptoms = _to_list(base.get("symptoms"))
+        base_severity = base.get("severity")
         base_severity_explanation = base.get("severity_explanation")
         base_technician_tip = base.get("technician_tip")
-        base_pre_replacement_checks = [
-            c.strip()
-            for c in (base.get("pre_replacement_checks") or "").split(",")
-            if c.strip()
-        ]
+        base_pre_replacement_checks = _to_list(
+            base.get("pre_replacement_checks")
+        )
 
         # Check if we need AI enrichment
         needs_enrichment = (
