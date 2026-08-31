@@ -13,6 +13,13 @@ class PaymentRepository:
     def __init__(self, client: Client):
         self.client = client
 
+    def _require_client(self):
+        if self.client is None:
+            raise RuntimeError(
+                "PaymentRepository requires a database connection but Supabase client is None. "
+                "Check that SUPABASE_URL and SUPABASE_SERVICE_KEY are set and Supabase is reachable."
+            )
+
     def create_transaction(
         self,
         phone_hash: str,
@@ -40,6 +47,7 @@ class PaymentRepository:
         Returns:
             Created transaction record
         """
+        self._require_client()
         data = {
             "phone_hash": phone_hash,
             "amount": amount,
