@@ -224,7 +224,20 @@ async def _check_payment_access(
             )
 
     # Resolve current state
-    state = state_machine.resolve_state(phone_hash)
+    try:
+        state = state_machine.resolve_state(phone_hash)
+    except RuntimeError:
+        logger.warning(
+            "payment_check_skipped_db_unavailable",
+            phone_hash=phone_hash
+        )
+        from app.services.user_state_machine import UserStateInfo, UserState
+        return None, UserStateInfo(
+            state=UserState.FREE_TIER,
+            phone_hash=phone_hash,
+            can_access_diagnostic=True,
+            reason="db_unavailable_fallback"
+        )
 
     # Payment commands always allowed (checked separately)
     payment_keywords = ['subscribe', 'renew', 'cancel', 'status', 'help']

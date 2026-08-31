@@ -489,6 +489,7 @@ class PaymentRepository:
         Returns:
             True if successful
         """
+        self._require_client()
         response = (
             self.client.table("subscriptions")
             .update({"is_active": False})
