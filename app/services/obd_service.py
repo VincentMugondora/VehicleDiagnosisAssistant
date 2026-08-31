@@ -323,26 +323,12 @@ class OBDService:
                 # Continue anyway - we can still return the data to user
 
             # Step 3: Return structured result to user
-            causes = [
-                c.strip()
-                for c in (generated_data.get("common_causes") or "").split(",")
-                if c.strip()
-            ]
-            checks = [
-                c.strip()
-                for c in (generated_data.get("generic_fixes") or "").split(",")
-                if c.strip()
-            ]
-            symptoms = [
-                s.strip()
-                for s in (generated_data.get("symptoms") or "").split(",")
-                if s.strip()
-            ]
-            pre_replacement_checks = [
-                c.strip()
-                for c in (generated_data.get("pre_replacement_checks") or "").split(",")
-                if c.strip()
-            ]
+            causes = _to_list(generated_data.get("common_causes"))
+            checks = _to_list(generated_data.get("generic_fixes"))
+            symptoms = _to_list(generated_data.get("symptoms"))
+            pre_replacement_checks = _to_list(
+                generated_data.get("pre_replacement_checks")
+            )
 
             return DiagnosticResult(
                 code=code.upper(),
