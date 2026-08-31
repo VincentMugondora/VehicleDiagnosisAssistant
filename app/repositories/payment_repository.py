@@ -170,6 +170,7 @@ class PaymentRepository:
         Returns:
             List of pending transactions
         """
+        self._require_client()
         # Only get transactions from last hour (older ones are likely expired)
         one_hour_ago = (datetime.now(UTC) - timedelta(hours=1)).isoformat()
 
