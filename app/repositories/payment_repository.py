@@ -91,6 +91,7 @@ class PaymentRepository:
         Returns:
             Updated transaction
         """
+        self._require_client()
         update_data = {
             "paynow_reference": paynow_reference,
             "poll_url": poll_url,
