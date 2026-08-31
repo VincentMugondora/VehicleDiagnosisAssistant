@@ -249,6 +249,7 @@ class PaymentRepository:
         Returns:
             Active subscription or None
         """
+        self._require_client()
         response = self.client.table("subscriptions").select("*").eq(
             "phone_hash", phone_hash
         ).eq(
@@ -273,6 +274,7 @@ class PaymentRepository:
         Returns:
             Number of diagnostics used this week
         """
+        self._require_client()
         # Calculate current week boundaries (Monday to Sunday)
         now = datetime.now(UTC)
         week_start = now - timedelta(days=now.weekday())
@@ -299,6 +301,7 @@ class PaymentRepository:
         Returns:
             New usage count
         """
+        self._require_client()
         # Calculate current week boundaries
         now = datetime.now(UTC)
         week_start = now - timedelta(days=now.weekday())
