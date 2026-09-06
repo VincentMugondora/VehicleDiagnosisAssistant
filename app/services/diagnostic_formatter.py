@@ -90,33 +90,31 @@ class DiagnosticReportFormatter:
     def _format_header(self) -> str:
         """Format fault code header"""
         system = self.result.system or "Unknown System"
-        return f"""🔧 *Fault Code: {self.result.code}*
-
-*System:* {system}"""
+        return f"""*DIAGNOSTIC REPORT*
+──────────────────────
+*FAULT CODE:* {self.result.code}
+*SYSTEM:* {system}"""
 
     def _format_description(self) -> str:
         """Format 'What it means' section"""
-        return f"""📖 *What it means*
-
+        return f"""*WHAT IT MEANS*
 {self.result.description}"""
 
     def _format_symptoms(self) -> str:
         """Format common symptoms section (from database/AI)"""
         symptoms = self.result.symptoms[:8]  # Limit to 8
-        symptom_list = "\n".join(f"• {s}" for s in symptoms)
-        return f"""🚗 *Common symptoms*
-
+        symptom_list = "\n".join(f"- {s}" for s in symptoms)
+        return f"""*COMMON SYMPTOMS*
 {symptom_list}"""
 
     def _format_causes(self) -> str:
         """Format likely causes section (from database/AI)"""
         causes_list = "\n".join(
-            f"• {cause}"
+            f"- {cause}"
             for cause in self.result.causes[:6]
         )
 
-        return f"""🔍 *Likely causes*
-
+        return f"""*POSSIBLE CAUSES*
 {causes_list}"""
 
     def _format_causes_with_likelihood(self) -> str:
@@ -130,11 +128,10 @@ class DiagnosticReportFormatter:
                 if isinstance(likelihoods, list) and likelihoods:
                     # Format with percentages
                     causes_list = "\n".join(
-                        f"{i+1}. ⭐ {item['cause']} ({item['likelihood']}%)"
+                        f"{i+1}. {item['cause']} ({item['likelihood']}%)"
                         for i, item in enumerate(likelihoods[:6])
                     )
-                    return f"""🔍 *Most Common Causes* (in order of likelihood)
-
+                    return f"""*POSSIBLE CAUSES* (Ranked)
 {causes_list}"""
             except (json.JSONDecodeError, KeyError, TypeError):
                 pass  # Fall back to basic format
@@ -149,8 +146,7 @@ class DiagnosticReportFormatter:
             for i, step in enumerate(self.result.checks[:8])
         )
 
-        return f"""🛠️ *Recommended diagnostic steps*
-
+        return f"""*WHAT TO CHECK & RECOMMENDED ACTIONS*
 {steps_list}"""
 
     def _format_severity(self) -> str:
@@ -158,32 +154,28 @@ class DiagnosticReportFormatter:
         severity = self.result.severity
         explanation = self.result.severity_explanation or self._get_fallback_severity_explanation(severity)
 
-        return f"""⚠️ *Severity*
-
-*{severity}*
-
-{explanation}"""
+        return f"""*SEVERITY & SAFETY INDICATOR*
+[ {severity.upper()} ] - {explanation}"""
 
     def _format_pre_replacement_checks(self) -> str:
         """Format pre-replacement checks section (from database/AI)"""
         checks_list = "\n".join(
-            f"• {check}"
+            f"- {check}"
             for check in self.result.pre_replacement_checks[:5]
         )
 
-        return f"""❌ *Do NOT replace parts until*
-
+        return f"""*DO NOT REPLACE UNTIL*
 {checks_list}"""
 
     def _format_technician_tip(self) -> str:
         """Format technician tip section (from database/AI)"""
-        return f"""💡 *Technician Tip*
-
+        return f"""*PRO TIP*
 {self.result.technician_tip}"""
 
     def _format_footer(self) -> str:
         """Format footer disclaimer"""
-        return "> _Always confirm the diagnosis using live scanner data and manufacturer service information before replacing parts._"
+        return """──────────────────────
+_Note: Always confirm diagnosis with live scanner data and service manuals before replacing parts._"""
 
     def _get_fallback_severity_explanation(self, severity: str) -> str:
         """
@@ -197,10 +189,10 @@ class DiagnosticReportFormatter:
             Generic explanation string
         """
         fallbacks = {
-            "Critical": "This code indicates a safety-critical system failure. Have the vehicle diagnosed and repaired immediately by a qualified technician.",
-            "High": "This code can lead to engine damage if left unaddressed. Avoid prolonged driving and have the vehicle diagnosed soon.",
-            "Moderate": "This code should be diagnosed and repaired to prevent potential damage and restore proper vehicle performance. The vehicle is usually drivable, but prolonged operation may reduce efficiency or cause further issues.",
-            "Low": "This code indicates a minor issue that is unlikely to cause immediate damage. Address it at your next scheduled service to prevent future problems."
+            "Critical": "Safety-critical system failure. Do not drive. Seek immediate repair.",
+            "High": "Potential engine damage if ignored. Avoid prolonged driving.",
+            "Moderate": "Vehicle is drivable, but reduced efficiency or secondary issues may occur.",
+            "Low": "Minor issue. Address at your next scheduled service."
         }
 
         return fallbacks.get(severity, fallbacks["Moderate"])
@@ -213,38 +205,35 @@ class DiagnosticReportFormatter:
         lines = []
 
         if self.result.typical_repair_time:
-            lines.append(f"⏱️ *Typical Repair Time:* {self.result.typical_repair_time}")
+            lines.append(f"*Typical Repair Time:* {self.result.typical_repair_time}")
 
         if self.result.typical_cost_range:
-            lines.append(f"💰 *Typical Cost Range:* {self.result.typical_cost_range}")
+            lines.append(f"*Typical Cost Range:* {self.result.typical_cost_range}")
 
         if self.result.diy_difficulty:
-            lines.append(f"🔧 *DIY Difficulty:* {self.result.diy_difficulty}")
+            lines.append(f"*DIY Difficulty:* {self.result.diy_difficulty}")
 
         return "\n".join(lines)
 
     def _format_related_codes(self) -> str:
         """Format related codes section (Migration 003)"""
-        codes_list = "\n".join(f"• {code}" for code in self.result.related_codes[:5])
+        codes_list = "\n".join(f"- {code}" for code in self.result.related_codes[:5])
 
-        return f"""🔗 *Related Codes to Check*
-
+        return f"""*RELATED CODES TO CHECK*
 {codes_list}"""
 
     def _format_common_misdiagnoses(self) -> str:
         """Format misdiagnosis warning (Migration 003)"""
-        return f"""⚠️ *Common Misdiagnosis*
-
+        return f"""*COMMON MISDIAGNOSIS*
 {self.result.common_misdiagnoses}"""
 
     def _format_freeze_frame_guidance(self) -> str:
         """Format freeze frame data guidance (Migration 003)"""
         data_list = "\n".join(
-            f"• {data}" for data in self.result.freeze_frame_data_to_check[:6]
+            f"- {data}" for data in self.result.freeze_frame_data_to_check[:6]
         )
 
-        return f"""📊 *Data to Review* (if you have a scanner)
-
+        return f"""*DATA TO REVIEW* (Live Scanner)
 {data_list}"""
 
 

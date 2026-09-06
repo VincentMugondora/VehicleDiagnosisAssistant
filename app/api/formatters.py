@@ -44,24 +44,25 @@ def format_symptom_response(result: SymptomDiagnosisResult) -> list[str]:
     max_codes = settings.reply_max_codes
     max_checks = settings.reply_max_checks
 
-    base = "*Diagnosis Summary*\n\n"
+    base = "*DIAGNOSIS SUMMARY*\n──────────────────────\n"
 
     if result.likely_systems:
-        base += "*Possible issues detected in:*\n"
+        base += "*POSSIBLE ISSUES DETECTED IN:*\n"
         base += ", ".join(result.likely_systems[:5]) + "\n\n"
 
     if result.probable_codes:
-        base += "*Common codes:*\n"
+        base += "*COMMON CODES:*\n"
         base += ", ".join(result.probable_codes[:max_codes]) + "\n\n"
 
     if result.recommended_checks:
-        base += "*Recommended checks:*\n"
+        base += "*RECOMMENDED CHECKS:*\n"
         base += "\n".join(
-            f"• {c}" for c in result.recommended_checks[:max_checks]
+            f"- {c}" for c in result.recommended_checks[:max_checks]
         ) + "\n\n"
 
     base += "Would you like to scan for codes?\n"
-    base += "_Symptom-based guidance. Confirm with a scan and inspection._"
+    base += "──────────────────────\n"
+    base += "_Note: Symptom-based guidance. Confirm with a scan and inspection._"
 
     return _split_message(base, max_length=1500)
 
