@@ -201,14 +201,18 @@ const validateSendMessage = [
     }
 ]
 
-// Exponential backoff for reconnection
+// Exponential backoff for reconnection with jitter
 let reconnectAttempt = 0
-const RECONNECT_DELAYS = [3000, 6000, 12000, 30000, 60000]
+const MIN_RECONNECT_DELAY = 2000;
+const MAX_RECONNECT_DELAY = 60000;
 
 function getReconnectDelay() {
-    const delay = RECONNECT_DELAYS[Math.min(reconnectAttempt, RECONNECT_DELAYS.length - 1)]
-    reconnectAttempt++
-    return delay
+    // Exponential backoff: 2s, 4s, 8s, 16s, 32s, 60s
+    const baseDelay = Math.min(MIN_RECONNECT_DELAY * Math.pow(2, reconnectAttempt), MAX_RECONNECT_DELAY);
+    // Add 0-20% jitter
+    const jitter = baseDelay * 0.2 * Math.random();
+    reconnectAttempt++;
+    return Math.floor(baseDelay + jitter);
 }
 
 function resetReconnectAttempt() {
@@ -259,13 +263,31 @@ function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms))
 }
 
+let isConnecting = false;
+let heartbeatInterval = null;
+
+function clearHeartbeat() {
+    if (heartbeatInterval) {
+        clearInterval(heartbeatInterval);
+        heartbeatInterval = null;
+    }
+}
+
 // WhatsApp connection
 async function connectToWhatsApp() {
+    if (isConnecting) {
+        logger.debug('Already attempting to connect, skipping...');
+        return;
+    }
+    
+    isConnecting = true;
     logger.info('Connecting to WhatsApp...')
     metrics.connectionStatus = 'connecting'
 
     try {
-        const { state, saveCreds } = await useMultiFileAuthState('auth_info_baileys')
+        const authPath = process.env.AUTH_INFO_DIR || 'auth_info_baileys'
+        logger.info({ authPath }, 'Using auth info directory')
+        const { state, saveCreds } = await useMultiFileAuthState(authPath)
 
         sock = makeWASocket({
             auth: state,
@@ -273,9 +295,11 @@ async function connectToWhatsApp() {
             browser: ['Vehicle Diagnosis Assistant', 'Chrome', '1.0.0'],
             connectTimeoutMs: 60000,
             defaultQueryTimeoutMs: 60000,
-            keepAliveIntervalMs: 30000,
+            keepAliveIntervalMs: 15000,
             logger: pino({ level: 'silent' }),
-            markOnlineOnConnect: true
+            markOnlineOnConnect: true,
+            // Automatically retry requests if they fail
+            retryRequestDelayMs: 1000
         })
 
         sock.ev.on('creds.update', saveCreds)
@@ -296,25 +320,23 @@ async function connectToWhatsApp() {
                 } catch (qrError) {
                     logger.error({ error: qrError.message }, 'Failed to generate QR code')
                 }
-
-                console.log('\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━')
-                console.log('📱 Open WhatsApp → Settings → Linked Devices')
-                console.log('📲 Tap "Link a Device" and scan the code above')
-                console.log('⏱️  QR code refreshes every 60 seconds')
-                console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n')
             }
 
             if (connection === 'close') {
+                isConnecting = false;
+                clearHeartbeat();
+                
                 const statusCode = lastDisconnect?.error?.output?.statusCode
                 const shouldReconnect = statusCode !== DisconnectReason.loggedOut
-
+                
                 metrics.connectionStatus = 'disconnected'
                 metrics.reconnectAttempts++
 
                 logger.warn({
                     statusCode,
                     shouldReconnect,
-                    attempt: reconnectAttempt
+                    attempt: reconnectAttempt,
+                    error: lastDisconnect?.error?.message
                 }, 'Connection closed')
 
                 if (shouldReconnect) {
@@ -322,16 +344,33 @@ async function connectToWhatsApp() {
                     logger.info({ delay }, `Reconnecting in ${delay}ms...`)
                     setTimeout(() => connectToWhatsApp(), delay)
                 } else {
-                    logger.error('Logged out. Delete auth_info_baileys folder to reconnect.')
+                    const authPath = process.env.AUTH_INFO_DIR || 'auth_info_baileys'
+                    logger.error(`Logged out explicitly. Delete ${authPath} folder to reconnect.`)
                     metrics.connectionStatus = 'logged_out'
                 }
             } else if (connection === 'open') {
-                latestQR = null
+                isConnecting = false;
+                latestQR = null;
                 logger.info('WhatsApp connected successfully')
                 metrics.connectionStatus = 'connected'
                 resetReconnectAttempt()
                 console.log('✅ WhatsApp Connected!')
-                console.log('📱 Ready to receive messages')
+                
+                clearHeartbeat();
+                heartbeatInterval = setInterval(async () => {
+                    try {
+                        // Explicit heartbeat check
+                        if (sock && sock.ws && sock.ws.readyState === 1) { // 1 = OPEN
+                            sock.ws.ping();
+                            logger.debug('Sent WebSocket ping');
+                        } else {
+                            logger.warn('WebSocket not open during heartbeat check, triggering reconnect');
+                            sock.end(new Error('Heartbeat timeout'));
+                        }
+                    } catch (err) {
+                        logger.error({ error: err.message }, 'Error in heartbeat');
+                    }
+                }, 30000);
             }
         })
 
@@ -368,6 +407,8 @@ async function connectToWhatsApp() {
             try {
                 await sock.sendPresenceUpdate('composing', from)
 
+                // Process in background if necessary, but here we await so we can send the response in-order.
+                // To avoid dropping connection, we ensure the backend response time is manageable.
                 const response = await axios.post(CONFIG.BACKEND_URL, {
                     from,
                     sender: from,
@@ -430,6 +471,7 @@ async function connectToWhatsApp() {
         })
 
     } catch (error) {
+        isConnecting = false;
         metrics.errors++
         logger.error({ error: error.message, stack: error.stack }, 'Failed to connect to WhatsApp')
 
@@ -659,6 +701,8 @@ async function gracefulShutdown(signal) {
     isShuttingDown = true
 
     logger.info({ signal }, 'Shutting down gracefully...')
+    
+    clearHeartbeat();
 
     if (server) {
         server.close(() => {
@@ -668,10 +712,16 @@ async function gracefulShutdown(signal) {
 
     if (sock) {
         try {
-            await sock.logout()
-            logger.info('WhatsApp logged out')
+            // IMPORTANT: Do NOT use sock.logout() here, as it invalidates the session and unpairs the device.
+            // Using sock.ws.close() properly terminates the connection while keeping the session valid for restart.
+            if (sock.ws) {
+                sock.ws.close();
+            } else {
+                sock.end(undefined);
+            }
+            logger.info('WhatsApp connection closed (session preserved)')
         } catch (error) {
-            logger.error({ error: error.message }, 'Error during logout')
+            logger.error({ error: error.message }, 'Error closing WhatsApp connection')
         }
     }
 
